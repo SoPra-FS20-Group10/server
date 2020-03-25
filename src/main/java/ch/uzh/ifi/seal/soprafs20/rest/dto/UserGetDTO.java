@@ -2,12 +2,15 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 
-public class UserGetDTO {
+import java.util.Date;
 
+public class UserGetDTO {
     private Long id;
     private String name;
     private String username;
     private UserStatus status;
+    private Date birthday;
+    private Date cakeday;
 
     public Long getId() {
         return id;
@@ -39,5 +42,21 @@ public class UserGetDTO {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public Date getCakeday() {
+        return cakeday;
+    }
+
+    public void setCakeday(Date cakeday) {
+        this.cakeday = cakeday;
     }
 }

@@ -1,16 +1,19 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
-public class UserPostDTO {
-    private String name;
+import java.util.Date;
+
+public class UserPutDTO {
+    private long id;
     private String username;
     private String password;
+    private Date birthday;
 
-    public String getName() {
-        return name;
+    public long getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -27,5 +30,13 @@ public class UserPostDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
     }
 }

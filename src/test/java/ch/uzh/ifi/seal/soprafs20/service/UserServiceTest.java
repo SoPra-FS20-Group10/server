@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.SignUpException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,19 +53,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser_duplicateName_throwsException() {
-        // given -> a first user has already been created
-        userService.createUser(testUser);
-
-        // when -> setup additional mocks for UserRepository
-        Mockito.when(userRepository.findByName(Mockito.any())).thenReturn(testUser);
-        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
-
-        // then -> attempt to create second user with same user -> check that an error is thrown
-        assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
-    }
-
-    @Test
     public void createUser_duplicateInputs_throwsException() {
         // given -> a first user has already been created
         userService.createUser(testUser);
@@ -75,8 +62,8 @@ public class UserServiceTest {
         Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
 
         // then -> attempt to create second user with same user -> check that an error is thrown
-        assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+        String exceptionMessage = "The username provided is not unique. Therefore, the user could not be created!";
+        SignUpException exception = assertThrows(SignUpException.class, () -> userService.createUser(testUser), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
     }
-
-
 }

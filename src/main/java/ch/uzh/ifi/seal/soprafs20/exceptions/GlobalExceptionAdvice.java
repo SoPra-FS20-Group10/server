@@ -8,15 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 
-@ControllerAdvice(annotations = RestController.class)
+@ControllerAdvice
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     private final Logger log = LoggerFactory.getLogger(GlobalExceptionAdvice.class);
@@ -27,16 +27,50 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
+    @ExceptionHandler(SopraServiceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public SopraServiceException handleBadRequestException(SopraServiceException ex) {
+        log.error(String.format("SopraServiceException raised:%s", ex));
+        return ex;
+    }
+
     @ExceptionHandler(TransactionSystemException.class)
-    public ResponseStatusException handleTransactionSystemException(Exception ex, HttpServletRequest request) {
-        log.error("Request: {} raised {}", request.getRequestURL(), ex);
-        return new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage(), ex);
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public void handleTransactionSystemException(Exception ex, HttpServletRequest request) {
+        log.error(String.format("Request: %s raised %s", request.getRequestURL(), ex));
+    }
+
+    @ExceptionHandler(SignUpException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public SignUpException handleSignUpException(SignUpException ex) {
+        log.error(String.format("SignUpException raised: raised %s", ex));
+        return ex;
+    }
+
+    @ExceptionHandler(LoginException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public LoginException handleLoginException(LoginException ex) {
+        log.error(String.format("LoginException raised: raised %s", ex));
+        return ex;
+    }
+
+    @ExceptionHandler(UpdateException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public UpdateException handleUpdateException(UpdateException ex) {
+        log.error(String.format("UpdateException raised: raised %s", ex));
+        return ex;
     }
 
     // Keep this one disable for all testing purposes -> it shows more detail with this one disabled
     @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
-    public ResponseStatusException handleException(Exception ex) {
-        log.error("Default Exception Handler -> caught:", ex);
-        return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Exception handleException(Exception ex) {
+        log.error(String.format("Exception raised:%s", ex));
+        return ex;
     }
 }
