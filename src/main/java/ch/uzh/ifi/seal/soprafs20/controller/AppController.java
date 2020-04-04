@@ -1,8 +1,13 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
+import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,19 +18,35 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AppController {
+    private UserService userService;
+
+    AppController(UserService userService){
+        this.userService = userService;
+    };
 
     @PutMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void loginUser(UserPutDTO userPutDTO) {
-        // TODO: implement
+    public ResponseEntity<UserGetDTO> loginUser(@RequestBody UserPostDTO userPostDTO) {
+        // convert API user to internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+
+        // search if user exists in database and change status
+        return userService.loginUser(userInput);
     }
 
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void registerUser(UserPostDTO userPostDTO) {
-        // TODO: implement
+    public String createUser(@RequestBody UserPostDTO userPostDTO) {
+        // convert API user to internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+
+        // create user
+        userService.createUser(userInput);
+
+        // returns new path
+        return "/login";
     }
 
     @PutMapping("/lobby")
@@ -66,15 +87,24 @@ public class AppController {
     @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void getUser(@PathVariable ("userId") Long userId) {
-        // TODO: implement
+    public UserGetDTO getUser(@PathVariable("userId") Long userId) {
+
+        // search if user exists in database
+        User userInput = userService.getUserById(userId);
+
+        // convert internal representation of user back to API
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
     }
 
     @PutMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void updateUser(@PathVariable ("userId") Long userId) {
-        // TODO: implement
+    public void updateUser(@PathVariable("userId") long userId, @RequestBody UserPutDTO userPutDTO) {
+        // convert API user to internal representation
+        User userInputUpdate = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+        // update the user infos
+        userService.updateUser(userInputUpdate, userId);
     }
 
     @DeleteMapping("/users/{userId}")
