@@ -66,6 +66,10 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(DTOMapper.INSTANCE.convertEntityToUserGetDTO(userLogin));
     }
 
+    public void logoutUser(long userId) {
+        // TODO: implement
+    }
+
     public User getUserById(long userId) {
         Optional<User> found = userRepository.findById(userId);
 
