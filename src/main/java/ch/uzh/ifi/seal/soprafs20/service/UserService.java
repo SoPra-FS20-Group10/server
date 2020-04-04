@@ -45,10 +45,12 @@ public class UserService {
         // retrieves the user from the db
         User userLogin = userRepository.findByUsername(user.getUsername());
 
+        // checks if the password is correct
         if (!userLogin.getPassword().equals(user.getPassword())) {
             throw new LoginException("Wrong password");
         }
 
+        // checks if the user is already online
         if (userLogin.getStatus() == UserStatus.ONLINE) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
@@ -56,6 +58,7 @@ public class UserService {
         // set the status of the user to online
         userLogin.setStatus(UserStatus.ONLINE);
 
+        // saves the update to the db
         userRepository.save(userLogin);
         userRepository.flush();
 
@@ -64,10 +67,10 @@ public class UserService {
     }
 
     public User getUserById(long userId) {
-        Optional<User> found = userRepository.findByIdIs(userId);
+        Optional<User> found = userRepository.findById(userId);
 
         // if no such user is found, an exception is thrown
-        if (!found.isPresent()) {
+        if (found.isEmpty()) {
             throw new SopraServiceException("No user with the id " + userId + " found.");
         }
 
@@ -107,10 +110,11 @@ public class UserService {
         Optional<User> userExisting = userRepository.findByIdIs(userId);
 
         // check if user exists
-        if (!userExisting.isPresent()) {
+        if (userExisting.isEmpty()) {
             throw new UpdateException("The user with the id " + userId + " does not exist.");
         }
 
+        // get the existing user
         User user = userExisting.get();
 
         // checkout user to test if new username already exists
@@ -120,7 +124,9 @@ public class UserService {
         if (test != null) {
             if (test.getUsername().equals(user.getUsername())) {
                 log.debug("username stays the same");
-            } else {
+            }
+
+            else {
                 throw new SopraServiceException("Username exists already, please choose another one.");
             }
         }
