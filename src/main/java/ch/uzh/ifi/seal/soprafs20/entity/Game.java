@@ -24,8 +24,8 @@ public class Game implements Serializable {
     @GeneratedValue
     private Long id;
 
-    //@ElementCollection
-    //private List<Player> players;
+    @ElementCollection
+    private List<Integer> players;
 
     @Column(nullable = false, unique = true)
     private String username;
