@@ -1,6 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
@@ -10,6 +12,9 @@ import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * App Controller
@@ -22,10 +27,10 @@ public class AppController {
     private UserService userService;
     private GameService gameService;
 
-    AppController(UserService userService, GameService gameService){
+    AppController(UserService userService, GameService gameService) {
         this.userService = userService;
         this.gameService = gameService;
-    };
+    }
 
     @PutMapping("/login")
     @ResponseStatus(HttpStatus.OK)
@@ -58,7 +63,7 @@ public class AppController {
     public void logoutUser(Long userId) {
         userService.logoutUser(userId);
     }
-/*
+
     @GetMapping("/lobby")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -71,9 +76,8 @@ public class AppController {
         for (Game game : games) {
             gameGetDTOs.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
         }
-        return gameGetDTOs;    }
-
- */
+        return gameGetDTOs;
+    }
 
     @PostMapping("/lobby/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
