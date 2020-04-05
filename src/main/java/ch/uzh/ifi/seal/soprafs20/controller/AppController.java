@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
@@ -89,8 +90,10 @@ public class AppController {
     @PutMapping("/lobby/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void joinLobby(@PathVariable ("gameId") Long gameId) {
-        // TODO: implement
+    public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody Long playerId) {
+        //Player player = playerRepository.getPlayer(playerId);
+
+        gameService.joinGame(gameId, playerId);
     }
 
     @PostMapping("/users/{userId}")
