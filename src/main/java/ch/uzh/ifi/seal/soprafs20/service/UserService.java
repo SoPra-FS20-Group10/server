@@ -67,7 +67,17 @@ public class UserService {
     }
 
     public void logoutUser(long userId) {
-        // TODO: implement
+        Optional<User> found = userRepository.findById(userId);
+
+        if (found.isEmpty()) {
+            throw new SopraServiceException("No user with the id " + userId + " found.");
+        }
+
+        User user = found.get();
+        user.setStatus(UserStatus.OFFLINE);
+
+        userRepository.save(user);
+        userRepository.flush();
     }
 
     public User getUserById(long userId) {
