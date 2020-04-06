@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
@@ -44,6 +45,7 @@ public class GameService {
     public void createGame() {
 
         Game newgame = new Game();
+        newgame.setStatus(GameStatus.ONLINE);
 
         gameRepository.save(newgame);
         gameRepository.flush();
