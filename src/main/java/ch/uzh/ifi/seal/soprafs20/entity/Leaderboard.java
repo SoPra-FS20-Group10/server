@@ -17,9 +17,12 @@ import java.util.List;
  */
 @Entity
 @Table(name = "Scoreboard")
-public class Scoreboard implements Serializable {
+public class Leaderboard implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue
+    private Long id;
 
 
 }

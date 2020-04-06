@@ -27,6 +27,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    /*
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -42,6 +43,9 @@ public class UserController {
         return userGetDTOs;
     }
 
+     */
+
+    /*
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -88,4 +92,6 @@ public class UserController {
         // update the user infos
         userService.updateUser(userInputUpdate, userId);
     }
+
+     */
 }

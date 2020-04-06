@@ -1,6 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
@@ -39,4 +41,8 @@ public interface DTOMapper {
     @Mapping(source = "password", target = "password")
     @Mapping(source = "birthday", target = "birthday")
     User convertUserPutDTOtoEntity(UserPutDTO user);
+
+    Game convertGameGetDTOtoEntity(GameGetDTO game);
+
+    GameGetDTO convertEntityToGameGetDTO(Game game);
 }

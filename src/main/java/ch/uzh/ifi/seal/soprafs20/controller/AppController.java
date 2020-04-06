@@ -1,14 +1,21 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * App Controller
@@ -19,10 +26,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AppController {
     private UserService userService;
+    private GameService gameService;
 
-    AppController(UserService userService){
+    AppController(UserService userService, GameService gameService) {
         this.userService = userService;
-    };
+        this.gameService = gameService;
+    }
 
     @PutMapping("/login")
     @ResponseStatus(HttpStatus.OK)
@@ -53,14 +62,22 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void logoutUser(Long userId) {
-        // TODO: use userId?
+        userService.logoutUser(userId);
     }
 
     @GetMapping("/lobby")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void getGames() {
-        // TODO: implement
+    public List<GameGetDTO> getGames() {
+        // fetch all games in the internal representation
+        List<Game> games = gameService.getGames();
+        List<GameGetDTO> gameGetDTOs = new ArrayList<>();
+
+        // convert each user to the API representation
+        for (Game game : games) {
+            gameGetDTOs.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
+        }
+        return gameGetDTOs;
     }
 
     @PostMapping("/lobby/{gameId}")
@@ -73,8 +90,10 @@ public class AppController {
     @PutMapping("/lobby/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void joinLobby(@PathVariable ("gameId") Long gameId) {
-        // TODO: implement
+    public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody Long playerId) {
+        //Player player = playerRepository.getPlayer(playerId);
+
+        gameService.joinGame(gameId, playerId);
     }
 
     @PostMapping("/users/{userId}")
@@ -97,7 +116,7 @@ public class AppController {
     }
 
     @PutMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void updateUser(@PathVariable("userId") long userId, @RequestBody UserPutDTO userPutDTO) {
         // convert API user to internal representation
@@ -175,5 +194,20 @@ public class AppController {
     @ResponseBody
     public void leaveGame() {
         //TODO: implement
+    }
+
+    @GetMapping("/users")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<UserGetDTO> getAllUsers() {
+        // fetch all users in the internal representation
+        List<User> users = userService.getUsers();
+        List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
+        // convert each user to the API representation
+        for (User user : users) {
+            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+        }
+        return userGetDTOs;
     }
 }

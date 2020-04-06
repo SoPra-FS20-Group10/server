@@ -1,5 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
+import ch.uzh.ifi.seal.soprafs20.boardcomponents.Board;
+import ch.uzh.ifi.seal.soprafs20.boardcomponents.Scoreboard;
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 
 import javax.persistence.*;
@@ -24,26 +27,33 @@ public class Game implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @ElementCollection
-    private List<Integer> players;
+    @Transient
+    private List<Player> players;
 
-    @Column(nullable = false, unique = true)
-    private String username;
 
-    @Column(nullable = false, unique = true)
-    private String token;
+    @Transient
+    private Scoreboard scoreboard;
 
     @Column(nullable = false)
-    private UserStatus status;
+    private GameStatus status;
 
     @Column(nullable = false)
-    private Date cakeday;
-
-    @Column()
-    private Date birthday;
+    private int ownerid;
 
     @Column(nullable = false)
+    private int chatid;
+
+    @Column
     private String password;
+
+    @Transient
+    private Board board;
+
+
+
+
+
+
 
     public Long getId() {
         return id;

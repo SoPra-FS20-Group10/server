@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
+import ch.uzh.ifi.seal.soprafs20.boardcomponents.Bag;
 import ch.uzh.ifi.seal.soprafs20.boardcomponents.Tile;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 
@@ -31,11 +32,11 @@ public class Player implements Serializable {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private int score;
 
-    @ElementCollection
-    private Set<Tile> status;
+    @Transient
+    private Bag bag;
 
     public Long getId() {
         return id;

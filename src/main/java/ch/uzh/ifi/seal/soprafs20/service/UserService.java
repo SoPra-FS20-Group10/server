@@ -66,6 +66,20 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(DTOMapper.INSTANCE.convertEntityToUserGetDTO(userLogin));
     }
 
+    public void logoutUser(long userId) {
+        Optional<User> found = userRepository.findById(userId);
+
+        if (found.isEmpty()) {
+            throw new SopraServiceException("No user with the id " + userId + " found.");
+        }
+
+        User user = found.get();
+        user.setStatus(UserStatus.OFFLINE);
+
+        userRepository.save(user);
+        userRepository.flush();
+    }
+
     public User getUserById(long userId) {
         Optional<User> found = userRepository.findById(userId);
 
