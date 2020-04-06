@@ -30,7 +30,6 @@ public class Game implements Serializable {
     @Transient
     private List<Player> players;
 
-
     @Transient
     private Scoreboard scoreboard;
 
