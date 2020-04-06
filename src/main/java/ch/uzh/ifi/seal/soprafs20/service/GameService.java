@@ -28,8 +28,7 @@ public class GameService {
         return gameRepository.findAll();
     }
 
-    public void createGame(Game game) {
-        gameRepository.save(game);
+    public void createGame() {
         gameRepository.flush();
     }
 

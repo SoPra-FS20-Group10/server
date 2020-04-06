@@ -84,6 +84,7 @@ public class AppController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public void createLobby(@PathVariable ("gameId") Long gameId) {
+        gameService.createGame();
         // TODO: why gameId?
     }
 
