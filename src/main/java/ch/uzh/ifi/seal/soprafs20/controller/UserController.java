@@ -42,6 +42,7 @@ public class UserController {
         return userGetDTOs;
     }
 
+    /*
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -88,4 +89,6 @@ public class UserController {
         // update the user infos
         userService.updateUser(userInputUpdate, userId);
     }
+
+     */
 }
