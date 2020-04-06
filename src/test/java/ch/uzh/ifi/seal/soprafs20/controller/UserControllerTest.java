@@ -4,6 +4,8 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This is a WebMvcTest which allows to test the UserController i.e. GET/POST request without actually sending them over the network.
  * This tests if the UserController works.
  */
-@WebMvcTest(UserController.class)
+@WebMvcTest(AppController.class)
 public class UserControllerTest {
 
     @Autowired
@@ -40,6 +42,9 @@ public class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private GameService gameService;
 
     @Test
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
@@ -69,15 +74,11 @@ public class UserControllerTest {
     public void createUser_validInput_userCreated() throws Exception {
         // given
     User user = new User();
-        user.setId(1L);
         user.setName("Test User");
         user.setUsername("testUsername");
         user.setPassword("testPassword");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
 
     UserPostDTO userPostDTO = new UserPostDTO();
-        userPostDTO.setName("Test User");
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
 
@@ -89,23 +90,19 @@ public class UserControllerTest {
             .content(asJsonString(userPostDTO));
 
     // then
-        mockMvc.perform(postRequest)
-            .andExpect(status().isCreated());
+        mockMvc.perform(postRequest).andExpect(status().isCreated());
+
 }
 
     @Test
     public void loginUser_validInput_userLoggedIn() throws Exception {
         // given
         User user = new User();
-        user.setId(1L);
         user.setName("Test User");
         user.setUsername("testUsername");
         user.setPassword("testPassword");
-        user.setToken("1");
-        user.setStatus(UserStatus.OFFLINE);
 
         UserPostDTO userPostDTO = new UserPostDTO();
-        userPostDTO.setName("Test User");
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
 
@@ -129,20 +126,12 @@ public class UserControllerTest {
         user.setName("Test User");
         user.setUsername("testUsername");
         user.setPassword("testPassword");
-        user.setToken("1");
-        user.setStatus(UserStatus.OFFLINE);
-
-        UserPostDTO userPostDTO = new UserPostDTO();
-        userPostDTO.setName("Test User");
-        userPostDTO.setUsername("testUsername");
-        userPostDTO.setPassword("testPassword");
 
         userService.createUser(user);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder getRequest = get("/users/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPostDTO));
+                .contentType(MediaType.APPLICATION_JSON);
 
         // then
         mockMvc.perform(getRequest)
@@ -153,24 +142,20 @@ public class UserControllerTest {
     public void updateUser_validInput() throws Exception {
         // given
         User user = new User();
-        user.setId(1L);
         user.setName("Test User");
         user.setUsername("testUsername");
         user.setPassword("testPassword");
-        user.setToken("1");
-        user.setStatus(UserStatus.OFFLINE);
 
-        UserPostDTO userPostDTO = new UserPostDTO();
-        userPostDTO.setName("bla");
-        userPostDTO.setUsername("bla");
-        userPostDTO.setPassword("bla");
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setUsername("bla");
+        userPutDTO.setPassword("bla");
 
         userService.createUser(user);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/users/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPostDTO));
+                .content(asJsonString(userPutDTO));
 
         // then
         mockMvc.perform(putRequest)

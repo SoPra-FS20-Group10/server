@@ -116,7 +116,7 @@ public class AppController {
     }
 
     @PutMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void updateUser(@PathVariable("userId") long userId, @RequestBody UserPutDTO userPutDTO) {
         // convert API user to internal representation
@@ -194,5 +194,20 @@ public class AppController {
     @ResponseBody
     public void leaveGame() {
         //TODO: implement
+    }
+
+    @GetMapping("/users")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<UserGetDTO> getAllUsers() {
+        // fetch all users in the internal representation
+        List<User> users = userService.getUsers();
+        List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
+        // convert each user to the API representation
+        for (User user : users) {
+            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+        }
+        return userGetDTOs;
     }
 }
