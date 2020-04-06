@@ -27,6 +27,4 @@ public class Chat implements Serializable {
 
     @Transient
     private List<Message> messages;
-
-
 }

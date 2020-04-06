@@ -23,6 +23,4 @@ public class Leaderboard implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
-
-
 }

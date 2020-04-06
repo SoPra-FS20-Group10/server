@@ -27,7 +27,7 @@ public class Player implements Serializable {
     private Long id;
 
     @Column
-    private Long Userid;
+    private Long userId;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -46,7 +46,6 @@ public class Player implements Serializable {
         this.id = id;
     }
 
-
     public String getUsername() {
         return username;
     }
@@ -62,5 +61,4 @@ public class Player implements Serializable {
     public void setScore(int score) {
         this.score = score;
     }
-
 }

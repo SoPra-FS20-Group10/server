@@ -8,7 +8,6 @@ import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import java.util.List;
 
 public class GameGetDTO {
-
     private Long id;
     private List<Player> players;
     private Scoreboard scoreboard;
@@ -17,8 +16,6 @@ public class GameGetDTO {
     private int chatid;
     private String password;
     private Board board;
-
-
 
     public Long getId() {
         return id;
@@ -83,7 +80,4 @@ public class GameGetDTO {
     public void setBoard(Board board) {
         this.board = board;
     }
-
-
-
 }

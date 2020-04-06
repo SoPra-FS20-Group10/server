@@ -24,6 +24,19 @@ public class GameService {
         this.playerRepository = playerRepository;
     }
 
+    public Game getGame(long gameId) {
+        Game game;
+        Optional<Game> foundGame = gameRepository.findById(gameId);
+
+        if (foundGame.isEmpty()) {
+            throw new SopraServiceException("The game with the id " + gameId + " is not existing.");
+        } else {
+            game = foundGame.get();
+        }
+
+        return game;
+    }
+
     public List<Game> getGames() {
         return gameRepository.findAll();
     }
