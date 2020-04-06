@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
+import ch.uzh.ifi.seal.soprafs20.boardcomponents.Message;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 
 import javax.persistence.*;
@@ -20,6 +21,12 @@ import java.util.List;
 public class Chat implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Transient
+    private List<Message> messages;
 
 
 }
