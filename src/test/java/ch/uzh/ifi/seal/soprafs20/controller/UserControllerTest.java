@@ -72,17 +72,19 @@ public class UserControllerTest {
         user.setId(1L);
         user.setName("Test User");
         user.setUsername("testUsername");
+        user.setPassword("testPassword");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
 
     UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setName("Test User");
         userPostDTO.setUsername("testUsername");
+        userPostDTO.setPassword("testPassword");
 
     given(userService.createUser(Mockito.any())).willReturn(user);
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/users")
+    MockHttpServletRequestBuilder postRequest = post("/registration")
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(userPostDTO));
 
