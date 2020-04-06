@@ -29,6 +29,10 @@ public class GameService {
     }
 
     public void createGame() {
+
+        Game newgame = new Game();
+
+        gameRepository.save(newgame);
         gameRepository.flush();
     }
 
