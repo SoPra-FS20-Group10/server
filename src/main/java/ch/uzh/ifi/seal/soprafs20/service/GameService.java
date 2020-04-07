@@ -59,7 +59,7 @@ public class GameService {
         game.initList();
         game.addPlayer(owner);
 
-        gameRepository.save(game);
+        game = gameRepository.save(game);
         gameRepository.flush();
 
         return game;

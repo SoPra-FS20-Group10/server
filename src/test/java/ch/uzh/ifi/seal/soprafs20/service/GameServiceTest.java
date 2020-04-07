@@ -66,7 +66,7 @@ public class GameServiceTest {
         Optional<Game> found = Optional.ofNullable(testGame);
 
         // when
-        Mockito.when(gameRepository.findByOwnerId(1)).thenReturn(found);
+        Mockito.when(gameRepository.findByOwnerId(Mockito.anyLong())).thenReturn(found);
 
         // then -> attempt to create second user with same user -> check that an error is thrown
         String exceptionMessage = "The user with the id 1 is hosting another game.";

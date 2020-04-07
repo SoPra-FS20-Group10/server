@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
@@ -189,7 +190,7 @@ public class AppControllerTest {
         user.setPassword("TestPassword");
         userService.createUser(user);
 
-        Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
+        given(gameService.createGame(Mockito.any(), Mockito.any())).willReturn(testGame);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/lobby/1")

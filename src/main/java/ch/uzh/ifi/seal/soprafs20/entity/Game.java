@@ -49,7 +49,7 @@ public class Game implements Serializable {
     @Transient
     private Board board;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
