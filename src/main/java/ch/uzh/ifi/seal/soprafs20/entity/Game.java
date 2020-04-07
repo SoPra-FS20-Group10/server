@@ -24,23 +24,26 @@ public class Game implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @Transient
-    private List<Player> players;
-
-    @Transient
-    private Scoreboard scoreboard;
-
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private Long ownerId;
 
     @Column(nullable = false)
     private Long chatId;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private GameStatus status;
 
     @Column
     private String password;
+
+    @Transient
+    private List<Player> players;
+
+    @Transient
+    private Scoreboard scoreboard;
 
     @Transient
     private Board board;
@@ -87,6 +90,14 @@ public class Game implements Serializable {
 
     public void setChatId(long id) {
         this.chatId = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getPassword() {

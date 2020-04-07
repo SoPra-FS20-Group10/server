@@ -3,10 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
@@ -84,20 +81,26 @@ public class AppController {
         return gameGetDTOs;
     }
 
+    // TODO: why gameId?
     @PostMapping("/lobby/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void createLobby(@PathVariable ("gameId") Long gameId) {
-        gameService.createGame();
+    public void createLobby(@PathVariable ("gameId") Long gameId, @RequestBody GamePostDTO gamePostDTO) {
+        // parse the input into a game instance
+        Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
 
-        // TODO: why gameId?
+        // create a player for the owner
+        playerService.createPlayer(userService.getUser(game.getOwnerId()));
+
+        // create the game
+        gameService.createGame(game, playerService.getPlayer(game.getOwnerId()));
     }
 
     @PutMapping("/lobby/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUser(userId);
 
         playerService.createPlayer(user);
         Player player = playerService.getPlayer(userId);
@@ -118,7 +121,7 @@ public class AppController {
     public UserGetDTO getUser(@PathVariable("userId") Long userId) {
 
         // search if user exists in database
-        User userInput = userService.getUserById(userId);
+        User userInput = userService.getUser(userId);
 
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);

@@ -80,7 +80,7 @@ public class UserService {
         userRepository.flush();
     }
 
-    public User getUserById(long userId) {
+    public User getUser(long userId) {
         Optional<User> found = userRepository.findById(userId);
 
         // if no such user is found, an exception is thrown

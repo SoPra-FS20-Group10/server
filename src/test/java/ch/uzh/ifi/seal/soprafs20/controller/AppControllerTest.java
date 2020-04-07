@@ -160,6 +160,11 @@ public class AppControllerTest {
     }
 
     @Test
+    public void createLobby_validInput() throws Exception {
+
+    }
+
+    @Test
     public void joinLobby_validInput() throws Exception {
 
     }

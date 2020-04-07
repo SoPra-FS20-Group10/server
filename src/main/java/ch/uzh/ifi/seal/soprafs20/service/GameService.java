@@ -42,12 +42,21 @@ public class GameService {
         return gameRepository.findAll();
     }
 
-    public void createGame() {
+    public void createGame(Game game, Player owner) {
+        // check if owner has no other game
+        Optional<Game> foundGame = gameRepository.findByOwnerId(game.getOwnerId());
 
-        Game newgame = new Game();
-        newgame.setStatus(GameStatus.ONLINE);
+        if (foundGame.isPresent()) {
+            // TODO: throw the correct exception
+            throw new SopraServiceException("The user with the id " + game.getOwnerId() + " is hosting another game.");
+        }
 
-        gameRepository.save(newgame);
+        // TODO: insert correct chatId
+        game.setChatId(-1);
+        game.setStatus(GameStatus.ONLINE);
+        game.addPlayer(owner);
+
+        gameRepository.save(game);
         gameRepository.flush();
     }
 
