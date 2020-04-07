@@ -9,11 +9,13 @@ import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class GameService {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
@@ -42,7 +44,7 @@ public class GameService {
         return gameRepository.findAll();
     }
 
-    public long createGame(Game game, Player owner) {
+    public Game createGame(Game game, Player owner) {
         // check if owner has no other game
         Optional<Game> foundGame = gameRepository.findByOwnerId(game.getOwnerId());
 
@@ -52,7 +54,7 @@ public class GameService {
         }
 
         // TODO: insert correct chatId
-        game.setChatId(-1);
+        game.setChatId(0L);
         game.setStatus(GameStatus.ONLINE);
         game.initList();
         game.addPlayer(owner);
@@ -60,7 +62,7 @@ public class GameService {
         gameRepository.save(game);
         gameRepository.flush();
 
-        return gameRepository.findByOwnerId(owner.getId()).get().getId();
+        return game;
     }
 
     public void joinGame(long gameId, Player player, String password) {

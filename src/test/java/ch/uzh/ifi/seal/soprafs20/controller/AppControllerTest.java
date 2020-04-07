@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.JoinGameDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
@@ -14,6 +15,7 @@ import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
@@ -52,6 +55,9 @@ public class AppControllerTest {
 
     @MockBean
     private PlayerService playerService;
+
+    @Mock
+    private GameRepository gameRepository;
 
     @Test
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
@@ -164,16 +170,26 @@ public class AppControllerTest {
 
     @Test
     public void createLobby_validInput() throws Exception {
-        // given
+        // given request
         GamePostDTO gamePostDTO = new GamePostDTO();
         gamePostDTO.setOwnerId(1);
         gamePostDTO.setName("TestGame");
         gamePostDTO.setPassword("");
 
+        // given game
+        Game testGame = new Game();
+        testGame.setId(1);
+        testGame.setOwnerId(1L);
+        testGame.setName("testGame");
+        testGame.setPassword("");
+
+        // given user
         User user = new User();
         user.setUsername("TestUsername");
         user.setPassword("TestPassword");
         userService.createUser(user);
+
+        Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/lobby/1")

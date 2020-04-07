@@ -93,7 +93,8 @@ public class AppController {
         playerService.createPlayer(userService.getUser(game.getOwnerId()));
 
         // create the game
-        return gameService.createGame(game, playerService.getPlayer(game.getOwnerId()));
+        Game newGame = gameService.createGame(game, playerService.getPlayer(game.getOwnerId()));
+        return newGame.getId();
     }
 
     @PutMapping("/lobby/{gameId}")

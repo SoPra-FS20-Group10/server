@@ -1,7 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import org.junit.jupiter.api.Test;
@@ -41,5 +43,22 @@ public class DTOMapperTest {
         assertEquals(user.getId(), userGetDTO.getId());
         assertEquals(user.getUsername(), userGetDTO.getUsername());
         assertEquals(user.getStatus(), userGetDTO.getStatus());
+    }
+
+    @Test
+    public void testPostGame_fromGamePostDTO_to_Game_success() {
+        // create GamePostDTO
+        GamePostDTO gamePostDTO = new GamePostDTO();
+        gamePostDTO.setOwnerId(1);
+        gamePostDTO.setName("TestName");
+        gamePostDTO.setPassword("TestPassword");
+
+        // MAP -> Create Game
+        Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
+
+        // check content
+        assertEquals(game.getOwnerId(), gamePostDTO.getOwnerId());
+        assertEquals(game.getName(), gamePostDTO.getName());
+        assertEquals(game.getPassword(), gamePostDTO.getPassword());
     }
 }
