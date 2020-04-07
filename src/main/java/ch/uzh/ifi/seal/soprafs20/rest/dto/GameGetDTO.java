@@ -12,8 +12,8 @@ public class GameGetDTO {
     private List<Player> players;
     private Scoreboard scoreboard;
     private GameStatus status;
-    private int ownerid;
-    private int chatid;
+    private int ownerId;
+    private int chatId;
     private String password;
     private Board board;
 
@@ -49,20 +49,20 @@ public class GameGetDTO {
         this.status = status;
     }
 
-    public int getOwnerid() {
-        return ownerid;
+    public int getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwnerid(int ownerid) {
-        this.ownerid = ownerid;
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
-    public int getChatid() {
-        return chatid;
+    public int getChatId() {
+        return chatId;
     }
 
-    public void setChatid(int chatid) {
-        this.chatid = chatid;
+    public void setChatId(int chatId) {
+        this.chatId = chatId;
     }
 
     public String getPassword() {

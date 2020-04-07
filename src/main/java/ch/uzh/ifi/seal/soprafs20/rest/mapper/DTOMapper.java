@@ -2,10 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -56,4 +53,8 @@ public interface DTOMapper {
     @Mapping(source = "password", target = "password")
     @Mapping(source = "board", target = "board")
     GameGetDTO convertEntityToGameGetDTO(Game game);
+
+    @Mapping(source = "ownerId", target = "ownerId")
+    @Mapping(source = "password", target = "password")
+    Game convertGamePostDTOToEntity(GamePostDTO game);
 }

@@ -77,6 +77,7 @@ public class AppController {
         for (Game game : games) {
             gameGetDTOs.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
         }
+
         return gameGetDTOs;
     }
 
