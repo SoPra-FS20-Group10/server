@@ -121,7 +121,7 @@ public class UserService {
         }
 
         // checkout user by userId
-        Optional<User> userExisting = userRepository.findByIdIs(userId);
+        Optional<User> userExisting = userRepository.findById(userId);
 
         // check if user exists
         if (userExisting.isEmpty()) {

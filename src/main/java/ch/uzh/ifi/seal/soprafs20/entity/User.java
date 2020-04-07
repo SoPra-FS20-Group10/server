@@ -23,10 +23,7 @@ public class User implements Serializable {
 	private Long id;
 
 	@Column
-    private Long Playerid;
-	
-	@Column(nullable = false) 
-	private String name;
+    private Long playerId;
 	
 	@Column(nullable = false, unique = true) 
 	private String username;
@@ -54,13 +51,13 @@ public class User implements Serializable {
 	    this.id = id;
     }
 
-	public String getName() {
-		return name;
-	}
+    public Long getPlayerId() {
+	    return playerId;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setPlayerId(long playerId) {
+	    this.playerId = playerId;
+    }
 
 	public String getUsername() {
 		return username;
