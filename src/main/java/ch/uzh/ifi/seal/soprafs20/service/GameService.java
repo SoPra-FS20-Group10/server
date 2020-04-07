@@ -54,6 +54,7 @@ public class GameService {
         // TODO: insert correct chatId
         game.setChatId(-1);
         game.setStatus(GameStatus.ONLINE);
+        game.initList();
         game.addPlayer(owner);
 
         gameRepository.save(game);

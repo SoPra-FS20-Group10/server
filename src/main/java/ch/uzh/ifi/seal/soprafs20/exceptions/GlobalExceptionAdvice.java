@@ -66,6 +66,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     // Keep this one disable for all testing purposes -> it shows more detail with this one disabled
+    /*
     @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
@@ -73,4 +74,6 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         log.error(String.format("Exception raised:%s", ex));
         return ex;
     }
+
+     */
 }

@@ -6,6 +6,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +55,10 @@ public class Game implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void initList() {
+        players = new ArrayList<>();
     }
 
     public List<Player> getPlayers() {
