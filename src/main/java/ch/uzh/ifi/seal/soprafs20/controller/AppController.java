@@ -85,7 +85,7 @@ public class AppController {
     @PostMapping("/lobby/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void createLobby(@PathVariable ("gameId") Long gameId, @RequestBody GamePostDTO gamePostDTO) {
+    public long createLobby(@PathVariable ("gameId") Long gameId, @RequestBody GamePostDTO gamePostDTO) {
         // parse the input into a game instance
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
 
@@ -93,7 +93,7 @@ public class AppController {
         playerService.createPlayer(userService.getUser(game.getOwnerId()));
 
         // create the game
-        gameService.createGame(game, playerService.getPlayer(game.getOwnerId()));
+        return gameService.createGame(game, playerService.getPlayer(game.getOwnerId()));
     }
 
     @PutMapping("/lobby/{gameId}")

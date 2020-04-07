@@ -42,7 +42,7 @@ public class GameService {
         return gameRepository.findAll();
     }
 
-    public void createGame(Game game, Player owner) {
+    public long createGame(Game game, Player owner) {
         // check if owner has no other game
         Optional<Game> foundGame = gameRepository.findByOwnerId(game.getOwnerId());
 
@@ -59,6 +59,8 @@ public class GameService {
 
         gameRepository.save(game);
         gameRepository.flush();
+
+        return gameRepository.findByOwnerId(owner.getId()).get().getId();
     }
 
     public void joinGame(long gameId, Player player, String password) {
