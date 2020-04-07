@@ -51,7 +51,7 @@ public class GameService {
         gameRepository.flush();
     }
 
-    public void joinGame(long gameId, long playerId) {
+    public void joinGame(long gameId, Player player) {
         // fetch the game by id
         Game game;
         Optional<Game> foundGame = gameRepository.findById(gameId);
@@ -62,18 +62,6 @@ public class GameService {
             throw new SopraServiceException("The game with the id " + gameId + " does not exist.");
         } else {
             game = foundGame.get();
-        }
-
-        // fetch the player by id
-        Player player;
-        Optional<Player> foundPlayer = playerRepository.findById(playerId);
-
-        //check if the player exists
-        if (foundPlayer.isEmpty()) {
-            // TODO: throw the right exception
-            throw new SopraServiceException("The game with the id " + gameId + " does not exist.");
-        } else {
-            player = foundPlayer.get();
         }
 
         // add player to the game

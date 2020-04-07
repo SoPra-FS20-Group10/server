@@ -9,6 +9,7 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
+import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +28,12 @@ import java.util.List;
 public class AppController {
     private UserService userService;
     private GameService gameService;
+    private PlayerService playerService;
 
-    AppController(UserService userService, GameService gameService) {
+    AppController(UserService userService, GameService gameService, PlayerService playerService) {
         this.userService = userService;
         this.gameService = gameService;
+        this.playerService = playerService;
     }
 
     @PutMapping("/login")
@@ -93,10 +96,13 @@ public class AppController {
     @PutMapping("/lobby/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody Long playerId) {
-        //Player player = playerRepository.getPlayer(playerId);
+    public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody Long userId) {
+        User user = userService.getUserById(userId);
 
-        gameService.joinGame(gameId, playerId);
+        playerService.createPlayer(user);
+        Player player = playerService.getPlayer(userId);
+
+        gameService.joinGame(gameId, player);
     }
 
     @PostMapping("/users/{userId}")

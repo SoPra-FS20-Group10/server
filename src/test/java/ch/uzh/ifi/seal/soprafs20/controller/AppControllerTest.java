@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 @WebMvcTest(AppController.class)
-public class UserControllerTest {
+public class AppControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -71,25 +71,24 @@ public class UserControllerTest {
     @Test
     public void createUser_validInput_userCreated() throws Exception {
         // given
-    User user = new User();
+        User user = new User();
         user.setUsername("testUsername");
         user.setPassword("testPassword");
 
-    UserPostDTO userPostDTO = new UserPostDTO();
+        UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
 
-    given(userService.createUser(Mockito.any())).willReturn(user);
+        given(userService.createUser(Mockito.any())).willReturn(user);
 
-    // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/registration")
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = post("/registration")
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(userPostDTO));
 
-    // then
+        // then
         mockMvc.perform(postRequest).andExpect(status().isCreated());
-
-}
+    }
 
     @Test
     public void loginUser_validInput_userLoggedIn() throws Exception {
@@ -154,6 +153,11 @@ public class UserControllerTest {
         // then
         mockMvc.perform(putRequest)
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void joinLobby_validInput() throws Exception {
+
     }
 
     /**
