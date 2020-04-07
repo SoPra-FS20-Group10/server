@@ -1,8 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
@@ -161,13 +163,57 @@ public class AppControllerTest {
 
     @Test
     public void createLobby_validInput() throws Exception {
+        // given
+        GamePostDTO gamePostDTO = new GamePostDTO();
+        gamePostDTO.setOwnerId(1);
+        gamePostDTO.setName("TestGame");
+        gamePostDTO.setPassword("");
 
+        User user = new User();
+        user.setUsername("TestUsername");
+        user.setPassword("TestPassword");
+        userService.createUser(user);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = post("/lobby/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gamePostDTO));
+
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isCreated());
     }
 
+    /*
     @Test
     public void joinLobby_validInput() throws Exception {
+        // given owner
+        User user = new User();
+        user.setUsername("TestUsername");
+        user.setPassword("TestPassword");
+        userService.createUser(user);
+        playerService.createPlayer(user);
 
+        // given user
+        user.setUsername("TestTest");
+        user.setPassword("TestTest");
+        userService.createUser(user);
+
+        // given game
+        Game game = new Game();
+        game.setOwnerId(1);
+        game.setName("TestGame");
+        game.setPassword("");
+        gameService.createGame(game, playerService.getPlayer(1));
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = post("/lobby/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(2));
+
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isCreated());
     }
+     */
 
     /**
      * Helper Method to convert userPostDTO into a JSON string such that the input can be processed

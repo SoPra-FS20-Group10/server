@@ -100,12 +100,11 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody Long userId) {
-        User user = userService.getUser(userId);
+        // create a new player for the given user
+        playerService.createPlayer(userService.getUser(userId));
 
-        playerService.createPlayer(user);
-        Player player = playerService.getPlayer(userId);
-
-        gameService.joinGame(gameId, player);
+        // adds the player to the game
+        gameService.joinGame(gameId, playerService.getPlayer(userId));
     }
 
     @PostMapping("/users/{userId}")
@@ -119,7 +118,6 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserGetDTO getUser(@PathVariable("userId") Long userId) {
-
         // search if user exists in database
         User userInput = userService.getUser(userId);
 
