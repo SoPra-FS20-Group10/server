@@ -60,17 +60,23 @@ public class GameService {
         gameRepository.flush();
     }
 
-    public void joinGame(long gameId, Player player) {
+    public void joinGame(long gameId, Player player, String password) {
         // fetch the game by id
         Game game;
         Optional<Game> foundGame = gameRepository.findById(gameId);
 
         // check if the game exists
         if (foundGame.isEmpty()) {
-            // TODO: throw the right exception
+            // TODO: throw the correct exception
             throw new SopraServiceException("The game with the id " + gameId + " does not exist.");
         } else {
             game = foundGame.get();
+        }
+
+        // check if password is correct
+        if (!game.getPassword().equals(password)) {
+            // TODO: throw the correct exception
+            throw new SopraServiceException("Wrong password. Therefore the player could not join the game");
         }
 
         // add player to the game

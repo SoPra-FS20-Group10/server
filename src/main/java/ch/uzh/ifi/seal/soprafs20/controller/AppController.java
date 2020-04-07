@@ -99,12 +99,12 @@ public class AppController {
     @PutMapping("/lobby/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody Long userId) {
+    public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody JoinGameDTO joinGameDTO) {
         // create a new player for the given user
-        playerService.createPlayer(userService.getUser(userId));
+        playerService.createPlayer(userService.getUser(joinGameDTO.getId()));
 
         // adds the player to the game
-        gameService.joinGame(gameId, playerService.getPlayer(userId));
+        gameService.joinGame(gameId, playerService.getPlayer(joinGameDTO.getId()), joinGameDTO.getPassword());
     }
 
     @PostMapping("/users/{userId}")
