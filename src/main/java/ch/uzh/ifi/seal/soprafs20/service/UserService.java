@@ -2,10 +2,11 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.LoginException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SignUpException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.QueryException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.LoginException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.SignUpException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.UpdateException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.UpdateException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -70,7 +71,7 @@ public class UserService {
         Optional<User> found = userRepository.findById(userId);
 
         if (found.isEmpty()) {
-            throw new SopraServiceException("No user with the id " + userId + " found.");
+            throw new QueryException("No user with the id " + userId + " found.");
         }
 
         User user = found.get();
@@ -85,7 +86,7 @@ public class UserService {
 
         // if no such user is found, an exception is thrown
         if (found.isEmpty()) {
-            throw new SopraServiceException("No user with the id " + userId + " found.");
+            throw new QueryException("No user with the id " + userId + " found.");
         }
 
         return found.get();
@@ -152,6 +153,20 @@ public class UserService {
 
         // save updated user
         userRepository.save(user);
+        userRepository.flush();
+    }
+
+    public void deleteUser(long userId) {
+        User user;
+        Optional<User> foundUser = userRepository.findById(userId);
+
+        if (foundUser.isPresent()) {
+            user = foundUser.get();
+        } else {
+            throw new SopraServiceException("The user with the id " + userId + " could not be found.");
+        }
+
+        userRepository.delete(user);
         userRepository.flush();
     }
 

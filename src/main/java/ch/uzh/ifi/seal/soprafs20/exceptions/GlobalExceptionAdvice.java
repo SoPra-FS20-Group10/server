@@ -1,5 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions;
 
+import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.LoginException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.SignUpException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.UpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -10,7 +13,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 

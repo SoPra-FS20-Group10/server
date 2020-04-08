@@ -141,7 +141,8 @@ public class AppController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void deleteUser(@PathVariable ("userId") Long userId) {
-        // TODO: implement
+        // delegate to userService
+        userService.deleteUser(userId);
     }
 
     @GetMapping("/chat")
