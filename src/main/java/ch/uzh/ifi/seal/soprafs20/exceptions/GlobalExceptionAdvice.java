@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.exceptions;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.LoginException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.SignUpException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.UpdateException;
+import org.hibernate.annotations.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -46,15 +47,15 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(SignUpException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
-    public SignUpException handleSignUpException(SignUpException ex) {
-        log.error(String.format("SignUpException raised: raised %s", ex));
+    public ConflictException handleConflictException(ConflictException ex) {
+        log.error(String.format("ConflictException raised: raised %s", ex));
         return ex;
     }
 
     @ExceptionHandler(LoginException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    public LoginException handleLoginException(LoginException ex) {
+    public UnauthorizedException handleUnauthorizedException(UnauthorizedException ex) {
         log.error(String.format("LoginException raised: raised %s", ex));
         return ex;
     }
@@ -62,7 +63,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UpdateException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public UpdateException handleUpdateException(UpdateException ex) {
+    public NotFoundException handleNotFoundException(NotFoundException ex) {
         log.error(String.format("UpdateException raised: raised %s", ex));
         return ex;
     }

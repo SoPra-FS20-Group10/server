@@ -2,7 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.SignUpException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ public class UserServiceTest {
 
         // then -> attempt to create second user with same user -> check that an error is thrown
         String exceptionMessage = "The username provided is not unique. Therefore, the user could not be created!";
-        SignUpException exception = assertThrows(SignUpException.class, () -> userService.createUser(testUser), exceptionMessage);
+        ConflictException exception = assertThrows(ConflictException.class, () -> userService.createUser(testUser), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
     }
 }

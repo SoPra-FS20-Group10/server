@@ -4,6 +4,8 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
@@ -33,7 +35,7 @@ public class GameService {
         Optional<Game> foundGame = gameRepository.findById(gameId);
 
         if (foundGame.isEmpty()) {
-            throw new SopraServiceException("The game with the id " + gameId + " is not existing.");
+            throw new NotFoundException("The game with the id " + gameId + " is not existing.");
         } else {
             game = foundGame.get();
         }
@@ -50,13 +52,11 @@ public class GameService {
         Optional<Game> foundGame = gameRepository.findByOwnerId(game.getOwnerId());
 
         if (foundGame.isPresent()) {
-            // TODO: throw the correct exception
-            throw new SopraServiceException("The user with the id " + game.getOwnerId() + " is hosting another game.");
+            throw new ConflictException("The user with the id " + game.getOwnerId() + " is hosting another game.");
         }
 
-        // TODO: insert correct chatId
         game.setChat(new Chat());
-        game.setStatus(GameStatus.ONLINE);
+        game.setStatus(GameStatus.WAITING);
 
         game.initGame();
         game.addPlayer(owner);
@@ -74,16 +74,14 @@ public class GameService {
 
         // check if the game exists
         if (foundGame.isEmpty()) {
-            // TODO: throw the correct exception
-            throw new SopraServiceException("The game with the id " + gameId + " does not exist.");
+            throw new NotFoundException("The game with the id " + gameId + " does not exist.");
         } else {
             game = foundGame.get();
         }
 
         // check if password is correct
         if (!game.getPassword().equals(password)) {
-            // TODO: throw the correct exception
-            throw new SopraServiceException("Wrong password. Therefore the player could not join the game");
+            throw new ConflictException("Wrong password. Therefore the player could not join the game");
         }
 
         // add player to the game

@@ -56,7 +56,7 @@ public class GameServiceTest {
         assertEquals(testGame.getOwnerId(), createdGame.getOwnerId());
         assertEquals(testGame.getName(), createdGame.getName());
         assertNotNull(testGame.getPlayers());
-        assertEquals(GameStatus.ONLINE, createdGame.getStatus());
+        assertEquals(GameStatus.WAITING, createdGame.getStatus());
     }
 
     @Test

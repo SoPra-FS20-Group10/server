@@ -2,7 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,7 +37,7 @@ public class PlayerService {
 
         // check if player exists
         if (foundPlayer.isEmpty()) {
-            throw new SopraServiceException("The player with the id " + playerId + " does not exist.");
+            throw new NotFoundException("The player with the id " + playerId + " does not exist.");
         } else {
             player = foundPlayer.get();
         }

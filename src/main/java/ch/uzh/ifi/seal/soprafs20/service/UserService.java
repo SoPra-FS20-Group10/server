@@ -2,11 +2,9 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.QueryException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.LoginException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.SignUpException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.UpdateException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -41,14 +39,16 @@ public class UserService {
     }
 
     public ResponseEntity<UserGetDTO> loginUser(User user) {
-        checkIfUserExists(user, "login");
+        if (!checkIfUserExists(user)) {
+            throw new NotFoundException("The user with the username " + user.getUsername() + " does not exist");
+        }
 
         // retrieves the user from the db
         User userLogin = userRepository.findByUsername(user.getUsername());
 
         // checks if the password is correct
         if (!userLogin.getPassword().equals(user.getPassword())) {
-            throw new LoginException("Wrong password");
+            throw new ConflictException("The password does not match the username " + user.getUsername());
         }
 
         // checks if the user is already online
@@ -71,7 +71,7 @@ public class UserService {
         Optional<User> found = userRepository.findById(userId);
 
         if (found.isEmpty()) {
-            throw new QueryException("No user with the id " + userId + " found.");
+            throw new NotFoundException("No user with the id " + userId + " found.");
         }
 
         User user = found.get();
@@ -86,7 +86,7 @@ public class UserService {
 
         // if no such user is found, an exception is thrown
         if (found.isEmpty()) {
-            throw new QueryException("No user with the id " + userId + " found.");
+            throw new NotFoundException("No user with the id " + userId + " found.");
         }
 
         return found.get();
@@ -96,29 +96,33 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public User createUser(User newUser) {
+    public User createUser(User user) {
         // generate an random token for the new user
-        newUser.setToken(UUID.randomUUID().toString());
+        user.setToken(UUID.randomUUID().toString());
+
 
         // check if the user credentials are unique
-        checkIfUserExists(newUser, "create");
+        if (checkIfUserExists(user)) {
+            throw new ConflictException("The username provided is not unique." +
+                    " Therefore, the user could not be created!");
+        }
 
         // create all fields of the user
-        newUser.setStatus(UserStatus.OFFLINE);
-        newUser.setCakeday(new Date());
+        user.setStatus(UserStatus.OFFLINE);
+        user.setCakeday(new Date());
 
         // saves the given entity but data is only persisted in the database once flush() is called
-        newUser = userRepository.save(newUser);
+        user = userRepository.save(user);
         userRepository.flush();
 
-        log.debug("Created Information for User: {}", newUser);
-        return newUser;
+        log.debug("Created Information for User: {}", user);
+        return user;
     }
 
     public void updateUser(User userUpdate, long userId) {
         // check if user is authorised to update
         if (userUpdate.getId() != userId) {
-            throw new UpdateException("User is not authorised to update this profile");
+            throw new UnauthorizedException("User is not authorised to update this profile");
         }
 
         // checkout user by userId
@@ -126,7 +130,7 @@ public class UserService {
 
         // check if user exists
         if (userExisting.isEmpty()) {
-            throw new UpdateException("The user with the id " + userId + " does not exist.");
+            throw new NotFoundException("The user with the id " + userId + " does not exist.");
         }
 
         // get the existing user
@@ -139,10 +143,8 @@ public class UserService {
         if (test != null) {
             if (test.getUsername().equals(user.getUsername())) {
                 log.debug("username stays the same");
-            }
-
-            else {
-                throw new SopraServiceException("Username exists already, please choose another one.");
+            } else {
+                throw new ConflictException("Username exists already, please choose another one.");
             }
         }
 
@@ -163,7 +165,7 @@ public class UserService {
         if (foundUser.isPresent()) {
             user = foundUser.get();
         } else {
-            throw new SopraServiceException("The user with the id " + userId + " could not be found.");
+            throw new NotFoundException("The user with the id " + userId + " could not be found.");
         }
 
         userRepository.delete(user);
@@ -171,30 +173,15 @@ public class UserService {
     }
 
     /**
-     * This is a helper method that will check the uniqueness criteria of the username and the name
-     * defined in the User entity. The method will do nothing if the input is unique and throw an error otherwise.
+     * This is a helper method that will check the uniqueness criteria of the username defined in the User entity.
      *
-     * @param userToBeCreated: The user given by the createUser function.
-     * @throws SopraServiceException: Throws exception if user (name or username) already exists.
+     * @param userToBeCreated: The user given by the calling function.
      * @see User
      */
-    private void checkIfUserExists(User userToBeCreated, String checkMode) {
+    private boolean checkIfUserExists(User userToBeCreated) {
         // search user by provided credentials
         User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
-        String baseErrorMessage = "The username provided is not %s. Therefore, the user could not be %s!";
 
-        if (checkMode.equalsIgnoreCase("login")) {
-
-            // throws exception
-            if (userByUsername == null) {
-                throw new LoginException(String.format(baseErrorMessage, "existing", "logged in"));
-            }
-        } else if (checkMode.equalsIgnoreCase("create")){
-
-            //throw exception
-            if (userByUsername != null) {
-               throw new SignUpException(String.format(baseErrorMessage, "unique", "created"));
-            }
-        }
+        return userByUsername != null;
     }
 }
