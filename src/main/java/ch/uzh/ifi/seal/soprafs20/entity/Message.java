@@ -11,13 +11,12 @@ import java.io.Serializable;
  * - unique = true -> this value must be unique across the database -> composes the primary key
  */
 @Entity
-@Table(name = "Chat")
-public class Chat implements Serializable {
+@Table(name = "Message")
+public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     private Long id;
-
 
 }

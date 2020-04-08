@@ -1,14 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import ch.uzh.ifi.seal.soprafs20.boardcomponents.Bag;
-import ch.uzh.ifi.seal.soprafs20.boardcomponents.Tile;
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Internal User Representation
@@ -34,8 +27,7 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private int score;
 
-    @Transient
-    private Bag bag;
+    //bag
 
     public Long getId() {
         return id;

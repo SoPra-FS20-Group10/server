@@ -1,7 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import ch.uzh.ifi.seal.soprafs20.boardcomponents.Board;
-import ch.uzh.ifi.seal.soprafs20.boardcomponents.Scoreboard;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 
 import javax.persistence.*;
@@ -46,8 +44,8 @@ public class Game implements Serializable {
     @Transient
     private Scoreboard scoreboard;
 
-    @Transient
-    private Board board;
+    //@Transient
+    //private Board board;
 
     public Long getId() {
         return id;
@@ -111,14 +109,6 @@ public class Game implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
     }
 
     public Scoreboard getScoreboard() {
