@@ -25,7 +25,10 @@ public class Player implements Serializable {
     private String username;
 
     @Column(nullable = false)
-    private int score;
+    private Integer score;
+
+    @ManyToOne
+    private Game game;
 
     //bag
 

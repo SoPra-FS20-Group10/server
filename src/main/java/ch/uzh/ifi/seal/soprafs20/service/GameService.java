@@ -55,7 +55,7 @@ public class GameService {
             throw new ConflictException("The user with the id " + game.getOwnerId() + " is hosting another game.");
         }
 
-        game.setChat(new Chat());
+        //game.setChat(new Chat());
         game.setStatus(GameStatus.WAITING);
 
         game.initGame();
