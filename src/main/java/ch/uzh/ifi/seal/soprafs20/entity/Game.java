@@ -27,9 +27,6 @@ public class Game implements Serializable {
     private Long ownerId;
 
     @Column(nullable = false)
-    private Long chatId;
-
-    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -38,14 +35,17 @@ public class Game implements Serializable {
     @Column
     private String password;
 
-    @Transient
-    private List<Player> players;
+    @OneToOne(mappedBy = "game", optional = false)
+    private Chat chat;
 
-    @Transient
+    @OneToOne(mappedBy = "game", optional = false)
     private Scoreboard scoreboard;
 
-    //@Transient
-    //private Board board;
+    @OneToOne(mappedBy = "game", optional = false)
+    private Board board;
+
+    @OneToMany
+    private List<Player> players;
 
     public Long getId() {
         return id;
@@ -53,22 +53,6 @@ public class Game implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public void initList() {
-        players = new ArrayList<>();
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void addPlayer(Player player) {
-        players.add(player);
-    }
-
-    public void removePlayer(Player player) {
-        players.remove(player);
     }
 
     public GameStatus getStatus() {
@@ -83,16 +67,16 @@ public class Game implements Serializable {
         return ownerId;
     }
 
-    public void setOwnerId(long id) {
-        this.ownerId = id;
+    public void setOwnerId(long ownerId) {
+        this.ownerId = ownerId;
     }
 
-    public Long getChatId() {
-        return chatId;
+    public Chat getChat() {
+        return chat;
     }
 
-    public void setChatId(long id) {
-        this.chatId = id;
+    public void setChat(Chat chat) {
+        this.chat = chat;
     }
 
     public void setName(String name) {
@@ -117,5 +101,21 @@ public class Game implements Serializable {
 
     public void setScoreboard(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
+    }
+
+    public void initGame() {
+        players = new ArrayList<>();
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+
+    public void removePlayer(Player player) {
+        players.remove(player);
     }
 }

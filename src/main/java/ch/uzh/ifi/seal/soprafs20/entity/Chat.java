@@ -19,5 +19,7 @@ public class Chat implements Serializable {
     @GeneratedValue
     private Long id;
 
-
+    @OneToOne
+    @MapsId
+    private Game game;
 }

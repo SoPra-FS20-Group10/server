@@ -19,4 +19,7 @@ public class Board implements Serializable {
     @GeneratedValue
     private Long id;
 
+    @OneToOne
+    @MapsId
+    private Game game;
 }

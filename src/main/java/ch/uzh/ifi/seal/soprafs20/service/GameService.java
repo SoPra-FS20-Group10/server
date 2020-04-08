@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
@@ -54,9 +55,10 @@ public class GameService {
         }
 
         // TODO: insert correct chatId
-        game.setChatId(0L);
+        game.setChat(new Chat());
         game.setStatus(GameStatus.ONLINE);
-        game.initList();
+
+        game.initGame();
         game.addPlayer(owner);
 
         game = gameRepository.save(game);

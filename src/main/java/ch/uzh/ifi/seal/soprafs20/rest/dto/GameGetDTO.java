@@ -1,19 +1,11 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-
-import java.util.List;
 
 public class GameGetDTO {
     private Long id;
-    private List<Player> players;
-    //private Scoreboard scoreboard;
+    private String name;
     private GameStatus status;
-    private int ownerId;
-    private int chatId;
-    private String password;
-    //private Board board;
 
     public Long getId() {
         return id;
@@ -23,12 +15,12 @@ public class GameGetDTO {
         this.id = id;
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    public String getName() {
+        return name;
     }
 
-    public void setPlayers(List<Player> players) {
-        this.players = players;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public GameStatus getStatus() {
@@ -38,29 +30,4 @@ public class GameGetDTO {
     public void setStatus(GameStatus status) {
         this.status = status;
     }
-
-    public int getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public int getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
 }
