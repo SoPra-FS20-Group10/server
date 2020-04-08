@@ -19,4 +19,6 @@ public class Bag implements Serializable {
     @GeneratedValue
     private Long id;
 
+
+
 }

@@ -19,4 +19,10 @@ public class Message implements Serializable {
     @GeneratedValue
     private Long id;
 
+    @Column
+    private String message;
+
+    @Column
+    private int time;
+
 }
