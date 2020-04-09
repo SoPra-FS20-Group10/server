@@ -43,6 +43,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public ResponseStatusException handleConflictException(ConflictException ex) {
         log.error(String.format("ConflictException raised: raised %s", ex));
