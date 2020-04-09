@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -103,8 +104,8 @@ public class UserService {
 
         // check if the user credentials are unique
         if (checkIfUserExists(user)) {
-            throw new ConflictException("The username provided is not unique." +
-                    " Therefore, the user could not be created!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "The username exists already. Therefore, the user could not be created!");
         }
 
         // create all fields of the user
