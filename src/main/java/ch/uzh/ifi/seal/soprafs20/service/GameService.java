@@ -89,4 +89,20 @@ public class GameService {
         gameRepository.save(game);
         gameRepository.flush();
     }
+
+    public List<Player> getPlayers(long gameId) {
+        // check if game exists
+        if (!doesGameExist(gameId)) {
+            throw new NotFoundException("The game with the id " + gameId + "could not be found.");
+        }
+
+        // fetch game from db
+        Game game = gameRepository.findByOwnerId(gameId).get();
+
+        return game.getPlayers();
+    }
+
+    private boolean doesGameExist(long gameId) {
+        return gameRepository.findById(gameId).isPresent();
+    }
 }

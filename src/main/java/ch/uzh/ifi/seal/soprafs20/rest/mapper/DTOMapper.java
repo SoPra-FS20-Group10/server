@@ -1,11 +1,14 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+
+import javax.persistence.ManyToOne;
 
 /**
  * DTOMapper
@@ -46,4 +49,9 @@ public interface DTOMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "password", target = "password")
     Game convertGamePostDTOToEntity(GamePostDTO game);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "username", target = "username")
+    @Mapping(source = "score", target = "score")
+    PlayerGetDTO convertEntityToPlayerGetDTO(Player player);
 }

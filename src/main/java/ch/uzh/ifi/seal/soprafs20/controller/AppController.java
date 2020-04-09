@@ -187,6 +187,21 @@ public class AppController {
         //TODO: implement
     }
 
+    @GetMapping("/games/{gameId}/players")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<PlayerGetDTO> getPlayers(@PathVariable("gameId")Long gameId) {
+        // fetch all users in the internal representation
+        List<Player> players = gameService.getPlayers(gameId);
+        List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
+
+        // convert each user to the API representation
+        for (Player player : players) {
+            playerGetDTOs.add(DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
+        }
+        return playerGetDTOs;
+    }
+
     @PutMapping("/game/stones/{stoneId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
