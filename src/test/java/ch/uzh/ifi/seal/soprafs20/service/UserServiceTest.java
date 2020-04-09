@@ -61,7 +61,8 @@ public class UserServiceTest {
 
         // then -> attempt to create second user with same user -> check that an error is thrown
         String exceptionMessage = "The username provided is not unique. Therefore, the user could not be created!";
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser), exceptionMessage);
-        //assertEquals(exceptionMessage, exception.getMessage());
+        ConflictException exception = assertThrows(ConflictException.class,
+                () -> userService.createUser(testUser), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 }

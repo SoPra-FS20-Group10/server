@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions;
 
+import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,11 +43,10 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConflictException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
-    public ResponseEntity<String> handleConflictException(ConflictException ex) {
+    public ResponseStatusException handleConflictException(ConflictException ex) {
         log.error(String.format("ConflictException raised: raised %s", ex));
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        return new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage(), ex);
     }
 
     @ExceptionHandler(UnauthorizedException.class)

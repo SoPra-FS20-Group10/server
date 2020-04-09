@@ -104,8 +104,7 @@ public class UserService {
 
         // check if the user credentials are unique
         if (checkIfUserExists(user)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "The username provided is not unique. Therefore, the user could not be created!");
+            throw new ConflictException("The username provided is not unique. Therefore, the user could not be created!");
         }
 
         // create all fields of the user
