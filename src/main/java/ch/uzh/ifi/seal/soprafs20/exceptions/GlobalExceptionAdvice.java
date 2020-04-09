@@ -46,7 +46,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @ResponseBody
     public ResponseStatusException handleConflictException(ConflictException ex) {
         log.error(String.format("ConflictException raised: raised %s", ex));
-        return new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage(), ex);
+        return new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
