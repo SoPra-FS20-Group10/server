@@ -1,9 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions;
 
-import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.LoginException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.SignUpException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.UserServiceExceptions.UpdateException;
-import org.hibernate.annotations.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -47,9 +43,9 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
-    public ConflictException handleConflictException(ConflictException ex) {
+    public ResponseEntity<String> handleConflictException(ConflictException ex) {
         log.error(String.format("ConflictException raised: raised %s", ex));
-        return ex;
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
