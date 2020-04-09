@@ -35,8 +35,8 @@ public class Game implements Serializable {
     @Column
     private String password;
 
-    //@OneToOne(mappedBy = "game", optional = false)
-    //private Chat chat;
+    @OneToOne(mappedBy = "game", optional = false)
+    private Chat chat;
 
     @OneToOne(mappedBy = "game", optional = false)
     private Scoreboard scoreboard;
@@ -71,7 +71,6 @@ public class Game implements Serializable {
         this.ownerId = ownerId;
     }
 
-    /*
     public Chat getChat() {
         return chat;
     }
@@ -79,7 +78,6 @@ public class Game implements Serializable {
     public void setChat(Chat chat) {
         this.chat = chat;
     }
-     */
 
     public void setName(String name) {
         this.name = name;
@@ -103,6 +101,14 @@ public class Game implements Serializable {
 
     public void setScoreboard(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public void initGame() {

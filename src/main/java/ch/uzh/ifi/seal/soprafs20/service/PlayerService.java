@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +20,25 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    public void createPlayer(User user) {
+    public Player createPlayer(User user) {
+        // check if player already exists
+        if (doesPlayerExist(user.getId())) {
+            throw new ConflictException("The user is already in another game.");
+        }
+
+        // create player
         Player player = new Player();
 
+        // set fields
         player.setId(user.getId());
         player.setUsername(user.getUsername());
         player.setScore(0);
 
-        playerRepository.save(player);
+        // save in db
+        Player createdPlayer = playerRepository.save(player);
         playerRepository.flush();
+
+        return createdPlayer;
     }
 
     public Player getPlayer(long playerId) {
@@ -43,5 +54,11 @@ public class PlayerService {
         }
 
         return player;
+    }
+
+    private boolean doesPlayerExist(long playerId) {
+        Optional<Player> player = playerRepository.findById(playerId);
+
+        return player.isPresent();
     }
 }

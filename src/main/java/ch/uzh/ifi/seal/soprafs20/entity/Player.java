@@ -18,14 +18,14 @@ public class Player implements Serializable {
     @Id
     private Long id;
 
-    @Column
-    private Long userId;
-
     @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
     private Integer score;
+
+    @OneToOne
+    private User user;
 
     @ManyToOne
     private Game game;

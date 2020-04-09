@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -89,10 +90,10 @@ public class AppController {
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
 
         // create a player for the owner
-        playerService.createPlayer(userService.getUser(game.getOwnerId()));
+        Player player = playerService.createPlayer(userService.getUser(game.getOwnerId()));
 
         // create the game
-        Game newGame = gameService.createGame(game, playerService.getPlayer(game.getOwnerId()));
+        Game newGame = gameService.createGame(game, player);
         return newGame.getId();
     }
 
