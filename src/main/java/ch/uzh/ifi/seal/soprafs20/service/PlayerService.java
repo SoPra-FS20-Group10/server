@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
@@ -33,6 +34,7 @@ public class PlayerService {
         player.setId(user.getId());
         player.setUsername(user.getUsername());
         player.setScore(0);
+        player.setUser(user);
 
         // save in db
         Player createdPlayer = playerRepository.save(player);
@@ -54,6 +56,18 @@ public class PlayerService {
         }
 
         return player;
+    }
+
+    public void deletePlayer(Player player) {
+        playerRepository.delete(player);
+        playerRepository.flush();
+    }
+
+    public void addGame(Player player, Game game) {
+        player.setGame(game);
+
+        playerRepository.save(player);
+        playerRepository.flush();
     }
 
     private boolean doesPlayerExist(long playerId) {

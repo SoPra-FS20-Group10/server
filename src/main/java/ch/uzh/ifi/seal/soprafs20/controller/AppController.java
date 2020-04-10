@@ -61,8 +61,8 @@ public class AppController {
     @PutMapping("/lobby")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void logoutUser(Long userId) {
-        userService.logoutUser(userId);
+    public void logoutUser(@RequestBody User user) {
+        userService.logoutUser(user.getId());
     }
 
     @GetMapping("/lobby")
@@ -92,8 +92,15 @@ public class AppController {
         // create a player for the owner
         Player player = playerService.createPlayer(userService.getUser(game.getOwnerId()));
 
+        // adds player to user
+        userService.addPlayer(player);
+
         // create the game
         Game newGame = gameService.createGame(game, player);
+
+        // adds game to player
+        playerService.addGame(player, game);
+
         return newGame.getId();
     }
 
@@ -102,10 +109,16 @@ public class AppController {
     @ResponseBody
     public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody JoinGameDTO joinGameDTO) {
         // create a new player for the given user
-        playerService.createPlayer(userService.getUser(joinGameDTO.getId()));
+        Player player = playerService.createPlayer(userService.getUser(joinGameDTO.getId()));
+
+        // adds player to user
+        userService.addPlayer(player);
 
         // adds the player to the game
-        gameService.joinGame(gameId, playerService.getPlayer(joinGameDTO.getId()), joinGameDTO.getPassword());
+        Game game = gameService.joinGame(gameId, player, joinGameDTO.getPassword());
+
+        // adds the game to the player
+        playerService.addGame(player, game);
     }
 
     @PostMapping("/users/{userId}")
@@ -180,11 +193,20 @@ public class AppController {
         //TODO: implement
     }
 
-    @DeleteMapping("/game")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/games/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void endGame() {
-        //TODO: implement
+    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody User user) {
+        // fetch all players from the game
+        List<Player> players = gameService.getPlayers(gameId);
+
+        // end game
+        gameService.endGame(gameId, user.getPlayer());
+
+        // delete all players
+        for (Player player : players) {
+            playerService.deletePlayer(player);
+        }
     }
 
     @GetMapping("/games/{gameId}/players")

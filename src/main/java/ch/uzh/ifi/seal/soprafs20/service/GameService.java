@@ -5,8 +5,8 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -19,13 +19,10 @@ import java.util.Optional;
 @Transactional
 public class GameService {
     private final GameRepository gameRepository;
-    private final PlayerRepository playerRepository;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository")GameRepository gameRepository,
-                       @Qualifier("playerRepository")PlayerRepository playerRepository) {
+    public GameService(@Qualifier("gameRepository")GameRepository gameRepository) {
         this.gameRepository = gameRepository;
-        this.playerRepository = playerRepository;
     }
 
     public Game getGame(long gameId) {
@@ -65,7 +62,7 @@ public class GameService {
         return game;
     }
 
-    public void joinGame(long gameId, Player player, String password) {
+    public Game joinGame(long gameId, Player player, String password) {
         // fetch the game by id
         Game game;
         Optional<Game> foundGame = gameRepository.findById(gameId);
@@ -88,21 +85,43 @@ public class GameService {
         // save the game
         gameRepository.save(game);
         gameRepository.flush();
+
+        return game;
     }
 
     public List<Player> getPlayers(long gameId) {
-        // check if game exists
-        if (!doesGameExist(gameId)) {
-            throw new NotFoundException("The game with the id " + gameId + "could not be found.");
-        }
-
         // fetch game from db
-        Game game = gameRepository.findByOwnerId(gameId).get();
+        Game game;
+        Optional<Game> foundGame = gameRepository.findById(gameId);
+
+        // check if game exists
+        if (foundGame.isEmpty()) {
+            throw new NotFoundException("The game with the id " + gameId + "could not be found.");
+        } else {
+            game = foundGame.get();
+        }
 
         return game.getPlayers();
     }
 
-    private boolean doesGameExist(long gameId) {
-        return gameRepository.findById(gameId).isPresent();
+    public void endGame(long gameId, Player player) {
+        // fetch game from db
+        Game game;
+        Optional<Game> foundGame = gameRepository.findById(gameId);
+
+        // check if game exists
+        if (foundGame.isEmpty()) {
+            throw new NotFoundException("The game with the id " + gameId + " could not be found.");
+        } else {
+            game = foundGame.get();
+        }
+
+        //check if user is authorized to end game
+        if (!game.getOwnerId().equals(player.getId())) {
+            throw new UnauthorizedException("The game can not be ended by this user");
+        }
+
+        gameRepository.delete(game);
+        gameRepository.flush();
     }
 }

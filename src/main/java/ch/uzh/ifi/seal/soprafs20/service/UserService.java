@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
@@ -168,6 +169,14 @@ public class UserService {
         }
 
         userRepository.delete(user);
+        userRepository.flush();
+    }
+
+    public void addPlayer(Player player) {
+        User user = player.getUser();
+        user.setPlayer(player);
+
+        userRepository.save(user);
         userRepository.flush();
     }
 

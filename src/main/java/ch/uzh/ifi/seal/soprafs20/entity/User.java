@@ -31,6 +31,9 @@ public class User implements Serializable {
 	@Column(nullable = false, unique = true) 
 	private String token;
 
+    @Column(nullable = false)
+    private String password;
+
 	@Column(nullable = false)
 	private UserStatus status;
 
@@ -40,8 +43,8 @@ public class User implements Serializable {
 	@Column()
     private Date birthday;
 
-	@Column(nullable = false)
-    private String password;
+	@OneToOne(mappedBy = "user")
+    private Player player;
 
 	public Long getId() {
 		return id;
@@ -105,5 +108,13 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
 	    this.password = password;
+    }
+
+    public Player getPlayer() {
+	    return player;
+    }
+
+    public void setPlayer(Player player) {
+	    this.player = player;
     }
 }
