@@ -1,6 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions;
 
-import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -53,17 +52,17 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    public UnauthorizedException handleUnauthorizedException(UnauthorizedException ex) {
+    public ResponseStatusException handleUnauthorizedException(UnauthorizedException ex) {
         log.error(String.format("LoginException raised: raised %s", ex));
-        return ex;
+        return new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public NotFoundException handleNotFoundException(NotFoundException ex) {
+    public ResponseStatusException handleNotFoundException(NotFoundException ex) {
         log.error(String.format("UpdateException raised: raised %s", ex));
-        return ex;
+        return new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     // Keep this one disable for all testing purposes -> it shows more detail with this one disabled
