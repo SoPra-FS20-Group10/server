@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class UserGetDTO {
     private Long id;
+    private String token;
     private String username;
     private UserStatus status;
     private Date birthday;
@@ -17,6 +18,14 @@ public class UserGetDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getUsername() {

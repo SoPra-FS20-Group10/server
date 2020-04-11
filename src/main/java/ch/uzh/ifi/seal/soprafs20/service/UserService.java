@@ -105,7 +105,6 @@ public class UserService {
         // generate an random token for the new user
         user.setToken(UUID.randomUUID().toString());
 
-
         // check if the user credentials are unique
         if (checkIfUserExists(user)) {
             throw new ConflictException("The username provided is not unique. Therefore, the user could not be created!");
