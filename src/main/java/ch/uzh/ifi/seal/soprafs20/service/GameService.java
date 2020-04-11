@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
@@ -27,7 +28,7 @@ public class GameService {
 
     public Game getGame(long gameId) {
         Game game;
-        Optional<Game> foundGame = gameRepository.findById(gameId);
+        Optional<Game> foundGame = gameRepository.findByIdIs(gameId);
 
         if (foundGame.isEmpty()) {
             throw new NotFoundException("The game with the id " + gameId + " is not existing.");
@@ -62,18 +63,7 @@ public class GameService {
         return game;
     }
 
-    public Game joinGame(long gameId, Player player, String password) {
-        // fetch the game by id
-        Game game;
-        Optional<Game> foundGame = gameRepository.findById(gameId);
-
-        // check if the game exists
-        if (foundGame.isEmpty()) {
-            throw new NotFoundException("The game with the id " + gameId + " does not exist.");
-        } else {
-            game = foundGame.get();
-        }
-
+    public Game joinGame(Game game, Player player, String password) {
         // check if password is correct
         if (!game.getPassword().equals(password)) {
             throw new ConflictException("Wrong password. Therefore the player could not join the game");
@@ -83,25 +73,16 @@ public class GameService {
         game.addPlayer(player);
 
         // save the game
-        gameRepository.save(game);
+        game = gameRepository.save(game);
         gameRepository.flush();
 
         return game;
     }
 
-    public List<Player> getPlayers(long gameId) {
-        // fetch game from db
-        Game game;
-        Optional<Game> foundGame = gameRepository.findById(gameId);
-
-        // check if game exists
-        if (foundGame.isEmpty()) {
-            throw new NotFoundException("The game with the id " + gameId + "could not be found.");
-        } else {
-            game = foundGame.get();
+    public void leaveGame(Game game, Player player, User user) {
+        if (game.getOwnerId().equals(user.getId())) {
+            throw new ConflictException("The user is not authorized to leave this game");
         }
-
-        return game.getPlayers();
     }
 
     public void endGame(long gameId, Player player) {
@@ -123,5 +104,20 @@ public class GameService {
 
         gameRepository.delete(game);
         gameRepository.flush();
+    }
+
+    public List<Player> getPlayers(long gameId) {
+        // fetch game from db
+        Game game;
+        Optional<Game> foundGame = gameRepository.findById(gameId);
+
+        // check if game exists
+        if (foundGame.isEmpty()) {
+            throw new NotFoundException("The game with the id " + gameId + "could not be found.");
+        } else {
+            game = foundGame.get();
+        }
+
+        return game.getPlayers();
     }
 }

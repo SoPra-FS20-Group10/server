@@ -7,10 +7,14 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,25 +34,43 @@ public class GameServiceIntegrationTest {
     @Autowired
     private GameService gameService;
 
+    private Game game;
+    private Player player;
+
     @BeforeEach
     public void setup() {
         gameRepository.deleteAll();
-    }
 
-    @Test
-    public void createGame_validInput() {
-        // given game
-        Game game = new Game();
+        // setup game
+        game = new Game();
         game.setOwnerId(1);
         game.setName("TestName");
         game.setPassword("TestPassword");
 
-        // given player
-        Player player = new Player();
+        // setup player
+        player = new Player();
         player.setId(1);
         player.setUsername("TestUsername");
         player.setScore(0);
+    }
 
+    @Test
+    public void getGame_validInput() {
+        // given game
+        Game createdGame = gameService.createGame(game, player);
+
+        // search game
+        Game foundGame = gameService.getGame(createdGame.getId());
+
+        // then check if they are equal
+        assertEquals(createdGame.getName(), foundGame.getName());
+        assertEquals(createdGame.getStatus(), foundGame.getStatus());
+        assertEquals(createdGame.getOwnerId(), foundGame.getOwnerId());
+        assertEquals(createdGame.getId(), foundGame.getId());
+    }
+
+    @Test
+    public void createGame_validInput() {
         // when
         Game createdGame = gameService.createGame(game, player);
 
@@ -61,18 +83,6 @@ public class GameServiceIntegrationTest {
 
     @Test
     public void createGame_duplicateOwner_throwsException() {
-        // given game
-        Game game = new Game();
-        game.setOwnerId(1);
-        game.setName("TestName");
-        game.setPassword("TestPassword");
-
-        // given player
-        Player player = new Player();
-        player.setId(1);
-        player.setUsername("TestUsername");
-        player.setScore(0);
-
         // given first game creation
         gameService.createGame(game, player);
 

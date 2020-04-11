@@ -3,6 +3,8 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +34,7 @@ public class GameServiceTest {
 
         // given game
         testGame = new Game();
+        testGame.setId(99);
         testGame.setOwnerId(1L);
         testGame.setName("testName");
         testGame.setPassword("testPassword");
@@ -46,11 +49,45 @@ public class GameServiceTest {
     }
 
     @Test
+    public void getGame_validInput_success() {
+        // given game
+        Game createdGame = gameService.createGame(testGame, testPlayer);
+        Optional<Game> found = Optional.ofNullable(createdGame);
+
+        // when
+        Mockito.when(gameRepository.findByIdIs(Mockito.anyLong())).thenReturn(found);
+
+        // search game
+        assert createdGame != null;
+        Game foundGame = gameService.getGame(99);
+
+        // then check if they are equal
+        assertEquals(createdGame.getName(), foundGame.getName());
+        assertEquals(createdGame.getStatus(), foundGame.getStatus());
+        assertEquals(createdGame.getOwnerId(), foundGame.getOwnerId());
+        assertEquals(createdGame.getId(), foundGame.getId());
+    }
+
+    @Test void getGame_notExistingGame_throwsException() {
+        // given
+        Optional<Game> found = Optional.empty();
+
+        // when/then
+        Mockito.when(gameRepository.findById(Mockito.anyLong())).thenReturn(found);
+
+        // test
+        String exceptionMessage = "The game with the id 404 is not existing.";
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> gameService.getGame(404), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
     public void createGame_validInputs_success() {
-        // when -> any object is being save in the userRepository -> return the dummy testUser
+        // given game
         Game createdGame = gameService.createGame(testGame, testPlayer);
 
-        // then
+        // when/then
         Mockito.verify(gameRepository, Mockito.times(1)).save(Mockito.any());
 
         assertEquals(testGame.getOwnerId(), createdGame.getOwnerId());
@@ -70,7 +107,7 @@ public class GameServiceTest {
 
         // then -> attempt to create second user with same user -> check that an error is thrown
         String exceptionMessage = "The user with the id 1 is hosting another game.";
-        SopraServiceException exception = assertThrows(SopraServiceException.class,
+        ConflictException exception = assertThrows(ConflictException.class,
                 () -> gameService.createGame(testGame, testPlayer), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
     }

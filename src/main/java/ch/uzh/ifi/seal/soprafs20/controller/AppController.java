@@ -61,7 +61,11 @@ public class AppController {
     @PutMapping("/lobby")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void logoutUser(@RequestBody User user) {
+    public void logoutUser(@RequestBody UserPutDTO userPutDTO) {
+        // parse to user entity
+        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+        // logout user
         userService.logoutUser(user.getId());
     }
 
@@ -111,11 +115,14 @@ public class AppController {
         // create a new player for the given user
         Player player = playerService.createPlayer(userService.getUser(joinGameDTO.getId()));
 
+        // fetch the game
+        Game game = gameService.getGame(gameId);
+
         // adds player to user
         userService.addPlayer(player);
 
         // adds the player to the game
-        Game game = gameService.joinGame(gameId, player, joinGameDTO.getPassword());
+        game = gameService.joinGame(game, player, joinGameDTO.getPassword());
 
         // adds the game to the player
         playerService.addGame(player, game);
@@ -193,6 +200,7 @@ public class AppController {
         //TODO: implement
     }
 
+    // TODO: change requestBody
     @DeleteMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -224,6 +232,22 @@ public class AppController {
         return playerGetDTOs;
     }
 
+    @DeleteMapping("/games/{gameId}/players/{playerId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void leaveGame(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
+                          @RequestBody UserPutDTO userPutDTO) {
+        // parse input into user
+        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+        // get game and player instance
+        Game game = gameService.getGame(gameId);
+        Player player = playerService.getPlayer(playerId);
+
+        // leave game
+
+    }
+
     @PutMapping("/game/stones/{stoneId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -235,13 +259,6 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void getScore() {
-        //TODO: implement
-    }
-
-    @DeleteMapping("/game/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void leaveGame() {
         //TODO: implement
     }
 
