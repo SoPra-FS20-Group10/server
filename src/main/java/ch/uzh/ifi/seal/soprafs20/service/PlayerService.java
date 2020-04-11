@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
@@ -33,6 +34,7 @@ public class PlayerService {
         // set fields
         player.setId(user.getId());
         player.setUsername(user.getUsername());
+        player.setStatus(PlayerStatus.NOT_READY);
         player.setScore(0);
         player.setUser(user);
 

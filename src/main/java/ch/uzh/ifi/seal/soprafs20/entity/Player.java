@@ -1,5 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -20,6 +22,9 @@ public class Player implements Serializable {
 
     @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(nullable = false)
+    private PlayerStatus status;
 
     @Column(nullable = false)
     private Integer score;
@@ -46,6 +51,14 @@ public class Player implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public PlayerStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PlayerStatus status) {
+        this.status = status;
     }
 
     public int getScore() {
