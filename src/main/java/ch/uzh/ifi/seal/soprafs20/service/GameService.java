@@ -27,9 +27,11 @@ public class GameService {
     }
 
     public Game getGame(long gameId) {
+        // fetch game from db
         Game game;
         Optional<Game> foundGame = gameRepository.findByIdIs(gameId);
 
+        // check if game exists
         if (foundGame.isEmpty()) {
             throw new NotFoundException("The game with the id " + gameId + " is not existing.");
         } else {
@@ -54,9 +56,11 @@ public class GameService {
         //game.setChat(new Chat());
         game.setStatus(GameStatus.WAITING);
 
+        // initialise list and add player
         game.initGame();
         game.addPlayer(owner);
 
+        // save changes
         game = gameRepository.save(game);
         gameRepository.flush();
 
@@ -80,9 +84,17 @@ public class GameService {
     }
 
     public void leaveGame(Game game, Player player, User user) {
-        if (game.getOwnerId().equals(user.getId())) {
+        // check if the user is authorized to leave the game
+        if (player.getId().equals(user.getId())) {
             throw new ConflictException("The user is not authorized to leave this game");
         }
+
+        // remove the player
+        game.removePlayer(player);
+
+        // save changes
+        gameRepository.save(game);
+        gameRepository.flush();
     }
 
     public void endGame(long gameId, Player player) {
@@ -102,6 +114,7 @@ public class GameService {
             throw new UnauthorizedException("The game can not be ended by this user");
         }
 
+        // delete the game
         gameRepository.delete(game);
         gameRepository.flush();
     }

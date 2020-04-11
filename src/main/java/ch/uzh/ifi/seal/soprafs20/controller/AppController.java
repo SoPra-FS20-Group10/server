@@ -44,7 +44,7 @@ public class AppController {
         return userService.loginUser(userInput);
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public String createUser(@RequestBody UserPostDTO userPostDTO) {
@@ -58,18 +58,18 @@ public class AppController {
         return "/login";
     }
 
-    @PutMapping("/lobby")
+    @PatchMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void logoutUser(@RequestBody UserPutDTO userPutDTO) {
+    public void logoutUser(@PathVariable("userId")long userId, @RequestBody UserPutDTO userPutDTO) {
         // parse to user entity
         User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
         // logout user
-        userService.logoutUser(user.getId());
+        userService.logoutUser(user, userId);
     }
 
-    @GetMapping("/lobby")
+    @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<GameGetDTO> getGames() {
@@ -85,11 +85,10 @@ public class AppController {
         return gameGetDTOs;
     }
 
-    // TODO: why gameId?
-    @PostMapping("/lobby/{gameId}")
+    @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public long createLobby(@PathVariable ("gameId") Long gameId, @RequestBody GamePostDTO gamePostDTO) {
+    public long createLobby(@RequestBody GamePostDTO gamePostDTO) {
         // parse the input into a game instance
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
 
@@ -108,7 +107,7 @@ public class AppController {
         return newGame.getId();
     }
 
-    @PutMapping("/lobby/{gameId}")
+    @PutMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody JoinGameDTO joinGameDTO) {
@@ -126,13 +125,6 @@ public class AppController {
 
         // adds the game to the player
         playerService.addGame(player, game);
-    }
-
-    @PostMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    public void createPlayer(@PathVariable ("userId") Long userId) {
-        // TODO: implement
     }
 
     @GetMapping("/users/{userId}")
@@ -200,19 +192,22 @@ public class AppController {
         //TODO: implement
     }
 
-    // TODO: change requestBody
     @DeleteMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody User user) {
+    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserPutDTO userPutDTO) {
+        // parse input into user entity
+        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
         // fetch all players from the game
         List<Player> players = gameService.getPlayers(gameId);
 
         // end game
         gameService.endGame(gameId, user.getPlayer());
 
-        // delete all players
+        // delete all players and remove player from user
         for (Player player : players) {
+            userService.removePlayer(player);
             playerService.deletePlayer(player);
         }
     }
@@ -244,8 +239,10 @@ public class AppController {
         Game game = gameService.getGame(gameId);
         Player player = playerService.getPlayer(playerId);
 
-        // leave game
-
+        // leave game, remove player from user and delete player
+        gameService.leaveGame(game, player, user);
+        userService.removePlayer(player);
+        playerService.deletePlayer(player);
     }
 
     @PutMapping("/game/stones/{stoneId}")

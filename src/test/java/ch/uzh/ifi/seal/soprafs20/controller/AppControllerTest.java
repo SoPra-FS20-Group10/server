@@ -96,7 +96,7 @@ public class AppControllerTest {
         given(userService.createUser(Mockito.any())).willReturn(user);
 
         // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder postRequest = post("/registration")
+        MockHttpServletRequestBuilder postRequest = post("/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(userPostDTO));
 
@@ -193,7 +193,7 @@ public class AppControllerTest {
         given(gameService.createGame(Mockito.any(), Mockito.any())).willReturn(testGame);
 
         // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder postRequest = post("/lobby/1")
+        MockHttpServletRequestBuilder postRequest = post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(gamePostDTO));
 
@@ -228,7 +228,7 @@ public class AppControllerTest {
         joinGameDTO.setPassword("");
 
         // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/lobby/1")
+        MockHttpServletRequestBuilder putRequest = put("/games/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(joinGameDTO));
 

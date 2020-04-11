@@ -68,21 +68,25 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(DTOMapper.INSTANCE.convertEntityToUserGetDTO(userLogin));
     }
 
-    public void logoutUser(long userId) {
-        Optional<User> found = userRepository.findById(userId);
-
-        if (found.isEmpty()) {
-            throw new NotFoundException("No user with the id " + userId + " found.");
+    public void logoutUser(User user, long userId) {
+        // check if the user is authorized to logout
+        if (!user.getId().equals(userId)) {
+            throw new UnauthorizedException("The user is not authorized to logout this user.");
         }
 
-        User user = found.get();
+        // fetch user from db
+        user = getUser(userId);
+
+        // change the status to offline
         user.setStatus(UserStatus.OFFLINE);
 
+        // save the change
         userRepository.save(user);
         userRepository.flush();
     }
 
     public User getUser(long userId) {
+        // fetch user from db
         Optional<User> found = userRepository.findById(userId);
 
         // if no such user is found, an exception is thrown
@@ -159,23 +163,30 @@ public class UserService {
     }
 
     public void deleteUser(long userId) {
-        User user;
-        Optional<User> foundUser = userRepository.findById(userId);
+        // fetch user form db
+        User user = getUser(userId);
 
-        if (foundUser.isPresent()) {
-            user = foundUser.get();
-        } else {
-            throw new NotFoundException("The user with the id " + userId + " could not be found.");
-        }
-
+        // delete user from db
         userRepository.delete(user);
         userRepository.flush();
     }
 
     public void addPlayer(Player player) {
+        // add player to the user
         User user = player.getUser();
         user.setPlayer(player);
 
+        // save change
+        userRepository.save(user);
+        userRepository.flush();
+    }
+
+    public void removePlayer(Player player) {
+        // remove player from the user
+        User user = player.getUser();
+        user.setPlayer(null);
+
+        // save change
         userRepository.save(user);
         userRepository.flush();
     }
