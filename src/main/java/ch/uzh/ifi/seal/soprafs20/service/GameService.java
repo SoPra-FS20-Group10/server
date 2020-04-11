@@ -108,15 +108,7 @@ public class GameService {
 
     public List<Player> getPlayers(long gameId) {
         // fetch game from db
-        Game game;
-        Optional<Game> foundGame = gameRepository.findById(gameId);
-
-        // check if game exists
-        if (foundGame.isEmpty()) {
-            throw new NotFoundException("The game with the id " + gameId + "could not be found.");
-        } else {
-            game = foundGame.get();
-        }
+        Game game = getGame(gameId);
 
         return game.getPlayers();
     }
