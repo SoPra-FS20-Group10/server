@@ -68,9 +68,12 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(DTOMapper.INSTANCE.convertEntityToUserGetDTO(userLogin));
     }
 
-    public void logoutUser(User user, long userId) {
+    public void logoutUser(String token, long userId) {
+        // fetch user
+        User user = getUser(userId);
+
         // check if the user is authorized to logout
-        if (!user.getId().equals(userId)) {
+        if (!user.getToken().equals(token)) {
             throw new UnauthorizedException("The user is not authorized to logout this user.");
         }
 

@@ -8,6 +8,7 @@ import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,12 +62,12 @@ public class AppController {
     @PatchMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void logoutUser(@PathVariable("userId")long userId, @RequestBody UserPutDTO userPutDTO) {
-        // parse to user entity
-        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+    public void logoutUser(@PathVariable("userId")long userId, @RequestBody JSONPObject userToken) {
+        // parse to String
+        String token = (String) userToken.getValue();
 
         // logout user
-        userService.logoutUser(user, userId);
+        userService.logoutUser(token, userId);
     }
 
     @GetMapping("/games")
