@@ -114,14 +114,11 @@ public class AppController {
         // create a new player for the given user
         Player player = playerService.createPlayer(userService.getUser(joinGameDTO.getId()));
 
-        // fetch the game
-        Game game = gameService.getGame(gameId);
-
         // adds player to user
         userService.addPlayer(player);
 
         // adds the player to the game
-        game = gameService.joinGame(game, player, joinGameDTO.getPassword());
+        Game game = gameService.joinGame(gameId, player, joinGameDTO.getPassword());
 
         // adds the game to the player
         playerService.addGame(player, game);
@@ -210,6 +207,14 @@ public class AppController {
             userService.removePlayer(player);
             playerService.deletePlayer(player);
         }
+    }
+
+    @PutMapping("/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void startGame(@PathVariable("gameId")long gameId) {
+        // start the game
+        gameService.startGame(gameId);
     }
 
     @GetMapping("/games/{gameId}/players")

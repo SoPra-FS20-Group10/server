@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
@@ -67,7 +68,10 @@ public class GameService {
         return game;
     }
 
-    public Game joinGame(Game game, Player player, String password) {
+    public Game joinGame(long gameId, Player player, String password) {
+        // fetch game from db
+        Game game = getGame(gameId);
+
         // check if password is correct
         if (!game.getPassword().equals(password)) {
             throw new ConflictException("Wrong password. Therefore the player could not join the game");
@@ -81,6 +85,34 @@ public class GameService {
         gameRepository.flush();
 
         return game;
+    }
+
+    public void startGame(long gameId) {
+        // fetch game from db
+        Game game = getGame(gameId);
+
+        // check if all players are ready
+        List<Player> players = game.getPlayers();
+
+        for (Player player : players) {
+            if (player.getStatus() == PlayerStatus.NOT_READY) {
+                throw new ConflictException("Not all players are ready to start.");
+            }
+        }
+
+        // check if the game can be started
+        if (game.getStatus() == GameStatus.RUNNING) {
+            throw new ConflictException("The game is already running.");
+        } else if (game.getStatus() == GameStatus.ENDED) {
+            throw new ConflictException("The game has already ended.");
+        }
+
+        // set flag to running
+        game.setStatus(GameStatus.RUNNING);
+
+        // save change
+        gameRepository.save(game);
+        gameRepository.flush();
     }
 
     public void leaveGame(Game game, Player player, User user) {
