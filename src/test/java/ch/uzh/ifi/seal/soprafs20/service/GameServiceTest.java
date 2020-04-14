@@ -3,9 +3,9 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,21 +27,27 @@ public class GameServiceTest {
     private GameService gameService;
     private Game testGame;
     private Player testPlayer;
+    private User testUser;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
+        // given user
+        testUser = new User();
+        testUser.setId(2L);
+
         // given game
         testGame = new Game();
         testGame.setId(99);
-        testGame.setOwnerId(1L);
+        testGame.setOwner(testUser);
         testGame.setName("testName");
         testGame.setPassword("testPassword");
 
         // given player
         testPlayer = new Player();
-        testPlayer.setId(1L);
+        testPlayer.setUser(testUser);
+        testPlayer.setId(2L);
         testPlayer.setUsername("testUsername");
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
@@ -64,7 +70,7 @@ public class GameServiceTest {
         // then check if they are equal
         assertEquals(createdGame.getName(), foundGame.getName());
         assertEquals(createdGame.getStatus(), foundGame.getStatus());
-        assertEquals(createdGame.getOwnerId(), foundGame.getOwnerId());
+        assertEquals(createdGame.getOwner().getId(), foundGame.getOwner().getId());
         assertEquals(createdGame.getId(), foundGame.getId());
     }
 
@@ -90,7 +96,7 @@ public class GameServiceTest {
         // when/then
         Mockito.verify(gameRepository, Mockito.times(1)).save(Mockito.any());
 
-        assertEquals(testGame.getOwnerId(), createdGame.getOwnerId());
+        assertEquals(testGame.getOwner().getId(), createdGame.getOwner().getId());
         assertEquals(testGame.getName(), createdGame.getName());
         assertNotNull(testGame.getPlayers());
         assertEquals(GameStatus.WAITING, createdGame.getStatus());
@@ -101,12 +107,13 @@ public class GameServiceTest {
         // given -> a first game has already been created
         gameService.createGame(testGame, testPlayer);
         Optional<Game> found = Optional.ofNullable(testGame);
+        testUser.setGame(testGame);
 
         // when
-        Mockito.when(gameRepository.findByOwnerId(Mockito.anyLong())).thenReturn(found);
+        Mockito.when(gameRepository.findByOwner(Mockito.any())).thenReturn(found);
 
         // then -> attempt to create second user with same user -> check that an error is thrown
-        String exceptionMessage = "The user with the id 1 is hosting another game.";
+        String exceptionMessage = "The user with the id 2 is hosting another game.";
         ConflictException exception = assertThrows(ConflictException.class,
                 () -> gameService.createGame(testGame, testPlayer), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());

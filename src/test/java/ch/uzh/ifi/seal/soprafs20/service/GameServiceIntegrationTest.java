@@ -3,26 +3,27 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for the GameResource REST resource
  *
  * @see GameService
  */
+@Transactional
 @WebAppConfiguration
 @SpringBootTest
 public class GameServiceIntegrationTest {
@@ -36,22 +37,27 @@ public class GameServiceIntegrationTest {
 
     private Game game;
     private Player player;
+    private User user;
 
     @BeforeEach
     public void setup() {
         gameRepository.deleteAll();
 
+        // setup user
+        user = new User();
+        user.setId(2L);
+
         // setup game
         game = new Game();
-        game.setOwnerId(1);
+        game.setOwner(user);
         game.setName("TestName");
         game.setPassword("TestPassword");
 
         // setup player
         player = new Player();
         player.setId(1);
+        player.setUser(user);
         player.setUsername("TestUsername");
-        player.setScore(0);
     }
 
     @Test
@@ -65,7 +71,7 @@ public class GameServiceIntegrationTest {
         // then check if they are equal
         assertEquals(createdGame.getName(), foundGame.getName());
         assertEquals(createdGame.getStatus(), foundGame.getStatus());
-        assertEquals(createdGame.getOwnerId(), foundGame.getOwnerId());
+        assertEquals(createdGame.getOwner().getId(), foundGame.getOwner().getId());
         assertEquals(createdGame.getId(), foundGame.getId());
     }
 
@@ -77,7 +83,7 @@ public class GameServiceIntegrationTest {
         // then
         assertEquals(createdGame.getName(), game.getName());
         assertEquals(createdGame.getPassword(), game.getPassword());
-        assertEquals(createdGame.getOwnerId(), game.getOwnerId());
+        assertEquals(createdGame.getOwner().getId(), game.getOwner().getId());
         assertEquals(createdGame.getStatus(), GameStatus.WAITING);
     }
 
@@ -85,9 +91,10 @@ public class GameServiceIntegrationTest {
     public void createGame_duplicateOwner_throwsException() {
         // given first game creation
         gameService.createGame(game, player);
+        user.setGame(game);
 
         // check that an error is thrown
-        String exceptionMessage = "The user with the id 1 is hosting another game.";
+        String exceptionMessage = "The user with the id 2 is hosting another game.";
         ConflictException exception = assertThrows(ConflictException.class,
                 () -> gameService.createGame(game, player), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());

@@ -21,9 +21,6 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue
 	private Long id;
-
-	@Column
-    private Long playerId;
 	
 	@Column(nullable = false, unique = true) 
 	private String username;
@@ -46,20 +43,15 @@ public class User implements Serializable {
 	@OneToOne(mappedBy = "user")
     private Player player;
 
+	@OneToOne
+    private Game game;
+
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(long id) {
 	    this.id = id;
-    }
-
-    public Long getPlayerId() {
-	    return playerId;
-    }
-
-    public void setPlayerId(long playerId) {
-	    this.playerId = playerId;
     }
 
 	public String getUsername() {
@@ -116,5 +108,13 @@ public class User implements Serializable {
 
     public void setPlayer(Player player) {
 	    this.player = player;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }

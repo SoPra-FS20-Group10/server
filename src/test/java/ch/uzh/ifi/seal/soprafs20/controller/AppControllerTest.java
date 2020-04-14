@@ -169,18 +169,18 @@ public class AppControllerTest {
         gamePostDTO.setName("TestGame");
         gamePostDTO.setPassword("");
 
-        // given game
-        Game testGame = new Game();
-        testGame.setId(1);
-        testGame.setOwnerId(1L);
-        testGame.setName("testGame");
-        testGame.setPassword("");
-
         // given user
         User user = new User();
         user.setUsername("TestUsername");
         user.setPassword("TestPassword");
         userService.createUser(user);
+
+        // given game
+        Game testGame = new Game();
+        testGame.setId(1);
+        testGame.setOwner(user);
+        testGame.setName("testGame");
+        testGame.setPassword("");
 
         given(gameService.createGame(Mockito.any(), Mockito.any())).willReturn(testGame);
 
@@ -209,7 +209,7 @@ public class AppControllerTest {
 
         // given game
         Game game = new Game();
-        game.setOwnerId(1);
+        game.setOwner(user);
         game.setName("TestGame");
         game.setPassword("");
         gameService.createGame(game, playerService.getPlayer(1));

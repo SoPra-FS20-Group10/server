@@ -91,9 +91,10 @@ public class AppController {
     public long createLobby(@RequestBody GamePostDTO gamePostDTO) {
         // parse the input into a game instance
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
+        User user = userService.getUser(gamePostDTO.getOwnerId());
 
         // create a player for the owner
-        Player player = playerService.createPlayer(userService.getUser(game.getOwnerId()));
+        Player player = playerService.createPlayer(user);
 
         // adds player to user
         userService.addPlayer(player);
@@ -101,8 +102,9 @@ public class AppController {
         // create the game
         Game newGame = gameService.createGame(game, player);
 
-        // adds game to player
+        // adds game to player and user
         playerService.addGame(player, game);
+        // userService.addGame(game);
 
         return newGame.getId();
     }
@@ -195,12 +197,14 @@ public class AppController {
     public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserPutDTO userPutDTO) {
         // parse input into user entity
         User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+        // String token = userTokenDTO.getToken();
 
         // fetch all players from the game
         List<Player> players = gameService.getPlayers(gameId);
 
         // end game
-        gameService.endGame(gameId, user.getPlayer());
+        gameService.endGame(gameId, "");
+        // gameService.endGame(gameId, token);
 
         // delete all players and remove player from user
         for (Player player : players) {
@@ -209,12 +213,14 @@ public class AppController {
         }
     }
 
-    @PutMapping("/{gameId}")
+    @PutMapping("/games/{gameId}/la")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void startGame(@PathVariable("gameId")long gameId) {
+    public void startGame(@PathVariable("gameId")long gameId, @RequestBody UserTokenDTO userTokenDTO) {
+        String token = userTokenDTO.getToken();
+
         // start the game
-        gameService.startGame(gameId);
+        gameService.startGame(gameId, token);
     }
 
     @GetMapping("/games/{gameId}/players")

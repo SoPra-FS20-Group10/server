@@ -48,13 +48,12 @@ public class GameService {
 
     public Game createGame(Game game, Player owner) {
         // check if owner has no other game
-        Optional<Game> foundGame = gameRepository.findByOwnerId(game.getOwnerId());
-
-        if (foundGame.isPresent()) {
-            throw new ConflictException("The user with the id " + game.getOwnerId() + " is hosting another game.");
+        if (owner.getUser().getGame() != null) {
+            throw new ConflictException("The user with the id " + owner.getUser().getId() + " is hosting another game.");
         }
 
         //game.setChat(new Chat());
+        game.setOwner(owner.getUser());
         game.setStatus(GameStatus.WAITING);
 
         // initialise list and add player
@@ -87,10 +86,14 @@ public class GameService {
         return game;
     }
 
-    public void startGame(long gameId) {
+    public void startGame(long gameId, String token) {
         // fetch game from db
         Game game = getGame(gameId);
 
+        // check if user is authorized to start the game
+        if (!game.getOwner().getToken().equals(token)) {
+            throw new UnauthorizedException("The user is not authorized to start the game");
+        }
         // check if all players are ready
         List<Player> players = game.getPlayers();
 
@@ -129,20 +132,12 @@ public class GameService {
         gameRepository.flush();
     }
 
-    public void endGame(long gameId, Player player) {
+    public void endGame(long gameId, String token) {
         // fetch game from db
-        Game game;
-        Optional<Game> foundGame = gameRepository.findById(gameId);
-
-        // check if game exists
-        if (foundGame.isEmpty()) {
-            throw new NotFoundException("The game with the id " + gameId + " could not be found.");
-        } else {
-            game = foundGame.get();
-        }
+        Game game = getGame(gameId);
 
         //check if user is authorized to end game
-        if (!game.getOwnerId().equals(player.getId())) {
+        if (!game.getOwner().getToken().equals(token)) {
             throw new UnauthorizedException("The game can not be ended by this user");
         }
 

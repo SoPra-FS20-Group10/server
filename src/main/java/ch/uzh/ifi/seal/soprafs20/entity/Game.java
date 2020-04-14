@@ -23,17 +23,17 @@ public class Game implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private Long ownerId;
-
-    @Column(nullable = false)
+    @Column
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private GameStatus status;
 
     @Column
     private String password;
+
+    @OneToOne(mappedBy = "game", optional = false)
+    private User owner;
 
     @OneToOne(mappedBy = "game", optional = false)
     private Chat chat;
@@ -63,14 +63,6 @@ public class Game implements Serializable {
         this.status = status;
     }
 
-    public Long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(long ownerId) {
-        this.ownerId = ownerId;
-    }
-
     public Chat getChat() {
         return chat;
     }
@@ -93,6 +85,14 @@ public class Game implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public Scoreboard getScoreboard() {

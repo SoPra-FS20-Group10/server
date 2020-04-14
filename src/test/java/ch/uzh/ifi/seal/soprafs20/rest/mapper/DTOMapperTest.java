@@ -57,7 +57,6 @@ public class DTOMapperTest {
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
 
         // check content
-        assertEquals(game.getOwnerId(), gamePostDTO.getOwnerId());
         assertEquals(game.getName(), gamePostDTO.getName());
         assertEquals(game.getPassword(), gamePostDTO.getPassword());
     }

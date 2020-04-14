@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
@@ -187,6 +188,26 @@ public class UserService {
         // remove player from the user
         User user = player.getUser();
         user.setPlayer(null);
+
+        // save change
+        userRepository.save(user);
+        userRepository.flush();
+    }
+
+    public void addGame(Game game) {
+        // add game to the user
+        User user = game.getOwner();
+        user.setGame(game);
+
+        // save change
+        userRepository.save(user);
+        userRepository.flush();
+    }
+
+    public void removeGame(Game game) {
+        // remove game from user
+        User user = game.getOwner();
+        user.setGame(null);
 
         // save change
         userRepository.save(user);
