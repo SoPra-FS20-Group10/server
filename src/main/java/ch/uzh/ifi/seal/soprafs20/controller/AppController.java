@@ -8,7 +8,6 @@ import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,9 +61,9 @@ public class AppController {
     @PatchMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void logoutUser(@PathVariable("userId")long userId, @RequestBody JSONPObject userToken) {
+    public void logoutUser(@PathVariable("userId")long userId, @RequestBody UserTokenDTO userTokenDTO) {
         // parse to String
-        String token = (String) userToken.getValue();
+        String token = userTokenDTO.getToken();
 
         // logout user
         userService.logoutUser(token, userId);
