@@ -24,7 +24,7 @@ public class Tile implements Serializable {
     private List<Stone> stone;
 
     @Column
-    private int multiplier;
+    private int multiplier = 1;
 
     @ManyToOne
     private Board board;

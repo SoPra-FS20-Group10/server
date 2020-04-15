@@ -27,4 +27,31 @@ public class Board implements Serializable {
 
     @OneToMany(mappedBy = "board")
     private List<Tile> grid;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public List<Tile> getGrid() {
+        return grid;
+    }
+
+    public void setGrid(List<Tile> grid) {
+        this.grid = grid;
+    }
+
+
+
 }
