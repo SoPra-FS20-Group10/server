@@ -23,9 +23,9 @@ import java.util.List;
 
 @RestController
 public class AppController {
-    private UserService userService;
-    private GameService gameService;
-    private PlayerService playerService;
+    private final UserService userService;
+    private final GameService gameService;
+    private final PlayerService playerService;
 
     AppController(UserService userService, GameService gameService, PlayerService playerService) {
         this.userService = userService;
@@ -214,17 +214,18 @@ public class AppController {
     @DeleteMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserPutDTO userPutDTO) {
+    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserTokenDTO userTokenDTO) {
         // parse input into user entity
-        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
-        // String token = userTokenDTO.getToken();
+        String token = userTokenDTO.getToken();
 
         // fetch all players from the game
         List<Player> players = gameService.getPlayers(gameId);
 
+        // remove game from user
+        userService.removeGame(gameService.getGame(gameId));
+
         // end game
-        gameService.endGame(gameId, "");
-        // gameService.endGame(gameId, token);
+        gameService.endGame(gameId, token);
 
         // delete all players and remove player from user
         for (Player player : players) {
