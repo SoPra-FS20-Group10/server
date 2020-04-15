@@ -62,7 +62,7 @@ public class UserService {
         userLogin.setStatus(UserStatus.ONLINE);
 
         // saves the update to the db
-        userRepository.save(userLogin);
+        userLogin = userRepository.save(userLogin);
         userRepository.flush();
 
         log.debug("User login successful");

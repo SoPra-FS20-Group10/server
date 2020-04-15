@@ -88,7 +88,7 @@ public class AppController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public long createLobby(@RequestBody GamePostDTO gamePostDTO) {
+    public long createGame(@RequestBody GamePostDTO gamePostDTO) {
         // parse the input into a game instance
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
         User user = userService.getUser(gamePostDTO.getOwnerId());
@@ -109,10 +109,10 @@ public class AppController {
         return newGame.getId();
     }
 
-    @PutMapping("/games/{gameId}")
+    @PutMapping("/games/{gameId}/players")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody JoinGameDTO joinGameDTO) {
+    public void joinGame(@PathVariable ("gameId") Long gameId, @RequestBody JoinGameDTO joinGameDTO) {
         // create a new player for the given user
         Player player = playerService.createPlayer(userService.getUser(joinGameDTO.getId()));
 
@@ -233,7 +233,7 @@ public class AppController {
         }
     }
 
-    @PutMapping("/games/{gameId}/la")
+    @PutMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void startGame(@PathVariable("gameId")long gameId, @RequestBody UserTokenDTO userTokenDTO) {
@@ -246,7 +246,7 @@ public class AppController {
     @GetMapping("/games/{gameId}/players")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<PlayerGetDTO> getPlayers(@PathVariable("gameId")Long gameId) {
+    public List<PlayerGetDTO> getPlayersFromGame(@PathVariable("gameId")Long gameId) {
         // fetch all users in the internal representation
         List<Player> players = gameService.getPlayers(gameId);
         List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
