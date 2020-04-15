@@ -6,6 +6,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,6 +59,23 @@ public class PlayerService {
         }
 
         return player;
+    }
+
+    public void readyPlayer(long playerId, String token) {
+        // fetch player from db
+        Player player = getPlayer(playerId);
+
+        // check if user is authorized
+        if (!player.getUser().getToken().equals(token)) {
+            throw new UnauthorizedException("The user is not authorized to ready this player.");
+        }
+
+        // ready the player
+        player.setStatus(PlayerStatus.READY);
+
+        // save the change
+        playerRepository.save(player);
+        playerRepository.flush();
     }
 
     public void deletePlayer(Player player) {

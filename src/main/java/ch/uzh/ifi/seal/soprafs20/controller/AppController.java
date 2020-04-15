@@ -104,7 +104,7 @@ public class AppController {
 
         // adds game to player and user
         playerService.addGame(player, game);
-        // userService.addGame(game);
+        userService.addGame(game);
 
         return newGame.getId();
     }
@@ -124,6 +124,26 @@ public class AppController {
 
         // adds the game to the player
         playerService.addGame(player, game);
+    }
+
+    @GetMapping("/players/{playerId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public PlayerGetDTO getPlayer(@PathVariable("playerId")long playerId){
+        Player player = playerService.getPlayer(playerId);
+
+        return DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player);
+    }
+
+    @PutMapping("/players/{playerId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void readyPlayer(@PathVariable("playerId")long playerId, @RequestBody UserTokenDTO userTokenDTO) {
+        // parse input into String
+        String token = userTokenDTO.getToken();
+
+        // ready player
+        playerService.readyPlayer(playerId, token);
     }
 
     @GetMapping("/users/{userId}")
