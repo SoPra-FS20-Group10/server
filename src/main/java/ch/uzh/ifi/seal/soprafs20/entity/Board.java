@@ -2,6 +2,8 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -22,4 +24,7 @@ public class Board implements Serializable {
     @OneToOne
     @MapsId
     private Game game;
+
+    @OneToMany(mappedBy = "board")
+    private List<Tile> grid;
 }

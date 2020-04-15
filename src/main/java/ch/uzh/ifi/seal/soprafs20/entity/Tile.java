@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -18,5 +19,43 @@ public class Tile implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
+
+    @ManyToMany(mappedBy = "tile")
+    private List<Stone> stone;
+
+    @Column
+    private int multiplier;
+
+    @ManyToOne
+    private Board board;
+
+
+
+
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Stone> getStone() {
+        return stone;
+    }
+
+    public void setStone(List<Stone> stone) {
+        this.stone = stone;
+    }
+
+    public int getMultiplier() {
+        return multiplier;
+    }
+
+    public void setMultiplier(int multiplier) {
+        this.multiplier = multiplier;
+    }
 
 }
