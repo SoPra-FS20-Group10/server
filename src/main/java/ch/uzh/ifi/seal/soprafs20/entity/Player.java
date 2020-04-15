@@ -29,13 +29,14 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private Integer score;
 
+    @OneToOne(mappedBy = "player")
+    private Bag bag;
+
     @OneToOne
     private User user;
 
     @ManyToOne
     private Game game;
-
-    //bag
 
     public Long getId() {
         return id;
@@ -67,6 +68,14 @@ public class Player implements Serializable {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public Bag getBag() {
+        return bag;
+    }
+
+    public void setBag(Bag bag) {
+        this.bag = bag;
     }
 
     public User getUser() {

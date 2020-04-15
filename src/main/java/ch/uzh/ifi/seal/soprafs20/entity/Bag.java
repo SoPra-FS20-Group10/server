@@ -19,6 +19,22 @@ public class Bag implements Serializable {
     @GeneratedValue
     private Long id;
 
+    @OneToOne
+    private Player player;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 }

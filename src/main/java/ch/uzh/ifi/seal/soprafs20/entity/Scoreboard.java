@@ -20,6 +20,5 @@ public class Scoreboard implements Serializable {
     private Long id;
 
     @OneToOne
-    @MapsId
     private Game game;
 }

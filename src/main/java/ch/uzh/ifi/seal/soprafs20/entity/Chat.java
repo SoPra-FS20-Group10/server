@@ -20,6 +20,21 @@ public class Chat implements Serializable {
     private Long id;
 
     @OneToOne
-    @MapsId
     private Game game;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
 }
