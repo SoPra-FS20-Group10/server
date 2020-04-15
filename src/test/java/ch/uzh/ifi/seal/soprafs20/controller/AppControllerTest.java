@@ -289,15 +289,13 @@ public class AppControllerTest {
     @Test
     public void leaveGame_validInput() throws Exception {
         // given
-        UserPutDTO userPutDTO = new UserPutDTO();
-        userPutDTO.setId(1L);
-        userPutDTO.setUsername("testUsername");
-        userPutDTO.setPassword("testPassword");
+        UserTokenDTO userTokenDTO = new UserTokenDTO();
+        userTokenDTO.setToken("testToken");
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest = delete("/games/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPutDTO));
+                .content(asJsonString(userTokenDTO));
 
         // then
         mockMvc.perform(deleteRequest).andExpect(status().isOk());

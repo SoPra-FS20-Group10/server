@@ -263,16 +263,16 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void leaveGame(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
-                          @RequestBody UserPutDTO userPutDTO) {
+                          @RequestBody UserTokenDTO userTokenDTO) {
         // parse input into user
-        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+        String token = userTokenDTO.getToken();
 
         // get game and player instance
         Game game = gameService.getGame(gameId);
         Player player = playerService.getPlayer(playerId);
 
         // leave game, remove player from user and delete player
-        gameService.leaveGame(game, player, user);
+        gameService.leaveGame(game, player, token);
         userService.removePlayer(player);
         playerService.deletePlayer(player);
     }

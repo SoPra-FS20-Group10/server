@@ -118,9 +118,9 @@ public class GameService {
         gameRepository.flush();
     }
 
-    public void leaveGame(Game game, Player player, User user) {
+    public void leaveGame(Game game, Player player, String token) {
         // check if the user is authorized to leave the game
-        if (player.getId().equals(user.getId())) {
+        if (player.getUser().getToken().equals(token)) {
             throw new ConflictException("The user is not authorized to leave this game");
         }
 
