@@ -22,7 +22,6 @@ public class Board implements Serializable {
     private Long id;
 
     @OneToOne
-    @MapsId
     private Game game;
 
     @OneToMany(mappedBy = "board")
@@ -51,7 +50,4 @@ public class Board implements Serializable {
     public void setGrid(List<Tile> grid) {
         this.grid = grid;
     }
-
-
-
 }

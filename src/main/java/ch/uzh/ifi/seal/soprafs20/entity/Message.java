@@ -13,7 +13,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "Message")
 public class Message implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
@@ -25,4 +24,27 @@ public class Message implements Serializable {
     @Column
     private int time;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
 }

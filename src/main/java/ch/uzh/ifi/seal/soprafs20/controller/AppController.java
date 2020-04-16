@@ -23,9 +23,9 @@ import java.util.List;
 
 @RestController
 public class AppController {
-    private UserService userService;
-    private GameService gameService;
-    private PlayerService playerService;
+    private final UserService userService;
+    private final GameService gameService;
+    private final PlayerService playerService;
 
     AppController(UserService userService, GameService gameService, PlayerService playerService) {
         this.userService = userService;
@@ -88,7 +88,7 @@ public class AppController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public long createLobby(@RequestBody GamePostDTO gamePostDTO) {
+    public long createGame(@RequestBody GamePostDTO gamePostDTO) {
         // parse the input into a game instance
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
         User user = userService.getUser(gamePostDTO.getOwnerId());
@@ -109,10 +109,10 @@ public class AppController {
         return newGame.getId();
     }
 
-    @PutMapping("/games/{gameId}")
+    @PutMapping("/games/{gameId}/players")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void joinLobby(@PathVariable ("gameId") Long gameId, @RequestBody JoinGameDTO joinGameDTO) {
+    public void joinGame(@PathVariable ("gameId") Long gameId, @RequestBody JoinGameDTO joinGameDTO) {
         // create a new player for the given user
         Player player = playerService.createPlayer(userService.getUser(joinGameDTO.getId()));
 
@@ -214,17 +214,18 @@ public class AppController {
     @DeleteMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserPutDTO userPutDTO) {
+    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserTokenDTO userTokenDTO) {
         // parse input into user entity
-        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
-        // String token = userTokenDTO.getToken();
+        String token = userTokenDTO.getToken();
 
         // fetch all players from the game
         List<Player> players = gameService.getPlayers(gameId);
 
+        // remove game from user
+        userService.removeGame(gameService.getGame(gameId));
+
         // end game
-        gameService.endGame(gameId, "");
-        // gameService.endGame(gameId, token);
+        gameService.endGame(gameId, token);
 
         // delete all players and remove player from user
         for (Player player : players) {
@@ -233,7 +234,7 @@ public class AppController {
         }
     }
 
-    @PutMapping("/games/{gameId}/la")
+    @PutMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void startGame(@PathVariable("gameId")long gameId, @RequestBody UserTokenDTO userTokenDTO) {
@@ -246,7 +247,7 @@ public class AppController {
     @GetMapping("/games/{gameId}/players")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<PlayerGetDTO> getPlayers(@PathVariable("gameId")Long gameId) {
+    public List<PlayerGetDTO> getPlayersFromGame(@PathVariable("gameId")Long gameId) {
         // fetch all users in the internal representation
         List<Player> players = gameService.getPlayers(gameId);
         List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
@@ -262,16 +263,16 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void leaveGame(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
-                          @RequestBody UserPutDTO userPutDTO) {
+                          @RequestBody UserTokenDTO userTokenDTO) {
         // parse input into user
-        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+        String token = userTokenDTO.getToken();
 
         // get game and player instance
         Game game = gameService.getGame(gameId);
         Player player = playerService.getPlayer(playerId);
 
         // leave game, remove player from user and delete player
-        gameService.leaveGame(game, player, user);
+        gameService.leaveGame(game, player, token);
         userService.removePlayer(player);
         playerService.deletePlayer(player);
     }

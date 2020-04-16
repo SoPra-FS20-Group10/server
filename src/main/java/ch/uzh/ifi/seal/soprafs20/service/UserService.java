@@ -40,33 +40,36 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public ResponseEntity<UserGetDTO> loginUser(User user) {
-        if (!checkIfUserExists(user)) {
-            throw new NotFoundException("The user with the username " + user.getUsername() + " does not exist");
+    public ResponseEntity<UserGetDTO> loginUser(User userToLogin) {
+        User user;
+        Optional<User> foundUser = userRepository.findByUsername(userToLogin.getUsername());
+
+        // check if user exists
+        if (foundUser.isEmpty()) {
+            throw new NotFoundException("The user with the username " + userToLogin.getUsername() + " could not be found.");
+        } else {
+            user = foundUser.get();
         }
 
-        // retrieves the user from the db
-        User userLogin = userRepository.findByUsername(user.getUsername());
-
         // checks if the password is correct
-        if (!userLogin.getPassword().equals(user.getPassword())) {
+        if (!user.getPassword().equals(userToLogin.getPassword())) {
             throw new ConflictException("The password does not match the username " + user.getUsername());
         }
 
         // checks if the user is already online
-        if (userLogin.getStatus() == UserStatus.ONLINE) {
+        if (user.getStatus() == UserStatus.ONLINE) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 
         // set the status of the user to online
-        userLogin.setStatus(UserStatus.ONLINE);
+        user.setStatus(UserStatus.ONLINE);
 
         // saves the update to the db
-        userRepository.save(userLogin);
+        user = userRepository.save(user);
         userRepository.flush();
 
         log.debug("User login successful");
-        return ResponseEntity.status(HttpStatus.OK).body(DTOMapper.INSTANCE.convertEntityToUserGetDTO(userLogin));
+        return ResponseEntity.status(HttpStatus.OK).body(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
     }
 
     public void logoutUser(String token, long userId) {
@@ -144,11 +147,11 @@ public class UserService {
         User user = userExisting.get();
 
         // checkout user to test if new username already exists
-        User test = userRepository.findByUsername(userUpdate.getUsername());
+        Optional<User> test = userRepository.findByUsername(userUpdate.getUsername());
 
         // check if new username is unique
-        if (test != null) {
-            if (test.getUsername().equals(user.getUsername())) {
+        if (test.isPresent()) {
+            if (test.get().getUsername().equals(user.getUsername())) {
                 log.debug("username stays the same");
             } else {
                 throw new ConflictException("Username exists already, please choose another one.");
@@ -222,8 +225,8 @@ public class UserService {
      */
     private boolean checkIfUserExists(User userToBeCreated) {
         // search user by provided credentials
-        User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
+        Optional<User> userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
 
-        return userByUsername != null;
+        return userByUsername.isPresent();
     }
 }

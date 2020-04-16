@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,7 +40,7 @@ public class UserServiceIntegrationTest {
     @Test
     public void createUser_validInputs_success() {
         // given
-        assertNull(userRepository.findByUsername("testUsername"));
+        assertEquals(userRepository.findByUsername("testUsername"), Optional.empty());
 
         User testUser = new User();
         testUser.setUsername("testUsername");
@@ -58,7 +59,7 @@ public class UserServiceIntegrationTest {
 
     @Test
     public void createUser_duplicateUsername_throwsException() {
-        assertNull(userRepository.findByUsername("testUsername"));
+        assertEquals(userRepository.findByUsername("testUsername"), Optional.empty());
 
         User testUser = new User();
         testUser.setUsername("testUsername");

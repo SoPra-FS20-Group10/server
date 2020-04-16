@@ -1,12 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Internal User Representation
@@ -18,9 +16,16 @@ import java.util.List;
 @Entity
 @Table(name = "Scoreboard")
 public class Leaderboard implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

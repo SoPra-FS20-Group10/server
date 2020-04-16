@@ -70,8 +70,12 @@ public class PlayerService {
             throw new UnauthorizedException("The user is not authorized to ready this player.");
         }
 
-        // ready the player
-        player.setStatus(PlayerStatus.READY);
+        // ready/unready the player
+        if (player.getStatus() == PlayerStatus.NOT_READY) {
+            player.setStatus(PlayerStatus.READY);
+        } else {
+            player.setStatus(PlayerStatus.NOT_READY);
+        }
 
         // save the change
         playerRepository.save(player);
