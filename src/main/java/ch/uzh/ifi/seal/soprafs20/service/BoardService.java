@@ -4,11 +4,13 @@ import ch.uzh.ifi.seal.soprafs20.entity.Board;
 import ch.uzh.ifi.seal.soprafs20.entity.Tile;
 import ch.uzh.ifi.seal.soprafs20.repository.BoardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -19,21 +21,6 @@ public class BoardService {
     @Autowired
     public BoardService(@Qualifier("boardRepository") BoardRepository boardRepository) {
         this.boardRepository = boardRepository;
-    }
-
-
-    public List<Tile> creategrid(Board board){
-
-        List<Tile> grid = board.getGrid();
-
-        for(int i =0; i < 225; i++){
-
-        }
-
-
-
-
-        return null;
     }
 
 

@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface TileRepository extends JpaRepository<Tile, Long> {
-
+    Optional<Tile> findByCombo(int multiplier, String stonesymbol);
 }
