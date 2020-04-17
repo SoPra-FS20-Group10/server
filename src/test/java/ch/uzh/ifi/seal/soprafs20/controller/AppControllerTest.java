@@ -293,7 +293,7 @@ public class AppControllerTest {
         userTokenDTO.setToken("testToken");
 
         // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder deleteRequest = delete("/games/1")
+        MockHttpServletRequestBuilder deleteRequest = delete("/games/1/players/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(userTokenDTO));
 

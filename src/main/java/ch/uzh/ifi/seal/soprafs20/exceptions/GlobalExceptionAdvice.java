@@ -43,7 +43,6 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ResponseBody
     public ResponseStatusException handleConflictException(ConflictException ex) {
         log.error(String.format("ConflictException raised: raised %s", ex));
         return new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
@@ -51,7 +50,6 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ResponseBody
     public ResponseStatusException handleUnauthorizedException(UnauthorizedException ex) {
         log.error(String.format("LoginException raised: raised %s", ex));
         return new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
@@ -59,7 +57,6 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
     public ResponseStatusException handleNotFoundException(NotFoundException ex) {
         log.error(String.format("UpdateException raised: raised %s", ex));
         return new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
