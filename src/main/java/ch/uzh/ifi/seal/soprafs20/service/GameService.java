@@ -119,8 +119,13 @@ public class GameService {
     }
 
     public void leaveGame(Game game, Player player, String token) {
+        // check if player is the lobbyLeader
+        if (player.getUser().getId().equals(game.getOwner().getId())) {
+            throw new UnauthorizedException("The game owner cannot leave the game. Choose to end the game.");
+        }
+
         // check if the user is authorized to leave the game
-        if (player.getUser().getToken().equals(token)) {
+        if (!player.getUser().getToken().equals(token)) {
             throw new ConflictException("The user is not authorized to leave this game");
         }
 
