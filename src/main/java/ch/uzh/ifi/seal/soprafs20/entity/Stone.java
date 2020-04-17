@@ -20,15 +20,11 @@ public class Stone implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @ManyToMany(mappedBy = "stone")
-    private List<Tile> tile;
-
     @Column
     private int value;
 
-
-
-
+    @ManyToOne
+    private Bag bag;
 
 
     public Long getId() {
@@ -37,14 +33,6 @@ public class Stone implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public List<Tile> getTile() {
-        return tile;
-    }
-
-    public void setTile(List<Tile> tile) {
-        this.tile = tile;
     }
 
     public int getValue() {

@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -21,6 +22,9 @@ public class Bag implements Serializable {
 
     @OneToOne
     private Player player;
+
+    @OneToMany(mappedBy = "bag")
+    private List<Stone> stones;
 
     public Long getId() {
         return id;
