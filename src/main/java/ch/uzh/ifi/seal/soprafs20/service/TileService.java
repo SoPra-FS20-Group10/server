@@ -57,7 +57,7 @@ public class TileService {
         int[] doubles = {3, 11,16,20,24,28,32,36,38,42,45,48,52,56,59,64,70,76,80,84,88,92,96,98,102,108};
         int[] triples= {0,7,14,105};
 
-        //create half of board, then flip and append
+        //create half of board, then flip and append testtest
 
         for(int i =0; i < 112; i++){
 
