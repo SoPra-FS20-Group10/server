@@ -2,6 +2,8 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -22,6 +24,9 @@ public class Board implements Serializable {
     @OneToOne
     private Game game;
 
+    @OneToMany(mappedBy = "board")
+    private List<Tile> grid;
+
     public Long getId() {
         return id;
     }
@@ -36,5 +41,13 @@ public class Board implements Serializable {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public List<Tile> getGrid() {
+        return grid;
+    }
+
+    public void setGrid(List<Tile> grid) {
+        this.grid = grid;
     }
 }
