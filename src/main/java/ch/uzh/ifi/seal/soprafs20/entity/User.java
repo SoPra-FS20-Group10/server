@@ -40,6 +40,23 @@ public class User implements Serializable {
 	@Column()
     private Date birthday;
 
+    @Column()
+    private int playtime;
+
+    @Column()
+    private float winpercentage = 0;
+
+    @Column()
+    private int overallscore = 0;
+
+    @Column()
+    private int playedgames = 0;
+
+    @Column()
+    private int wongames = 0;
+
+
+
 	@OneToOne(mappedBy = "user")
     private Player player;
 
@@ -116,5 +133,53 @@ public class User implements Serializable {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public int getPlaytime() {
+        return playtime;
+    }
+
+    public void setPlaytime(int playtime) {
+        this.playtime = playtime;
+    }
+
+    public float getWinpercentage() {
+	    if(playedgames == 0){
+	        return 0;
+        }
+
+        return wongames/playedgames;
+    }
+
+    public void setWinpercentage() {
+        if(playedgames == 0){
+            this.winpercentage = 0;
+        }
+
+        this.winpercentage = wongames/playedgames;
+    }
+
+    public int getOverallscore() {
+        return overallscore;
+    }
+
+    public void setOverallscore(int overallscore) {
+        this.overallscore = overallscore;
+    }
+
+    public int getPlayedgames() {
+        return playedgames;
+    }
+
+    public void setPlayedgames(int playedgames) {
+        this.playedgames = playedgames;
+    }
+
+    public int getWongames() {
+        return wongames;
+    }
+
+    public void setWongames(int wongames) {
+        this.wongames = wongames;
     }
 }
