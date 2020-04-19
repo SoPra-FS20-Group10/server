@@ -44,6 +44,9 @@ public class Game implements Serializable {
     @OneToOne(mappedBy = "game", optional = false)
     private Board board;
 
+    @OneToOne(mappedBy = "game", optional = false)
+    private Bag bag;
+
     @OneToMany(mappedBy = "game")
     private List<Player> players;
 
@@ -109,6 +112,14 @@ public class Game implements Serializable {
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    public Bag getBag() {
+        return bag;
+    }
+
+    public void setBag(Bag bag) {
+        this.bag = bag;
     }
 
     public void initGame() {
