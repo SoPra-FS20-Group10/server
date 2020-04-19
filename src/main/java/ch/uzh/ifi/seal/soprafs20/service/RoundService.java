@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Stone;
 import ch.uzh.ifi.seal.soprafs20.entity.Tile;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+
+// TODO: check again if stone and tile entity are implemented
 
 @Service
 @Transactional
@@ -69,6 +72,30 @@ public class RoundService {
 
         // return
         return stone;
+    }
+
+    public void placeStoneValid(long gameId, Stone stone, int coordinate) {
+        // fetch game from db
+        Game game = getGame(gameId);
+
+        // fetch board from game, grid from board
+        List<Tile> grid = game.getBoard().getGrid();
+
+        // check if tile-to-be-covered is empty
+        if (grid.get(coordinate).getStonesymbol() != null) {
+            throw new ConflictException("This field has already a stone on it, thus this stone could not be placed");
+        }
+    }
+
+    public void placeStone(long gameId, Stone stone, int coordinate) {
+        // fetch game from db
+        Game game = getGame(gameId);
+
+        // fetch board from game
+        List<Tile> grid = game.getBoard().getGrid();
+
+        // TODO: change after stone is implemented
+        grid.get(coordinate).setStonesymbol(stone.toString());
     }
 
     public int calculatePoints(List<Stone> word, List<Tile> tiles) {
