@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Stone;
+import ch.uzh.ifi.seal.soprafs20.entity.Tile;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +69,24 @@ public class RoundService {
 
         // return
         return stone;
+    }
+
+    public int calculatePoints(List<Stone> word, List<Tile> tiles) {
+        assert(word.size() == tiles.size());
+
+        // define sum and multiplicand
+        int sum = 0;
+        int multiplicand = 1;
+
+        // calculate sum and multiplicand
+        for (int i = 0; i < word.size(); ++i) {
+            sum += word.get(i).getValue();
+            multiplicand *= tiles.get(i).getMultiplier();
+        }
+
+        // deploy multiplications
+        sum *= multiplicand;
+
+        return sum;
     }
 }
