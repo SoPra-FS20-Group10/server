@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Stone;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -304,5 +305,22 @@ public class AppController {
             userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
         }
         return userGetDTOs;
+    }
+
+    @GetMapping("/games/{gameId}/players/{playerId}/bag")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<StoneGetDTO> getStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
+        // get stones from player
+        List<Stone> stones = playerService.getStones(playerId, gameId);
+
+        // parse stone entities into stone DTOs
+        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
+
+        for (Stone stone : stones) {
+            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
+        }
+
+        return stoneGetDTOs;
     }
 }
