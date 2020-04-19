@@ -1,10 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Board;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Tile;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
-import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,7 +62,7 @@ public class TileService {
             //check if double field
 
             if(Arrays.asList(doubles).contains(i)){
-                Optional<Tile> foundTile = tileRepository.findByCombo(2,null);
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStonesymbol(2,null);
 
                 // check if game exists
                 if (foundTile.isEmpty()) {
@@ -78,7 +76,7 @@ public class TileService {
 
             else if(Arrays.asList(triples).contains(i)){
 
-                Optional<Tile> foundTile = tileRepository.findByCombo(3,null);
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStonesymbol(3,null);
 
                 // check if game exists
                 if (foundTile.isEmpty()) {
@@ -93,7 +91,7 @@ public class TileService {
             else{
 
 
-                Optional<Tile> foundTile = tileRepository.findByCombo(1,null);
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStonesymbol(1,null);
 
                 // check if game exists
                 if (foundTile.isEmpty()) {
@@ -110,7 +108,7 @@ public class TileService {
         List<Tile> clone = new ArrayList<Tile>(grid);
         Collections.reverse(clone);
         //add the middle star
-        grid.add(tileRepository.findByCombo(2,null).get());
+        grid.add(tileRepository.findByMultiplierAndStonesymbol(2,null).get());
         grid.addAll(clone);
 
 
