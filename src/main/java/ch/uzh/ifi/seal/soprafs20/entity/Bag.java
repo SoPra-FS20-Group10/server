@@ -23,6 +23,9 @@ public class Bag implements Serializable {
     @OneToOne
     private Player player;
 
+    @OneToOne
+    private Game game;
+
     @OneToMany(mappedBy = "bag")
     private List<Stone> stones;
 
@@ -40,5 +43,25 @@ public class Bag implements Serializable {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public List<Stone> getStones() {
+        return stones;
+    }
+
+    public void setStones(List<Stone> stones) {
+        this.stones = stones;
+    }
+
+    public void removeStone(Stone stone) {
+        stones.remove(stone);
     }
 }

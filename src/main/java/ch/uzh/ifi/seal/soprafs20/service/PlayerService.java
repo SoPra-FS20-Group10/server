@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Stone;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -92,6 +94,18 @@ public class PlayerService {
 
         playerRepository.save(player);
         playerRepository.flush();
+    }
+
+    public List<Stone> getStones(long playerId, long gameId) {
+        // fetch player from db
+        Player player = getPlayer(playerId);
+
+        // check if player is part of game
+        if (player.getGame().getId() != gameId) {
+            throw new ConflictException("The player is playing in another game");
+        }
+
+        return player.getBag().getStones();
     }
 
     private boolean doesPlayerExist(long playerId) {
