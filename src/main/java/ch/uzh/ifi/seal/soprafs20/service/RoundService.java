@@ -7,14 +7,19 @@ import ch.uzh.ifi.seal.soprafs20.entity.Tile;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.WordnikGetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.net.URL;
+import java.net.URLConnection;
 
 // TODO: check again if stone and tile entity are implemented
 
@@ -42,6 +47,40 @@ public class RoundService {
         }
 
         return game;
+    }
+
+    private String getWord(List<Stone> letters) {
+        StringBuilder word = new StringBuilder();
+
+        for (Stone letter : letters) {
+            word.append(letter.toString());
+        }
+
+        return word.toString();
+    }
+
+    public void checkWord(List<Stone> letters) {
+        // get word as String
+        String word = getWord(letters);
+
+        // check if word is empty
+        if (word.isEmpty()) {
+            throw new ConflictException("Cannot look up an empty word.");
+        }
+
+        // url for request
+        String uri = "https://api.wordnik.com/v4/word.json/" + word +
+                "/definitions?limit=1&includeRelated=false&useCanonical=false&includeTags=false&" +
+                "api_key=out7ek18doyp1jvmhndr9evfsj1jtsjd8piodr5vkbr47m2s9";
+
+        // send request and get answer
+        try {
+            URL url = new URL(uri);
+            URLConnection connection = url.openConnection();
+            WordnikGetDTO wordnikGetDTO = (WordnikGetDTO) connection.getContent();
+        } catch (Exception exception) {
+            throw new ConflictException(exception.getMessage());
+        }
     }
 
     public Player getCurrentPlayer(long gameId) {

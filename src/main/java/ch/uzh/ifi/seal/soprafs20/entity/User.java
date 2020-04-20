@@ -55,8 +55,6 @@ public class User implements Serializable {
     @Column()
     private int wongames = 0;
 
-
-
 	@OneToOne(mappedBy = "user")
     private Player player;
 
