@@ -21,6 +21,9 @@ public class Stone implements Serializable {
     private Long id;
 
     @Column
+    private String letter;
+
+    @Column
     private int value;
 
     @ManyToOne
@@ -35,6 +38,14 @@ public class Stone implements Serializable {
         this.id = id;
     }
 
+    public String getLetter() {
+        return letter;
+    }
+
+    public void setLetter(String letter) {
+        this.letter = letter;
+    }
+
     public int getValue() {
         return value;
     }
@@ -43,4 +54,11 @@ public class Stone implements Serializable {
         this.value = value;
     }
 
+    public Bag getBag() {
+        return bag;
+    }
+
+    public void setBag(Bag bag) {
+        this.bag = bag;
+    }
 }

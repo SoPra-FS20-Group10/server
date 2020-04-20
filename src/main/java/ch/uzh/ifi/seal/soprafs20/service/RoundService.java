@@ -7,19 +7,18 @@ import ch.uzh.ifi.seal.soprafs20.entity.Tile;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.WordnikGetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.net.URL;
-import java.net.URLConnection;
 
 // TODO: check again if stone and tile entity are implemented
 
@@ -27,10 +26,13 @@ import java.net.URLConnection;
 @Transactional
 public class RoundService {
     private final GameRepository gameRepository;
+    private final TileRepository tileRepository;
 
     @Autowired
-    public RoundService(@Qualifier("gameRepository")GameRepository gameRepository) {
+    public RoundService(@Qualifier("gameRepository")GameRepository gameRepository,
+                        @Qualifier("tileRepository")TileRepository tileRepository) {
         this.gameRepository = gameRepository;
+        this.tileRepository = tileRepository;
     }
 
     private Game getGame(long gameId) {
@@ -127,14 +129,27 @@ public class RoundService {
     }
 
     public void placeStone(long gameId, Stone stone, int coordinate) {
+        Tile tile;
+
         // fetch game from db
         Game game = getGame(gameId);
 
         // fetch board from game
         List<Tile> grid = game.getBoard().getGrid();
 
+        // fetch tile from db
+        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStonesymbol(grid.get(coordinate).getMultiplier(),
+                stone.getLetter());
+
+        // check if tile is present
+        if (foundTile.isEmpty()) {
+            throw new ConflictException("There was a problem while fetching the tile");
+        } else {
+            tile = foundTile.get();
+        }
+
         // TODO: change after stone is implemented
-        grid.get(coordinate).setStonesymbol(stone.toString());
+        grid.set(coordinate, tile);
     }
 
     public int calculatePoints(List<Stone> word, List<Tile> tiles) {
