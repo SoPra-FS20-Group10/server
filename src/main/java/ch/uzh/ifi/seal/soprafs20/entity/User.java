@@ -48,7 +48,7 @@ public class User implements Serializable {
 
     @Column()
     private int overallscore = 0;
-
+ 
     @Column()
     private int playedgames = 0;
 
