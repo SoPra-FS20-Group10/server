@@ -148,7 +148,7 @@ public class User implements Serializable {
 	        return 0;
         }
 
-        return wongames/playedgames;
+        return (float)wongames/playedgames;
     }
 
     public void setWinpercentage() {
@@ -156,7 +156,7 @@ public class User implements Serializable {
             this.winpercentage = 0;
         }
 
-        this.winpercentage = wongames/playedgames;
+        this.winpercentage = (float)wongames/playedgames;
     }
 
     public int getOverallscore() {

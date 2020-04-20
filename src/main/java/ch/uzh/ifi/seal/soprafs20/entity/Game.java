@@ -39,10 +39,9 @@ public class Game implements Serializable {
     private Chat chat;
 
     @OneToOne(mappedBy = "game", optional = false)
-    private Scoreboard scoreboard;
-
-    @OneToOne(mappedBy = "game", optional = false)
     private Board board;
+
+    //bag where to draw stones from
 
     @OneToOne(mappedBy = "game", optional = false)
     private Bag bag;
@@ -96,14 +95,6 @@ public class Game implements Serializable {
 
     public void setOwner(User owner) {
         this.owner = owner;
-    }
-
-    public Scoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    public void setScoreboard(Scoreboard scoreboard) {
-        this.scoreboard = scoreboard;
     }
 
     public Board getBoard() {
