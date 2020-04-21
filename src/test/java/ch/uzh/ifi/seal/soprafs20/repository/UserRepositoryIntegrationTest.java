@@ -33,7 +33,7 @@ public class UserRepositoryIntegrationTest {
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
         user.setPassword("testPassword");
-        user.setCakeday(new Date());
+        user.setCakeDay(new Date());
 
         entityManager.persist(user);
         entityManager.flush();

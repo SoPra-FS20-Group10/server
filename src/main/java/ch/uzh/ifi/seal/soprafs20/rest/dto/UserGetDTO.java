@@ -10,7 +10,12 @@ public class UserGetDTO {
     private String username;
     private UserStatus status;
     private Date birthday;
-    private Date cakeday;
+    private Date cakeDay;
+    private int playtime;
+    private int overallScore;
+    private int playedGames;
+    private int wonGames;
+    private float winPercentage;
 
     public Long getId() {
         return id;
@@ -52,11 +57,51 @@ public class UserGetDTO {
         this.birthday = birthday;
     }
 
-    public Date getCakeday() {
-        return cakeday;
+    public Date getCakeDay() {
+        return cakeDay;
     }
 
-    public void setCakeday(Date cakeday) {
-        this.cakeday = cakeday;
+    public void setCakeDay(Date cakeDay) {
+        this.cakeDay = cakeDay;
+    }
+
+    public int getPlaytime() {
+        return playtime;
+    }
+
+    public void setPlaytime(int playtime) {
+        this.playtime = playtime;
+    }
+
+    public int getOverallScore() {
+        return overallScore;
+    }
+
+    public void setOverallScore(int overallScore) {
+        this.overallScore = overallScore;
+    }
+
+    public int getPlayedGames() {
+        return playedGames;
+    }
+
+    public void setPlayedGames(int playedGames) {
+        this.playedGames = playedGames;
+    }
+
+    public int getWonGames() {
+        return wonGames;
+    }
+
+    public void setWonGames(int wonGames) {
+        this.wonGames = wonGames;
+    }
+
+    public float getWinPercentage() {
+        return winPercentage;
+    }
+
+    public void setWinPercentage(float winPercentage) {
+        this.winPercentage = winPercentage;
     }
 }

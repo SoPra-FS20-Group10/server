@@ -38,7 +38,7 @@ public class TileService {
             String symbol = Character.toString(alpha.charAt(i));
             for(int j = 1; j < 4; j++){
                 tile.setMultiplier(j);
-                tile.setStonesymbol(symbol);
+                tile.setStoneSymbol(symbol);
                 tileRepository.save(tile);
                 tileRepository.flush();
             }
@@ -62,7 +62,7 @@ public class TileService {
             //check if double field
 
             if(Arrays.asList(doubles).contains(i)){
-                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStonesymbol(2,null);
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(2,null);
 
                 // check if game exists
                 if (foundTile.isEmpty()) {
@@ -76,7 +76,7 @@ public class TileService {
 
             else if(Arrays.asList(triples).contains(i)){
 
-                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStonesymbol(3,null);
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(3,null);
 
                 // check if game exists
                 if (foundTile.isEmpty()) {
@@ -91,7 +91,7 @@ public class TileService {
             else{
 
 
-                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStonesymbol(1,null);
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(1,null);
 
                 // check if game exists
                 if (foundTile.isEmpty()) {
@@ -108,7 +108,7 @@ public class TileService {
         List<Tile> clone = new ArrayList<Tile>(grid);
         Collections.reverse(clone);
         //add the middle star
-        grid.add(tileRepository.findByMultiplierAndStonesymbol(2,null).get());
+        grid.add(tileRepository.findByMultiplierAndStoneSymbol(2,null).get());
         grid.addAll(clone);
 
 
