@@ -28,9 +28,6 @@ public class Tile implements Serializable {
     @Column
     private int multiplier;
 
-    @Column
-    private int value;
-
     @ManyToOne
     private Board board;
 
