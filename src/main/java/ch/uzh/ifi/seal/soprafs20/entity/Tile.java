@@ -25,6 +25,9 @@ public class Tile implements Serializable {
     private String stonesymbol;
 
     @Column
+    private int value;
+
+    @Column
     private int multiplier;
 
     @ManyToOne

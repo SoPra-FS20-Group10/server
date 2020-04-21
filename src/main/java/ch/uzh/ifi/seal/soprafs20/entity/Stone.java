@@ -23,8 +23,27 @@ public class Stone implements Serializable {
     @Column
     private int value;
 
+    @Column
+    private String symbol;
+
     @ManyToOne
     private Bag bag;
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Bag getBag() {
+        return bag;
+    }
+
+    public void setBag(Bag bag) {
+        this.bag = bag;
+    }
 
 
     public Long getId() {
