@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface TileRepository extends JpaRepository<Tile, Long> {
-    Optional<Tile> findByMultiplierAndStonesymbol(int multiplier, String stonesymbol);
+    Optional<Tile> findByMultiplierAndStoneSymbol(int multiplier, String stoneSymbol);
 }

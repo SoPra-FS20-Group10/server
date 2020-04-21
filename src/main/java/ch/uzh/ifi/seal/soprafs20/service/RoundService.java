@@ -123,7 +123,7 @@ public class RoundService {
         List<Tile> grid = game.getBoard().getGrid();
 
         // check if tile-to-be-covered is empty
-        if (grid.get(coordinate).getStonesymbol() != null) {
+        if (grid.get(coordinate).getStoneSymbol() != null) {
             throw new ConflictException("This field has already a stone on it, thus this stone could not be placed");
         }
     }
@@ -138,7 +138,7 @@ public class RoundService {
         List<Tile> grid = game.getBoard().getGrid();
 
         // fetch tile from db
-        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStonesymbol(grid.get(coordinate).getMultiplier(),
+        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(grid.get(coordinate).getMultiplier(),
                 stone.getLetter());
 
         // check if tile is present
@@ -152,17 +152,15 @@ public class RoundService {
         grid.set(coordinate, tile);
     }
 
-    public int calculatePoints(List<Stone> word, List<Tile> tiles) {
-        assert(word.size() == tiles.size());
-
+    public int calculatePoints(List<Tile> tiles) {
         // define sum and multiplicand
         int sum = 0;
         int multiplicand = 1;
 
         // calculate sum and multiplicand
-        for (int i = 0; i < word.size(); ++i) {
-            sum += word.get(i).getValue();
-            multiplicand *= tiles.get(i).getMultiplier();
+        for (Tile tile : tiles) {
+            sum += tile.getValue();
+            multiplicand *= tile.getMultiplier();
         }
 
         // deploy multiplications

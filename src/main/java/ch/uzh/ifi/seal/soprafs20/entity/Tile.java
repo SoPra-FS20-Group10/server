@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Internal User Representation
@@ -20,26 +19,32 @@ public class Tile implements Serializable {
     @GeneratedValue
     private Long id;
 
-
     @Column
-    private String stonesymbol;
+    private String stoneSymbol;
 
     @Column
     private int multiplier;
 
+    @Column
+    private int value;
+
     @ManyToOne
     private Board board;
 
-    public String getStonesymbol() {
-        return stonesymbol;
+    public String getStoneSymbol() {
+        return stoneSymbol;
     }
 
-    public void setStonesymbol(String stonesymbol) {
-        this.stonesymbol = stonesymbol;
+    public void setStoneSymbol(String stonesymbol) {
+        this.stoneSymbol = stonesymbol;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public int getMultiplier() {
@@ -50,4 +55,19 @@ public class Tile implements Serializable {
         this.multiplier = multiplier;
     }
 
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
 }
