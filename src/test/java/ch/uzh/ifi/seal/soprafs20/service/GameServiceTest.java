@@ -49,6 +49,7 @@ public class GameServiceTest {
         testPlayer.setUser(testUser);
         testPlayer.setId(2L);
         testPlayer.setUsername("testUsername");
+        testPlayer.setScore(100);
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
@@ -117,6 +118,16 @@ public class GameServiceTest {
         ConflictException exception = assertThrows(ConflictException.class,
                 () -> gameService.createGame(testGame, testPlayer), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    public void addscores_test(){
+        Game createdGame = gameService.createGame(testGame, testPlayer);
+        gameService.addScores(createdGame);
+        assertEquals(testUser.getOverallScore(),100);
+        assertEquals(testPlayer.getScore(),0);
+
+
     }
 }
 
