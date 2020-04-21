@@ -73,11 +73,4 @@ public class Stone implements Serializable {
         this.value = value;
     }
 
-    public Bag getBag() {
-        return bag;
-    }
-
-    public void setBag(Bag bag) {
-        this.bag = bag;
-    }
 }
