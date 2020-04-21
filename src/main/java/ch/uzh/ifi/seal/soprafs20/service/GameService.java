@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
@@ -148,6 +149,18 @@ public class GameService {
         // delete the game
         gameRepository.delete(game);
         gameRepository.flush();
+    }
+
+    public void addScores(Game game){
+        //adds the scores at the end of a game to the user
+
+        List<Player> players = game.getPlayers();
+        for(Player player: players){
+            User user = player.getUser();
+            user.setOverallScore(user.getOverallScore() + player.getScore());
+            player.setScore(0);
+        }
+
     }
 
     public List<Player> getPlayers(long gameId) {
