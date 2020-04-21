@@ -286,6 +286,7 @@ public class AppController {
         //TODO: implement
     }
 
+    /*
     @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -296,6 +297,8 @@ public class AppController {
         }
         return user.getOverallScore();
     }
+
+     */
 
 
     @GetMapping("/games/{gameId}/players{playerId}")
