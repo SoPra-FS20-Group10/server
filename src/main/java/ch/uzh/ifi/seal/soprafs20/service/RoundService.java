@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-// TODO: check again if stone and tile entity are implemented
-
 @Service
 @Transactional
 public class RoundService {
@@ -33,6 +31,91 @@ public class RoundService {
                         @Qualifier("tileRepository")TileRepository tileRepository) {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
+    }
+
+    public int calculatePoints(List<Tile> tiles) {
+        // define sum and multiplicand
+        int sum = 0;
+        int multiplicand = 1;
+
+        // calculate sum and multiplicand
+        for (Tile tile : tiles) {
+            sum += tile.getValue();
+            multiplicand *= tile.getMultiplier();
+        }
+
+        // deploy multiplications
+        sum *= multiplicand;
+
+        return sum;
+    }
+
+    public Player getCurrentPlayer(long gameId) {
+        // fetch game from db
+        Game game = getGame(gameId);
+
+        // fetch current player and reposition it to the last place
+        Player player = game.getPlayers().get(0);
+        game.removePlayer(player);
+        game.addPlayer(player);
+
+        return player;
+    }
+
+    public String placeWord(long gameId, List<Stone> stones, List<Integer> coordinates) {
+        String word;
+
+        // fetch game from db, board from game, grid from board
+        Game game = getGame(gameId);
+        List<Tile> grid = game.getBoard().getGrid();
+
+        // check if placing is valid
+        for(int i = 0; i < stones.size(); ++i) {
+            placeStoneValid(grid, coordinates.get(i));
+        }
+
+        // check if word is vertical or horizontal
+        if (coordinates.get(stones.size() - 1) == (coordinates.get(0) + stones.size() * 15)) {
+            word = buildWordVertical(grid, stones, coordinates);
+        } else {
+            word = buildWordHorizontal(grid, stones, coordinates);
+        }
+
+        // check if word exists
+        String definition = checkWord(word);
+
+        // place new stones
+        for(int i = 0; i < stones.size(); ++i) {
+            placeStone(grid, stones.get(i), coordinates.get(i));
+        }
+
+        // save changes
+        gameRepository.save(game);
+        gameRepository.flush();
+
+        return definition;
+    }
+
+    public Stone drawStone(long gameId) {
+        // fetch game from db
+        Game game = getGame(gameId);
+
+        // get stones from game
+        List<Stone> stones = game.getBag().getStones();
+
+        // draw a random stone
+        int random = new Random().nextInt() % stones.size();
+        Stone stone = stones.get(random);
+
+        // remove stone from game
+        game.getBag().removeStone(stone);
+
+        // save change
+        gameRepository.save(game);
+        gameRepository.flush();
+
+        // return
+        return stone;
     }
 
     private Game getGame(long gameId) {
@@ -51,17 +134,9 @@ public class RoundService {
         return game;
     }
 
-    private String getWord(List<Stone> letters) {
-        StringBuilder word = new StringBuilder();
+    private String checkWord(String word) {
+        WordnikGetDTO wordnikGetDTO;
 
-        for (Stone letter : letters) {
-            word.append(letter.toString());
-        }
-
-        return word.toString();
-    }
-
-    private void checkWord(String word) {
         // check if word is empty
         if (word.isEmpty()) {
             throw new ConflictException("Cannot look up an empty word.");
@@ -76,10 +151,12 @@ public class RoundService {
         try {
             URL url = new URL(uri);
             URLConnection connection = url.openConnection();
-            WordnikGetDTO wordnikGetDTO = (WordnikGetDTO) connection.getContent();
+            wordnikGetDTO = (WordnikGetDTO) connection.getContent();
         } catch (Exception exception) {
             throw new ConflictException(exception.getMessage());
         }
+
+        return wordnikGetDTO.getText();
     }
 
     private String buildWordVertical(List<Tile> grid, List<Stone> played, List<Integer> coordinates) {
@@ -123,64 +200,6 @@ public class RoundService {
         return word.toString();
     }
 
-    public Player getCurrentPlayer(long gameId) {
-        // fetch game from db
-        Game game = getGame(gameId);
-
-        // fetch current player and reposition it to the last place
-        Player player = game.getPlayers().get(0);
-        game.removePlayer(player);
-        game.addPlayer(player);
-
-        return player;
-    }
-
-    public Stone drawStone(long gameId) {
-        // fetch game from db
-        Game game = getGame(gameId);
-
-        // get stones from game
-        List<Stone> stones = game.getBag().getStones();
-
-        // draw a random stone
-        int random = new Random().nextInt() % stones.size();
-        Stone stone = stones.get(random);
-
-        // remove stone from game
-        game.getBag().removeStone(stone);
-
-        // return
-        return stone;
-    }
-
-    public void placeWord(long gameId, List<Stone> stones, List<Integer> coordinates) {
-        String word;
-
-        // fetch game from db, board from game, grid from board
-        Game game = getGame(gameId);
-        List<Tile> grid = game.getBoard().getGrid();
-
-        // check if placing is valid
-        for(int i = 0; i < stones.size(); ++i) {
-            placeStoneValid(grid, coordinates.get(i));
-        }
-
-        // check if word is vertical or horizontal
-        if (coordinates.get(stones.size() - 1) == (coordinates.get(0) + stones.size() * 15)) {
-            word = buildWordVertical(grid, stones, coordinates);
-        } else {
-            word = buildWordHorizontal(grid, stones, coordinates);
-        }
-
-        // check if word exists
-        checkWord(word);
-
-        // place new stones
-        for(int i = 0; i < stones.size(); ++i) {
-            placeStone(grid, stones.get(i), coordinates.get(i));
-        }
-    }
-
     private void placeStoneValid(List<Tile> grid, int coordinate) {
         // check if tile-to-be-covered is empty
         if (grid.get(coordinate).getStoneSymbol() != null) {
@@ -188,7 +207,7 @@ public class RoundService {
         }
     }
 
-    public void placeStone(List<Tile> grid, Stone stone, int coordinate) {
+    private void placeStone(List<Tile> grid, Stone stone, int coordinate) {
         Tile tile;
 
         // fetch tile from db
@@ -206,20 +225,16 @@ public class RoundService {
         grid.set(coordinate, tile);
     }
 
-    public int calculatePoints(List<Tile> tiles) {
-        // define sum and multiplicand
-        int sum = 0;
-        int multiplicand = 1;
+    private void returnStone(Game game, Stone stone) {
+        // get stones from game
+        List<Stone> stones = game.getBag().getStones();
 
-        // calculate sum and multiplicand
-        for (Tile tile : tiles) {
-            sum += tile.getValue();
-            multiplicand *= tile.getMultiplier();
-        }
+        // add stone to the bag
+        stones.add(stone);
+        game.getBag().setStones(stones);
 
-        // deploy multiplications
-        sum *= multiplicand;
-
-        return sum;
+        // save changes
+        gameRepository.save(game);
+        gameRepository.flush();
     }
 }
