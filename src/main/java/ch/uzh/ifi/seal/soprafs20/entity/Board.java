@@ -27,6 +27,9 @@ public class Board implements Serializable {
     @OneToMany(mappedBy = "board")
     private List<Tile> grid;
 
+    @Column
+    private String newWords;
+
     public Long getId() {
         return id;
     }

@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Stone;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
@@ -285,12 +286,30 @@ public class AppController {
         //TODO: implement
     }
 
-    @GetMapping("/game/users/{userId}")
+    @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void getScore() {
-        //TODO: implement
+    public long getUserScore(@PathVariable("userId") long userId) {
+        User user = userService.getUser(userId);
+        if(user == null){
+            throw new NotFoundException("not found");
+        }
+        return user.getOverallScore();
     }
+
+
+    @GetMapping("/games/{gameId}/players{playerId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public long getPlayerScore(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
+
+        Player player = playerService.getPlayer(playerId);
+        if(player == null){
+            throw new NotFoundException("player not found");
+        }
+        return player.getScore();
+    }
+
 
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
