@@ -1,9 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.Stone;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -67,10 +64,10 @@ public interface DTOMapper {
     @Mapping(source = "stoneSymbol", target = "stoneSymbol")
     @Mapping(source = "value", target = "value")
     @Mapping(source = "multiplier", target = "multiplier")
-    TileGetDTO convertEntityToTileGetDTO(Stone stone);
+    TileGetDTO convertEntityToTileGetDTO(Tile tile);
 
     @Mapping(source = "grid", target = "grid")
-    BoardGetDTO convertEntityToBoardGetDTO(Game game);
+    BoardGetDTO convertEntityToBoardGetDTO(Board board);
 
 
 }
