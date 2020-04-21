@@ -35,7 +35,7 @@ public class User implements Serializable {
 	private UserStatus status;
 
 	@Column(nullable = false)
-    private Date cakeday;
+    private Date cakeDay;
 
 	@Column()
     private Date birthday;
@@ -44,16 +44,16 @@ public class User implements Serializable {
     private int playtime;
 
     @Column()
-    private float winpercentage = 0;
+    private float winPercentage = 0;
 
     @Column()
-    private int overallscore = 0;
+    private int overallScore = 0;
  
     @Column()
-    private int playedgames = 0;
+    private int playedGames = 0;
 
     @Column()
-    private int wongames = 0;
+    private int wonGames = 0;
 
 	@OneToOne(mappedBy = "user")
     private Player player;
@@ -93,12 +93,12 @@ public class User implements Serializable {
 		this.status = status;
 	}
 
-	public Date getCakeday() {
-	    return cakeday;
+	public Date getCakeDay() {
+	    return cakeDay;
     }
 
-    public void setCakeday(Date date) {
-	    cakeday = date;
+    public void setCakeDay(Date date) {
+	    cakeDay = date;
     }
 
     public Date getBirthday() {
@@ -141,43 +141,43 @@ public class User implements Serializable {
         this.playtime = playtime;
     }
 
-    public float getWinpercentage() {
-	    if(playedgames == 0){
+    public float getWinPercentage() {
+	    if(playedGames == 0){
 	        return 0;
         }
 
-        return (float)wongames/playedgames;
+        return (float) wonGames / playedGames;
     }
 
-    public void setWinpercentage() {
-        if(playedgames == 0){
-            this.winpercentage = 0;
+    public void setWinPercentage() {
+        if(playedGames == 0){
+            this.winPercentage = 0;
         }
 
-        this.winpercentage = (float)wongames/playedgames;
+        this.winPercentage = (float) wonGames / playedGames;
     }
 
-    public int getOverallscore() {
-        return overallscore;
+    public int getOverallScore() {
+        return overallScore;
     }
 
-    public void setOverallscore(int overallscore) {
-        this.overallscore = overallscore;
+    public void setOverallScore(int overallScore) {
+        this.overallScore = overallScore;
     }
 
-    public int getPlayedgames() {
-        return playedgames;
+    public int getPlayedGames() {
+        return playedGames;
     }
 
-    public void setPlayedgames(int playedgames) {
-        this.playedgames = playedgames;
+    public void setPlayedGames(int playedGames) {
+        this.playedGames = playedGames;
     }
 
-    public int getWongames() {
-        return wongames;
+    public int getWonGames() {
+        return wonGames;
     }
 
-    public void setWongames(int wongames) {
-        this.wongames = wongames;
+    public void setWonGames(int wonGames) {
+        this.wonGames = wonGames;
     }
 }

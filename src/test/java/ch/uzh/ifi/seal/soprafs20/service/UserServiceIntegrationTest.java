@@ -45,7 +45,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
-        testUser.setCakeday(new Date());
+        testUser.setCakeDay(new Date());
 
         // when
         User createdUser = userService.createUser(testUser);
@@ -64,7 +64,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
-        testUser.setCakeday(new Date());
+        testUser.setCakeDay(new Date());
         userService.createUser(testUser);
 
         // check that an error is thrown

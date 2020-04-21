@@ -119,7 +119,7 @@ public class UserService {
 
         // create all fields of the user
         user.setStatus(UserStatus.OFFLINE);
-        user.setCakeday(new Date());
+        user.setCakeDay(new Date());
 
         // saves the given entity but data is only persisted in the database once flush() is called
         user = userRepository.save(user);
