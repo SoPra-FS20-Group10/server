@@ -212,14 +212,19 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<TileGetDTO> getBoard(@PathVariable ("gameId") Long gameId) {
+        List<TileGetDTO> grid = new ArrayList<>();
+
+        // fetch game and grid
         Game game = gameService.getGame(gameId);
         List<Tile> oggrid = game.getGrid();
-        List<TileGetDTO> grid = new ArrayList<>();
+
+        // parse tile into TileGetDTO
         for(Tile tile:oggrid){
             grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
         }
-        return grid;
 
+        // return
+        return grid;
     }
 
     @DeleteMapping("/games/{gameId}")
@@ -326,7 +331,8 @@ public class AppController {
     @PutMapping("/games/{gameId}/players{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
+    public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
+                            @RequestBody WordnikGetDTO wordnikGetDTO) {
 
 
     }
