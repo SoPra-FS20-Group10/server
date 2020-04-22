@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -29,8 +30,8 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private Integer score;
 
-    @OneToOne(mappedBy = "player")
-    private Bag bag;
+    @OneToMany
+    private List<Stone> bag;
 
     @OneToOne
     private User user;
@@ -70,12 +71,20 @@ public class Player implements Serializable {
         this.score = score;
     }
 
-    public Bag getBag() {
+    public List<Stone> getBag() {
         return bag;
     }
 
-    public void setBag(Bag bag) {
+    public void setBag(List<Stone> bag) {
         this.bag = bag;
+    }
+
+    public void addStone(Stone stone) {
+        bag.add(stone);
+    }
+
+    public void removeStone(Stone stone) {
+        bag.remove(stone);
     }
 
     public User getUser() {

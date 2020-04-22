@@ -105,7 +105,7 @@ public class PlayerService {
             throw new ConflictException("The player is playing in another game");
         }
 
-        return player.getBag().getStones();
+        return player.getBag();
     }
 
     private boolean doesPlayerExist(long playerId) {

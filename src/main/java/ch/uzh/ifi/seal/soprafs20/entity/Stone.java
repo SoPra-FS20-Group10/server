@@ -25,17 +25,19 @@ public class Stone implements Serializable {
     @Column
     private int value;
 
-    @ManyToOne
-    private Bag bag;
-
-    public Bag getBag() {
-        return bag;
+    /*
+    public Game getGame() {
+        return game;
     }
 
-    public void setBag(Bag bag) {
-        this.bag = bag;
+     */
+
+    /*
+    public void setGame(Game game) {
+        this.game = game;
     }
 
+     */
 
     public Long getId() {
         return id;

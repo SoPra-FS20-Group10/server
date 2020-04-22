@@ -6,6 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * DTOMapper
  * This class is responsible for generating classes that will automatically transform/map the internal representation
@@ -65,9 +67,4 @@ public interface DTOMapper {
     @Mapping(source = "value", target = "value")
     @Mapping(source = "multiplier", target = "multiplier")
     TileGetDTO convertEntityToTileGetDTO(Tile tile);
-
-    @Mapping(source = "grid", target = "grid")
-    BoardGetDTO convertEntityToBoardGetDTO(Board board);
-
-
 }

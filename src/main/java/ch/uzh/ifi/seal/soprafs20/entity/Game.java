@@ -38,13 +38,11 @@ public class Game implements Serializable {
     @OneToOne(mappedBy = "game", optional = false)
     private Chat chat;
 
-    @OneToOne(mappedBy = "game", optional = false)
-    private Board board;
+    @OneToMany
+    private List<Tile> grid;
 
-    //bag where to draw stones from
-
-    @OneToOne(mappedBy = "game", optional = false)
-    private Bag bag;
+    @OneToMany
+    private List<Stone> bag;
 
     @OneToMany(mappedBy = "game")
     private List<Player> players;
@@ -97,28 +95,42 @@ public class Game implements Serializable {
         this.owner = owner;
     }
 
-    public Board getBoard() {
-        return board;
+    public List<Tile> getGrid() {
+        return grid;
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
+    public void setGrid(List<Tile> grid) {
+        this.grid = grid;
     }
 
-    public Bag getBag() {
+    public List<Stone> getBag() {
         return bag;
     }
 
-    public void setBag(Bag bag) {
+    public void setBag(List<Stone> bag) {
         this.bag = bag;
+    }
+
+    public void addStone(Stone stone) {
+        bag.add(stone);
+    }
+
+    public void removeStone(Stone stone) {
+        bag.remove(stone);
     }
 
     public void initGame() {
         players = new ArrayList<>();
+        bag = new ArrayList<>();
+        grid = new ArrayList<>();
     }
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 
     public void addPlayer(Player player) {

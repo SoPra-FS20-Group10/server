@@ -213,8 +213,7 @@ public class AppController {
     @ResponseBody
     public List<TileGetDTO> getBoard(@PathVariable ("gameId") Long gameId) {
         Game game = gameService.getGame(gameId);
-        Board board = game.getBoard();
-        List<Tile> oggrid = board.getGrid();
+        List<Tile> oggrid = game.getGrid();
         List<TileGetDTO> grid = new ArrayList<>();
         for(Tile tile:oggrid){
             grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));

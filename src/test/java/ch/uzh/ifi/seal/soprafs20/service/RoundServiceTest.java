@@ -34,7 +34,6 @@ public class RoundServiceTest {
     private Game testGame;
     private Player testPlayer;
     private Stone stone1, stone2;
-    private Bag bag1, bag2;
 
     @BeforeEach
     public void setup() {
@@ -61,14 +60,6 @@ public class RoundServiceTest {
         stone2.setId(2L);
         stone2.setSymbol("b");
         stone2.setValue(5);
-
-        bag1 = new Bag();
-        testGame.setBag(bag1);
-        bag1.setStones(new ArrayList<>());
-
-        bag2 = new Bag();
-        testPlayer.setBag(bag2);
-        bag2.setStones(new ArrayList<>());
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
@@ -111,11 +102,8 @@ public class RoundServiceTest {
         stonesPlayer.add(stone2);
         request.add(stone2.getId());
 
-        bag1.setStones(stonesGame);
-        bag2.setStones(stonesPlayer);
-
-        testGame.getBag().setStones(stonesGame);
-        testPlayer.getBag().setStones(stonesPlayer);
+        testGame.setBag(stonesGame);
+        testPlayer.setBag(stonesPlayer);
 
         Mockito.when(stoneRepository.findByIdIs(Mockito.anyLong())).thenReturn(Optional.ofNullable(stone2));
         Mockito.when(gameRepository.findByIdIs(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testGame));
@@ -124,7 +112,7 @@ public class RoundServiceTest {
         List<Stone> exchanged = roundService.exchangeStone(1, 1, request);
 
         assertEquals(1, exchanged.size());
-        assertEquals(stone2.getId(), testGame.getBag().getStones().get(0).getId());
-        assertEquals(stone1.getId(), testPlayer.getBag().getStones().get(0).getId());
+        assertEquals(stone2.getId(), testGame.getBag().get(0).getId());
+        assertEquals(stone1.getId(), testPlayer.getBag().get(0).getId());
     }
 }

@@ -78,7 +78,7 @@ public class RoundService {
 
         // fetch game from db, board from game, grid from board
         Game game = getGame(gameId);
-        List<Tile> grid = game.getBoard().getGrid();
+        List<Tile> grid = game.getGrid();
 
         // check if placing is valid
         for(int i = 0; i < stones.size(); ++i) {
@@ -132,19 +132,19 @@ public class RoundService {
     public Stone drawStone(Game game, Player player) {
         // get stones from game
         List<Stone> stonesToChange;
-        stonesToChange = game.getBag().getStones();
+        stonesToChange = game.getBag();
 
         // draw a random stone
         int random = new Random().nextInt() % stonesToChange.size();
         Stone stone = stonesToChange.get(abs(random));
 
         // remove stone from game
-        game.getBag().removeStone(stone);
+        game.removeStone(stone);
 
         // add stone to player
-        stonesToChange = player.getBag().getStones();
+        stonesToChange = player.getBag();
         stonesToChange.add(stone);
-        player.getBag().setStones(stonesToChange);
+        player.setBag(stonesToChange);
 
         // save change
         gameRepository.save(game);
@@ -298,8 +298,8 @@ public class RoundService {
 
     private void returnStone(Game game, Player player, Stone stone) {
         // get stones from game and player
-        List<Stone> gameStones = game.getBag().getStones();
-        List<Stone> playerStones = player.getBag().getStones();
+        List<Stone> gameStones = game.getBag();
+        List<Stone> playerStones = player.getBag();
 
         // check if player has stone in bag
         if (!playerStones.contains(stone)) {
@@ -308,11 +308,11 @@ public class RoundService {
 
         // remove stone from player
         playerStones.remove(stone);
-        player.getBag().setStones(playerStones);
+        player.setBag(playerStones);
 
         // add stone to the game
         gameStones.add(stone);
-        game.getBag().setStones(gameStones);
+        game.setBag(gameStones);
 
         // save changes
         gameRepository.save(game);

@@ -29,14 +29,14 @@ public class Tile implements Serializable {
     private int multiplier;
 
     @ManyToOne
-    private Board board;
+    private Game game;
 
     public String getStoneSymbol() {
         return stoneSymbol;
     }
 
-    public void setStoneSymbol(String stonesymbol) {
-        this.stoneSymbol = stonesymbol;
+    public void setStoneSymbol(String stoneSymbol) {
+        this.stoneSymbol = stoneSymbol;
     }
 
     public Long getId() {
@@ -63,11 +63,11 @@ public class Tile implements Serializable {
         this.value = value;
     }
 
-    public Board getBoard() {
-        return board;
+    public Game getGame() {
+        return game;
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
+    public void setGame(Game game) {
+        this.game = game;
     }
 }
