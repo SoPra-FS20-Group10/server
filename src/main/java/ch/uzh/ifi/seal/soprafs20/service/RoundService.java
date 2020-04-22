@@ -7,6 +7,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Tile;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.WordnikGetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,15 @@ import java.util.Random;
 public class RoundService {
     private final GameRepository gameRepository;
     private final TileRepository tileRepository;
+    private final PlayerRepository playerRepository;
 
     @Autowired
     public RoundService(@Qualifier("gameRepository")GameRepository gameRepository,
-                        @Qualifier("tileRepository")TileRepository tileRepository) {
+                        @Qualifier("tileRepository")TileRepository tileRepository,
+                        @Qualifier("playerRepository")PlayerRepository playerRepository) {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
+        this.playerRepository = playerRepository;
     }
 
     public int calculatePoints(List<Tile> tiles) {
@@ -96,10 +100,27 @@ public class RoundService {
         return definition;
     }
 
-    public Stone drawStone(long gameId) {
-        // fetch game from db
-        Game game = getGame(gameId);
+    public List<Stone> exchangeStone(long gameId, long playerId,List<Stone> stones) {
+        int end = stones.size();
 
+        // fetch game/player from db
+        Game game = getGame(gameId);
+        Player player = getPlayer(playerId);
+
+        for (Stone stone : stones) {
+            returnStone(game, player, stone);
+        }
+
+        stones.clear();
+
+        for (int i = 0; i < end; ++i) {
+            stones.add(drawStone(game, player));
+        }
+
+        return stones;
+    }
+
+    public Stone drawStone(Game game, Player player) {
         // get stones from game
         List<Stone> stones = game.getBag().getStones();
 
@@ -110,9 +131,17 @@ public class RoundService {
         // remove stone from game
         game.getBag().removeStone(stone);
 
+        // add stone to player
+        stones = player.getBag().getStones();
+        stones.add(stone);
+        player.getBag().setStones(stones);
+
         // save change
         gameRepository.save(game);
         gameRepository.flush();
+
+        playerRepository.save(player);
+        playerRepository.flush();
 
         // return
         return stone;
@@ -132,6 +161,21 @@ public class RoundService {
         }
 
         return game;
+    }
+
+    private Player getPlayer(long playerId) {
+        // fetch player from db
+        Player player;
+        Optional<Player> foundPlayer = playerRepository.findById(playerId);
+
+        // check if player is present
+        if (foundPlayer.isEmpty()) {
+            throw new NotFoundException("The player with the id " + playerId + " could not be found.");
+        } else {
+            player = foundPlayer.get();
+        }
+
+        return player;
     }
 
     private String checkWord(String word) {
@@ -225,7 +269,7 @@ public class RoundService {
         grid.set(coordinate, tile);
     }
 
-    private void returnStone(Game game, Stone stone) {
+    private void returnStone(Game game, Player player, Stone stone) {
         // get stones from game
         List<Stone> stones = game.getBag().getStones();
 
@@ -233,8 +277,16 @@ public class RoundService {
         stones.add(stone);
         game.getBag().setStones(stones);
 
+        // get stones from player
+        stones = player.getBag().getStones();
+        stones.remove(stone);
+        player.getBag().setStones(stones);
+
         // save changes
         gameRepository.save(game);
         gameRepository.flush();
+
+        playerRepository.save(player);
+        playerRepository.flush();
     }
 }
