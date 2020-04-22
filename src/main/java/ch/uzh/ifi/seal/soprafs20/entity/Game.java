@@ -41,7 +41,7 @@ public class Game implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Tile> grid;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Stone> bag;
 
     @OneToMany(mappedBy = "game")
