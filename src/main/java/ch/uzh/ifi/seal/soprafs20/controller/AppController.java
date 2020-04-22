@@ -306,7 +306,7 @@ public class AppController {
      */
 
 
-    @GetMapping("/games/{gameId}/players{playerId}")
+    @PutMapping("/games/{gameId}/players{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
