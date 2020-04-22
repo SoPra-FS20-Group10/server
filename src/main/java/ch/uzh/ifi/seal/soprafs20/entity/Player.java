@@ -31,7 +31,7 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private Integer score;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Stone> bag;
 
     @OneToOne
