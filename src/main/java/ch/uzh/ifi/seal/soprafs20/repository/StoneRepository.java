@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface StoneRepository extends JpaRepository<Stone, Long> {
-    Optional<Stone> findById(long id);
+    Optional<Stone> findByIdIs(long id);
 
 }

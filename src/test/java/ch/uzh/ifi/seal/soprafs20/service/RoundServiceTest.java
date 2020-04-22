@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.StoneRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +25,9 @@ public class RoundServiceTest {
 
     @Mock
     private PlayerRepository playerRepository;
+
+    @Mock
+    private StoneRepository stoneRepository;
 
     @InjectMocks
     private RoundService roundService;
@@ -100,11 +105,11 @@ public class RoundServiceTest {
     public void test_exchangeStones_successful() {
         List<Stone> stonesGame = new ArrayList<>();
         List<Stone> stonesPlayer = new ArrayList<>();
-        List<Stone> request = new ArrayList<>();
+        List<Long> request = new ArrayList<>();
 
         stonesGame.add(stone1);
         stonesPlayer.add(stone2);
-        request.add(stone2);
+        request.add(stone2.getId());
 
         bag1.setStones(stonesGame);
         bag2.setStones(stonesPlayer);
@@ -112,6 +117,7 @@ public class RoundServiceTest {
         testGame.getBag().setStones(stonesGame);
         testPlayer.getBag().setStones(stonesPlayer);
 
+        Mockito.when(stoneRepository.findByIdIs(Mockito.anyLong())).thenReturn(Optional.ofNullable(stone2));
         Mockito.when(gameRepository.findByIdIs(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testGame));
         Mockito.when(playerRepository.findById(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testPlayer));
 

@@ -8,6 +8,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.StoneRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.WordnikGetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,17 @@ public class RoundService {
     private final GameRepository gameRepository;
     private final TileRepository tileRepository;
     private final PlayerRepository playerRepository;
+    private final StoneRepository stoneRepository;
 
     @Autowired
     public RoundService(@Qualifier("gameRepository")GameRepository gameRepository,
                         @Qualifier("tileRepository")TileRepository tileRepository,
-                        @Qualifier("playerRepository")PlayerRepository playerRepository) {
+                        @Qualifier("playerRepository")PlayerRepository playerRepository,
+                        @Qualifier("stoneRepository")StoneRepository stoneRepository) {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
         this.playerRepository = playerRepository;
+        this.stoneRepository = stoneRepository;
     }
 
     public int calculatePoints(List<Tile> tiles) {
@@ -103,8 +107,12 @@ public class RoundService {
         return definition;
     }
 
-    public List<Stone> exchangeStone(long gameId, long playerId, List<Stone> stones) {
+    public List<Stone> exchangeStone(long gameId, long playerId, List<Long> stoneIds) {
+        List<Stone> stones;
         List<Stone> answer = new ArrayList<>();
+
+        // fetch all stones from the db
+        stones = getStones(stoneIds);
 
         // fetch game/player from db
         Game game = getGame(gameId);
@@ -178,6 +186,23 @@ public class RoundService {
         }
 
         return player;
+    }
+
+    private List<Stone> getStones(List<Long> stoneIds) {
+        List<Stone> stones = new ArrayList<>();
+        Optional<Stone> found;
+
+        for (Long id : stoneIds) {
+            found = stoneRepository.findByIdIs(id);
+
+            if (found.isEmpty()) {
+                throw new NotFoundException("The stone with the id " + id + " could not be found");
+            } else {
+                stones.add(found.get());
+            }
+        }
+
+        return stones;
     }
 
     private String checkWord(String word) {

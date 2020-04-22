@@ -2,10 +2,12 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
+import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +27,14 @@ public class AppController {
     private final UserService userService;
     private final GameService gameService;
     private final PlayerService playerService;
+    private final RoundService roundService;
 
-    AppController(UserService userService, GameService gameService, PlayerService playerService) {
+    AppController(UserService userService, GameService gameService, PlayerService playerService,
+                  RoundService roundService) {
         this.userService = userService;
         this.gameService = gameService;
         this.playerService = playerService;
+        this.roundService = roundService;
     }
 
     @PutMapping("/login")
@@ -357,6 +362,33 @@ public class AppController {
             stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
         }
 
+        return stoneGetDTOs;
+    }
+
+    @PutMapping("/games/{gameId}/players/{playerId}/bag?action=exchange")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<StoneGetDTO> exchangeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
+                                            @RequestBody ExchangeStonesDTO exchangeStonesDTO) {
+        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
+
+        // get player
+        Player player = playerService.getPlayer(playerId);
+
+        // check if user is authorized to perform exchange action
+        if (!player.getUser().getToken().equals(exchangeStonesDTO.getToken())) {
+            throw new UnauthorizedException("The user is not authorized to perform this action.");
+        }
+
+        // exchange the stones
+        List<Stone> stones = roundService.exchangeStone(gameId, playerId, exchangeStonesDTO.getStoneIds());
+
+        // parse stones into StoneGetDTO
+        for (Stone stone : stones) {
+            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
+        }
+
+        // return
         return stoneGetDTOs;
     }
 }
