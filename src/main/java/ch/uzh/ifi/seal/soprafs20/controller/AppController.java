@@ -1,9 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.Stone;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -206,11 +203,19 @@ public class AppController {
         //TODO: implement
     }
 
-    @GetMapping("/game")
+    @GetMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void getBoard() {
-        //TODO: implement
+    public List<TileGetDTO> getBoard(@PathVariable ("gameId") Long gameId) {
+        Game game = gameService.getGame(gameId);
+        Board board = game.getBoard();
+        List<Tile> oggrid = board.getGrid();
+        List<TileGetDTO> grid = new ArrayList<>();
+        for(Tile tile:oggrid){
+            grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
+        }
+        return grid;
+
     }
 
     @DeleteMapping("/games/{gameId}")
