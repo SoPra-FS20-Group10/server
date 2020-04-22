@@ -1,10 +1,13 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Tile;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class TileService {
@@ -43,9 +46,7 @@ public class TileService {
 
     }
 
-    public void creategrid(Board board){
-
-        List<Tile> grid = board.getGrid();
+    public void creategrid(List<Tile> grid){
         grid.clear();
 
         int[] doubles = {3, 11,16,20,24,28,32,36,38,42,45,48,52,56,59,64,70,76,80,84,88,92,96,98,102,108};
@@ -101,14 +102,14 @@ public class TileService {
         }
 
         //make a clone and reverse it
-        List<Tile> clone = new ArrayList<Tile>(grid);
+        List<Tile> clone = new ArrayList<>(grid);
         Collections.reverse(clone);
         //add the middle star
         grid.add(tileRepository.findByMultiplierAndStoneSymbol(2,null).get());
         grid.addAll(clone);
 
 
-        board.setGrid(grid);
+        //board.setGrid(grid);
     }
 
 
