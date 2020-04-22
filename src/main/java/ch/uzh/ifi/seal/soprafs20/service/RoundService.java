@@ -17,9 +17,12 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+
+import static java.lang.Math.abs;
 
 @Service
 @Transactional
@@ -100,41 +103,40 @@ public class RoundService {
         return definition;
     }
 
-    public List<Stone> exchangeStone(long gameId, long playerId,List<Stone> stones) {
-        int end = stones.size();
+    public List<Stone> exchangeStone(long gameId, long playerId, List<Stone> stones) {
+        List<Stone> answer = new ArrayList<>();
 
         // fetch game/player from db
         Game game = getGame(gameId);
         Player player = getPlayer(playerId);
 
+        for (int i = 0; i < stones.size(); i++) {
+            answer.add(drawStone(game, player));
+        }
+
         for (Stone stone : stones) {
             returnStone(game, player, stone);
         }
 
-        stones.clear();
-
-        for (int i = 0; i < end; ++i) {
-            stones.add(drawStone(game, player));
-        }
-
-        return stones;
+        return answer;
     }
 
     public Stone drawStone(Game game, Player player) {
         // get stones from game
-        List<Stone> stones = game.getBag().getStones();
+        List<Stone> stonesToChange;
+        stonesToChange = game.getBag().getStones();
 
         // draw a random stone
-        int random = new Random().nextInt() % stones.size();
-        Stone stone = stones.get(random);
+        int random = new Random().nextInt() % stonesToChange.size();
+        Stone stone = stonesToChange.get(abs(random));
 
         // remove stone from game
         game.getBag().removeStone(stone);
 
         // add stone to player
-        stones = player.getBag().getStones();
-        stones.add(stone);
-        player.getBag().setStones(stones);
+        stonesToChange = player.getBag().getStones();
+        stonesToChange.add(stone);
+        player.getBag().setStones(stonesToChange);
 
         // save change
         gameRepository.save(game);
@@ -270,17 +272,22 @@ public class RoundService {
     }
 
     private void returnStone(Game game, Player player, Stone stone) {
-        // get stones from game
-        List<Stone> stones = game.getBag().getStones();
+        // get stones from game and player
+        List<Stone> gameStones = game.getBag().getStones();
+        List<Stone> playerStones = player.getBag().getStones();
 
-        // add stone to the bag
-        stones.add(stone);
-        game.getBag().setStones(stones);
+        // check if player has stone in bag
+        if (!playerStones.contains(stone)) {
+            throw new ConflictException("The player has no such stone.");
+        }
 
-        // get stones from player
-        stones = player.getBag().getStones();
-        stones.remove(stone);
-        player.getBag().setStones(stones);
+        // remove stone from player
+        playerStones.remove(stone);
+        player.getBag().setStones(playerStones);
+
+        // add stone to the game
+        gameStones.add(stone);
+        game.getBag().setStones(gameStones);
 
         // save changes
         gameRepository.save(game);

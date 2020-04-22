@@ -1,10 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.Tile;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,23 +21,22 @@ public class RoundServiceTest {
     @Mock
     private GameRepository gameRepository;
 
+    @Mock
+    private PlayerRepository playerRepository;
+
     @InjectMocks
     private RoundService roundService;
     private Game testGame;
     private Player testPlayer;
-    private User testUser;
+    private Stone stone1, stone2;
+    private Bag bag1, bag2;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        // given user
-        testUser = new User();
-        testUser.setId(2L);
-
         // given player
         testPlayer = new Player();
-        testPlayer.setUser(testUser);
         testPlayer.setId(2L);
         testPlayer.setUsername("testUsername");
         testPlayer.setScore(100);
@@ -47,9 +44,26 @@ public class RoundServiceTest {
         // given game
         testGame = new Game();
         testGame.setId(99);
-        testGame.setOwner(testUser);
         testGame.setName("testName");
         testGame.setPassword("testPassword");
+
+        stone1 = new Stone();
+        stone1.setId(1L);
+        stone1.setLetter("a");
+        stone1.setValue(3);
+
+        stone2 = new Stone();
+        stone2.setId(2L);
+        stone2.setLetter("b");
+        stone2.setValue(5);
+
+        bag1 = new Bag();
+        testGame.setBag(bag1);
+        bag1.setStones(new ArrayList<>());
+
+        bag2 = new Bag();
+        testPlayer.setBag(bag2);
+        bag2.setStones(new ArrayList<>());
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
@@ -80,5 +94,31 @@ public class RoundServiceTest {
         tiles.add(tile4);
 
         assertEquals(84, roundService.calculatePoints(tiles));
+    }
+
+    @Test
+    public void test_exchangeStones_successful() {
+        List<Stone> stonesGame = new ArrayList<>();
+        List<Stone> stonesPlayer = new ArrayList<>();
+        List<Stone> request = new ArrayList<>();
+
+        stonesGame.add(stone1);
+        stonesPlayer.add(stone2);
+        request.add(stone2);
+
+        bag1.setStones(stonesGame);
+        bag2.setStones(stonesPlayer);
+
+        testGame.getBag().setStones(stonesGame);
+        testPlayer.getBag().setStones(stonesPlayer);
+
+        Mockito.when(gameRepository.findByIdIs(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testGame));
+        Mockito.when(playerRepository.findById(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testPlayer));
+
+        List<Stone> exchanged = roundService.exchangeStone(1, 1, request);
+
+        assertEquals(1, exchanged.size());
+        assertEquals(stone2.getId(), testGame.getBag().getStones().get(0).getId());
+        assertEquals(stone1.getId(), testPlayer.getBag().getStones().get(0).getId());
     }
 }
