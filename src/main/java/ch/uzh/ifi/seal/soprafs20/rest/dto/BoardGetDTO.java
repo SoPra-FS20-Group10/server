@@ -7,7 +7,6 @@ import java.util.List;
 public class BoardGetDTO {
     private List<Tile> grid;
 
-
     public List<Tile> getGrid() {
         return grid;
     }

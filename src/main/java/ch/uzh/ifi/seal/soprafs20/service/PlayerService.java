@@ -41,6 +41,9 @@ public class PlayerService {
         player.setScore(0);
         player.setUser(user);
 
+        // initialize bag
+        player.initPlayer();
+
         // save in db
         Player createdPlayer = playerRepository.save(player);
         playerRepository.flush();
