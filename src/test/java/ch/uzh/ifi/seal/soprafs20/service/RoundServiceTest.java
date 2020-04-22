@@ -49,12 +49,12 @@ public class RoundServiceTest {
 
         stone1 = new Stone();
         stone1.setId(1L);
-        stone1.setLetter("a");
+        stone1.setSymbol("a");
         stone1.setValue(3);
 
         stone2 = new Stone();
         stone2.setId(2L);
-        stone2.setLetter("b");
+        stone2.setSymbol("b");
         stone2.setValue(5);
 
         bag1 = new Bag();

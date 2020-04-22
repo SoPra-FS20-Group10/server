@@ -309,6 +309,14 @@ public class AppController {
     @GetMapping("/games/{gameId}/players{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
+
+
+    }
+
+    @GetMapping("/games/{gameId}/players{playerId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     public long getPlayerScore(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
 
         Player player = playerService.getPlayer(playerId);
@@ -317,6 +325,7 @@ public class AppController {
         }
         return player.getScore();
     }
+
 
 
     @GetMapping("/users")

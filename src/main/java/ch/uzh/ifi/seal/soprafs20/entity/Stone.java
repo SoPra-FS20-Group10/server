@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Internal User Representation
@@ -21,24 +20,13 @@ public class Stone implements Serializable {
     private Long id;
 
     @Column
-    private String letter;
+    private String symbol;
 
     @Column
     private int value;
 
-    @Column
-    private String symbol;
-
     @ManyToOne
     private Bag bag;
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
 
     public Bag getBag() {
         return bag;
@@ -57,12 +45,12 @@ public class Stone implements Serializable {
         this.id = id;
     }
 
-    public String getLetter() {
-        return letter;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setLetter(String letter) {
-        this.letter = letter;
+    public void setSymbol(String letter) {
+        this.symbol = letter;
     }
 
     public int getValue() {

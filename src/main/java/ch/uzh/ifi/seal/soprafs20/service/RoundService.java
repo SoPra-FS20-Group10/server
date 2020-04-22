@@ -258,7 +258,7 @@ public class RoundService {
 
         // fetch tile from db
         Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(grid.get(coordinate).getMultiplier(),
-                stone.getLetter());
+                stone.getSymbol());
 
         // check if tile is present
         if (foundTile.isEmpty()) {
