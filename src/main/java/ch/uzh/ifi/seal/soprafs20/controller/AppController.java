@@ -330,8 +330,6 @@ public class AppController {
         return player.getScore();
     }
 
-
-
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Stone;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
@@ -110,6 +111,9 @@ public class GameService {
             throw new ConflictException("The game has already ended.");
         }
 
+        // add stones to the game
+        addAllStones(game);
+
         // set flag to running
         game.setStatus(GameStatus.RUNNING);
 
@@ -168,5 +172,101 @@ public class GameService {
         Game game = getGame(gameId);
 
         return game.getPlayers();
+    }
+
+    private void addAllStones(Game game) {
+        for (int i = 0; i < 10; i++) {
+            game.addStone(new Stone("a", 1));
+        }
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("b", 3));
+        }
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("c", 3));
+        }
+
+        for (int i = 0; i < 5; i++) {
+            game.addStone(new Stone("d", 2));
+        }
+
+        for (int i = 0; i < 13; i++) {
+            game.addStone(new Stone("e", 1));
+        }
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("f", 4));
+        }
+
+        for (int i = 0; i < 4; i++) {
+            game.addStone(new Stone("g", 2));
+        }
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("h", 4));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            game.addStone(new Stone("i", 1));
+        }
+
+        game.addStone(new Stone("j", 8));
+
+        game.addStone(new Stone("k", 5));
+
+        for (int i = 0; i < 5; i++) {
+            game.addStone(new Stone("l", 1));
+        }
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("m", 3));
+        }
+
+        for (int i = 0; i < 7; i++) {
+            game.addStone(new Stone("n", 1));
+        }
+
+        for (int i = 0; i < 9; i++) {
+            game.addStone(new Stone("o", 1));
+        }
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("p", 3));
+        }
+
+        game.addStone(new Stone("q", 10));
+
+        for (int i = 0; i < 7; i++) {
+            game.addStone(new Stone("r", 1));
+        }
+
+        for (int i = 0; i < 5; i++) {
+            game.addStone(new Stone("s", 1));
+        }
+
+        for (int i = 0; i < 7; i++) {
+            game.addStone(new Stone("t", 1));
+        }
+
+        for (int i = 0; i < 5; i++) {
+            game.addStone(new Stone("u", 1));
+        }
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("v", 4));
+        }
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("w", 4));
+        }
+
+        game.addStone(new Stone("x", 8));
+
+        for (int i = 0; i < 3; i++) {
+            game.addStone(new Stone("y", 4));
+        }
+
+        game.addStone(new Stone("z", 10));
     }
 }

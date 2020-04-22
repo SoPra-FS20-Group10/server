@@ -25,19 +25,12 @@ public class Stone implements Serializable {
     @Column
     private int value;
 
-    /*
-    public Game getGame() {
-        return game;
+    public Stone() {}
+
+    public Stone(String symbol, int value) {
+        this.symbol = symbol;
+        this.value = value;
     }
-
-     */
-
-    /*
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-     */
 
     public Long getId() {
         return id;
