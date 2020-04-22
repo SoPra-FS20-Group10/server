@@ -87,10 +87,7 @@ public class GameService {
         return game;
     }
 
-    public void startGame(long gameId, String token) {
-        // fetch game from db
-        Game game = getGame(gameId);
-
+    public void startGame(Game game, String token) {
         // check if user is authorized to start the game
         if (!game.getOwner().getToken().equals(token)) {
             throw new UnauthorizedException("The user is not authorized to start the game");

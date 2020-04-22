@@ -251,8 +251,21 @@ public class AppController {
     public void startGame(@PathVariable("gameId")long gameId, @RequestBody UserTokenDTO userTokenDTO) {
         String token = userTokenDTO.getToken();
 
+        // fetch game from db
+        Game game = gameService.getGame(gameId);
+
+        // fetch players from game
+        List<Player> players = game.getPlayers();
+
         // start the game
-        gameService.startGame(gameId, token);
+        gameService.startGame(game, token);
+
+        // fill the players bag
+        for (Player player : players) {
+            for (int i = 0; i < 8; ++i) {
+                roundService.drawStone(game, player);
+            }
+        }
     }
 
     @GetMapping("/games/{gameId}/players")
