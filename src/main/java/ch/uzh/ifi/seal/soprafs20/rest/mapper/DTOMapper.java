@@ -60,6 +60,7 @@ public interface DTOMapper {
     PlayerGetDTO convertEntityToPlayerGetDTO(Player player);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "symbol", target = "symbol")
     @Mapping(source = "value", target = "value")
     StoneGetDTO convertEntityToStoneGetDTO(Stone stone);
 

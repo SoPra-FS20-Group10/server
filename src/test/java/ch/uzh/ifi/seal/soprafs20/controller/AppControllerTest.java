@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -280,6 +281,18 @@ public class AppControllerTest {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
+
+        // given
+        Player player = new Player();
+        player.initPlayer();
+        List<Player> players = new ArrayList<>();
+        players.add(player);
+
+        Game game = new Game();
+        game.setPlayers(players);
+
+        // when -> then: return player
+        given(gameService.getGame(anyLong())).willReturn(game);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/games/1")

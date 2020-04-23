@@ -76,7 +76,7 @@ public class RoundService {
     public String placeWord(long gameId, List<Stone> stones, List<Integer> coordinates) {
         String word;
 
-        // fetch game from db, board from game, grid from board
+        // fetch game from db, board from game, grid from game
         Game game = getGame(gameId);
         List<Tile> grid = game.getGrid();
 
@@ -86,10 +86,10 @@ public class RoundService {
         }
 
         // check if word is vertical or horizontal
-        if (coordinates.get(stones.size() - 1) == (coordinates.get(0) + stones.size() * 15)) {
-            word = buildWordVertical(grid, stones, coordinates);
+        if ((coordinates.get(stones.size() - 1) % 15) == (coordinates.get(0) % 15)) {
+            word = buildWord(grid, stones, coordinates, "vertical");
         } else {
-            word = buildWordHorizontal(grid, stones, coordinates);
+            word = buildWord(grid, stones, coordinates, "horizontal");
         }
 
         // check if word exists
@@ -230,41 +230,62 @@ public class RoundService {
         return wordnikGetDTO.getText();
     }
 
-    private String buildWordVertical(List<Tile> grid, List<Stone> played, List<Integer> coordinates) {
-        StringBuilder word = new StringBuilder();
-        int start = coordinates.get(0) % 15;
+    private String buildWord(List<Tile> grid, List<Stone> played, List<Integer> coordinates, String mode) {
+        StringBuilder word = new StringBuilder(new StringBuilder());
+        int start, end, toAdd;
 
-        for (int i = start; i < 225; i += 15) {
+        // set start/end-point and toAdd according whether word is vertical or horizontal
+        if (mode.equals("vertical")) {
+            start = coordinates.get(0) % 15;
+            end = 225;
+            toAdd = 15;
+        } else {
+            start = coordinates.get(0) - (coordinates.get(0) % 15);
+            end = start + 15;
+            toAdd = 1;
+        }
+
+        // check left/on-top of the played stones
+        for (int i = coordinates.get(0) - 1; i >= start; i -= toAdd) {
+            // add letter to the front of the word if it exists
+            if (!grid.get(i).getStoneSymbol().isEmpty()) {
+                word.insert(0, grid.get(i).getStoneSymbol());
+            }
+
+            // if tile is empty: break
+            else {
+                break;
+            }
+        }
+
+        // check between first and last stones played
+        for (int i = coordinates.get(0); i <= coordinates.get(coordinates.size() - 1); i += toAdd) {
+            // stone gets played by player
             if (coordinates.contains(i)) {
                 word.append(played.get(coordinates.indexOf(i)));
-            } else if (!grid.get(i).getStoneSymbol().isEmpty()) {
+            }
+
+            // stone is already played
+            else if (!grid.get(i).getStoneSymbol().isEmpty()) {
                 word.append(grid.get(i).getStoneSymbol());
-            } else if (i > coordinates.get(coordinates.size() - 1) && grid.get(i).getStoneSymbol().isEmpty()) {
-                break;
-            } else if (i > coordinates.get(0) && i < coordinates.get(coordinates.size() - 1) &&
-                    grid.get(i).getStoneSymbol().isEmpty()) {
+            }
+
+            // if there's a gap, throw an error
+            else if (grid.get(i).getStoneSymbol().isEmpty()) {
                 throw new ConflictException("The stones played form more than one word");
             }
         }
 
-        return word.toString();
-    }
-
-    private String buildWordHorizontal(List<Tile> grid, List<Stone> played, List<Integer> coordinates) {
-        StringBuilder word = new StringBuilder();
-        int start = coordinates.get(0) - (coordinates.get(0) % 15);
-        int end = start + 15;
-
-        for (int i = start; i < end; ++i) {
-            if (coordinates.contains(i)) {
-                word.append(played.get(coordinates.indexOf(i)));
-            } else if (!grid.get(i).getStoneSymbol().isEmpty()) {
+        // check under/right of the stones played
+        for (int i = coordinates.get(coordinates.size() - 1) + 1; i < end; i += toAdd) {
+            // add letter to the back of the word if it exists
+            if (!grid.get(i).getStoneSymbol().isEmpty()) {
                 word.append(grid.get(i).getStoneSymbol());
-            } else if (i > coordinates.get(coordinates.size() - 1) && grid.get(i).getStoneSymbol().isEmpty()) {
+            }
+
+            // if tile is empty: break
+            else {
                 break;
-            } else if (i > coordinates.get(0) && i < coordinates.get(coordinates.size() - 1) &&
-                    grid.get(i).getStoneSymbol().isEmpty()) {
-                throw new ConflictException("The stones played form more than one word");
             }
         }
 

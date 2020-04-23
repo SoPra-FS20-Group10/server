@@ -159,9 +159,15 @@ public class UserService {
         }
 
         // update user
-        user.setUsername(userUpdate.getUsername());
-        user.setPassword(userUpdate.getPassword());
-        user.setBirthday(userUpdate.getBirthday());
+        if(userUpdate.getUsername() != null){
+            user.setUsername(userUpdate.getUsername());
+        }
+        if(userUpdate.getPassword() != null){
+            user.setPassword(userUpdate.getPassword());
+        }
+        if(userUpdate.getBirthday() != null){
+            user.setBirthday(userUpdate.getBirthday());
+        }
 
         // save updated user
         userRepository.save(user);

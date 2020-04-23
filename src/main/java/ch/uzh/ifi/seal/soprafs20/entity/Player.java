@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private Integer score;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Stone> bag;
 
     @OneToOne
@@ -85,6 +86,10 @@ public class Player implements Serializable {
 
     public void removeStone(Stone stone) {
         bag.remove(stone);
+    }
+
+    public void initPlayer() {
+        bag = new ArrayList<>();
     }
 
     public User getUser() {

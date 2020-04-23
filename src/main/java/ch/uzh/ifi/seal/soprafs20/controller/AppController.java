@@ -212,14 +212,19 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<TileGetDTO> getBoard(@PathVariable ("gameId") Long gameId) {
+        List<TileGetDTO> grid = new ArrayList<>();
+
+        // fetch game and grid
         Game game = gameService.getGame(gameId);
         List<Tile> oggrid = game.getGrid();
-        List<TileGetDTO> grid = new ArrayList<>();
+
+        // parse tile into TileGetDTO
         for(Tile tile:oggrid){
             grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
         }
-        return grid;
 
+        // return
+        return grid;
     }
 
     @DeleteMapping("/games/{gameId}")
@@ -251,8 +256,21 @@ public class AppController {
     public void startGame(@PathVariable("gameId")long gameId, @RequestBody UserTokenDTO userTokenDTO) {
         String token = userTokenDTO.getToken();
 
+        // fetch game from db
+        Game game = gameService.getGame(gameId);
+
+        // fetch players from game
+        List<Player> players = game.getPlayers();
+
         // start the game
-        gameService.startGame(gameId, token);
+        gameService.startGame(game, token);
+
+        // fill the players bag
+        for (Player player : players) {
+            for (int i = 0; i < 8; ++i) {
+                roundService.drawStone(game, player);
+            }
+        }
     }
 
     @GetMapping("/games/{gameId}/players")
@@ -313,7 +331,8 @@ public class AppController {
     @PutMapping("/games/{gameId}/players{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
+    public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
+                            @RequestBody WordnikGetDTO wordnikGetDTO) {
 
 
     }
@@ -329,8 +348,6 @@ public class AppController {
         }
         return player.getScore();
     }
-
-
 
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
