@@ -3,16 +3,19 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Tile;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import ch.uzh.ifi.seal.soprafs20.service.TileService;
 
 import java.util.Optional;
 
@@ -23,11 +26,15 @@ public class GameServiceTest {
     @Mock
     private GameRepository gameRepository;
 
+    @Mock
+    private TileRepository tileRepository;
+
     @InjectMocks
     private GameService gameService;
     private Game testGame;
     private Player testPlayer;
     private User testUser;
+    private Tile testTile;
 
     @BeforeEach
     public void setup() {
@@ -44,6 +51,10 @@ public class GameServiceTest {
         testGame.setName("testName");
         testGame.setPassword("testPassword");
 
+        //given tile
+        testTile = new Tile();
+
+
         // given player
         testPlayer = new Player();
         testPlayer.setUser(testUser);
@@ -53,6 +64,7 @@ public class GameServiceTest {
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
+        Mockito.when(tileRepository.save(Mockito.any())).thenReturn(testTile);
     }
 
     @Test
@@ -127,6 +139,11 @@ public class GameServiceTest {
         assertEquals(testUser.getOverallScore(),100);
         assertEquals(testPlayer.getScore(),0);
 
+
+    }
+
+    @Test
+    public void test_test(){
 
     }
 }

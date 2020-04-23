@@ -2,29 +2,29 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
 public class GameService {
     private final GameRepository gameRepository;
+    private final TileRepository tileRepository;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository")GameRepository gameRepository) {
+    public GameService(@Qualifier("gameRepository")GameRepository gameRepository, @Qualifier("tileRepository")TileRepository tileRepository) {
         this.gameRepository = gameRepository;
+        this.tileRepository = tileRepository;
     }
 
     public Game getGame(long gameId) {
@@ -59,10 +59,14 @@ public class GameService {
         // initialise list and add player
         game.initGame();
         game.addPlayer(owner);
+        //creategrid(game);
+
 
         // save changes
         game = gameRepository.save(game);
         gameRepository.flush();
+
+        this.initTiles();
 
         return game;
     }
@@ -169,4 +173,102 @@ public class GameService {
 
         return game.getPlayers();
     }
+
+    public void creategrid(Game game){
+        List<Tile> grid = new ArrayList<>();
+
+
+        Integer[] doubles = {3, 11,16,20,24,28,32,36,38,42,45,48,52,56,59,64,70,76,80,84,88,92,96,98,102,108};
+        Integer[] triples= {0,7,14,105};
+
+        //create half of board, then flip and append testtest
+
+        for(int i =0; i < 112; i++){
+
+            //check if double field
+
+            if(Arrays.asList(doubles).contains(i)){
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(2,null);
+
+                // check if game exists
+                if (foundTile.isEmpty()) {
+                    throw new NotFoundException("grid cannot be initilazed since the tiles couldnt be found");
+                } else {
+                    grid.add(foundTile.get());
+                }
+            }
+
+            //check if triple tile
+
+            else if(Arrays.asList(triples).contains(i)){
+
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(3,null);
+
+                // check if game exists
+                if (foundTile.isEmpty()) {
+                    throw new NotFoundException("grid cannot be initilazed since the tiles couldnt be found");
+                } else {
+                    grid.add(foundTile.get());
+                }
+
+            }
+
+            //else its single tile
+            else{
+
+
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(1,null);
+
+                // check if game exists
+                if (foundTile.isEmpty()) {
+                    throw new NotFoundException("grid cannot be initilazed since the tiles couldnt be found");
+                } else {
+                    grid.add(foundTile.get());
+                }
+
+            }
+
+        }
+
+        //make a clone and reverse it
+        List<Tile> clone = new ArrayList<>(grid);
+        Collections.reverse(clone);
+        //add the middle star
+        grid.add(tileRepository.findByMultiplierAndStoneSymbol(2,null).get());
+        grid.addAll(clone);
+
+
+        game.setGrid(grid);
+    }
+
+
+    public void initTiles(){
+        String alpha = "abcdefghijklmnopqrstuvwxyz";
+
+        //create and save empty tiles
+        Tile tile = new Tile();
+        tile.setMultiplier(1);
+        tileRepository.save(tile);
+        tile.setMultiplier(2);
+        tileRepository.save(tile);
+        tile.setMultiplier(3);
+        tileRepository.save(tile);
+        tileRepository.flush();
+
+        //add all other stone-tile combinations ot the repo
+
+        for(int i = 0; i < alpha.length();i++){
+            String symbol = Character.toString(alpha.charAt(i));
+            for(int j = 1; j < 4; j++){
+                tile.setMultiplier(j);
+                tile.setStoneSymbol(symbol);
+                tileRepository.save(tile);
+                tileRepository.flush();
+            }
+        }
+
+
+    }
+
+
 }
