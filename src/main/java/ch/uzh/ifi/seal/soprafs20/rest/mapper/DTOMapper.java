@@ -67,5 +67,6 @@ public interface DTOMapper {
     @Mapping(source = "stoneSymbol", target = "stoneSymbol")
     @Mapping(source = "value", target = "value")
     @Mapping(source = "multiplier", target = "multiplier")
+    @Mapping(source = "multivariant", target = "multivariant")
     TileGetDTO convertEntityToTileGetDTO(Tile tile);
 }

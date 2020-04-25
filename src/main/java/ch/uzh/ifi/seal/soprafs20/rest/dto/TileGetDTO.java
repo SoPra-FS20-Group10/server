@@ -6,6 +6,15 @@ public class TileGetDTO {
     private String stoneSymbol;
     private int value;
     private int multiplier;
+    private String multivariant;
+
+    public String getMultivariant() {
+        return multivariant;
+    }
+
+    public void setMultivariant(String multivariant) {
+        this.multivariant = multivariant;
+    }
 
     public String getStoneSymbol() {
         return stoneSymbol;

@@ -51,7 +51,7 @@ public class GameServiceTest {
         testGame.setPassword("testPassword");
 
         //given tile
-        testTile = new Tile(1, null);
+        testTile = new Tile(1, null,null);
 
 
         // given player
@@ -65,7 +65,7 @@ public class GameServiceTest {
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
         Mockito.when(tileRepository.save(Mockito.any())).thenReturn(testTile);
 
-        Mockito.when(tileRepository.findByMultiplierAndStoneSymbol(Mockito.anyInt(), Mockito.eq(null)))
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(Mockito.anyInt(), Mockito.eq(null),Mockito.eq(null)))
                 .thenReturn(Optional.ofNullable(testTile));
     }
 

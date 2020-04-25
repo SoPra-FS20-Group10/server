@@ -28,11 +28,15 @@ public class Tile implements Serializable {
     @Column
     private int multiplier;
 
+    @Column
+    private String multivariant;
+
     public Tile() {}
 
-    public Tile(int multiplier, String stoneSymbol) {
+    public Tile(int multiplier, String stoneSymbol, String multivariant) {
         this.multiplier = multiplier;
         this.stoneSymbol = stoneSymbol;
+        this.multivariant = multivariant;
     }
 
     public String getStoneSymbol() {
@@ -65,5 +69,13 @@ public class Tile implements Serializable {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public String getMultivariant() {
+        return multivariant;
+    }
+
+    public void setMultivariant(String multivariant) {
+        this.multivariant = multivariant;
     }
 }

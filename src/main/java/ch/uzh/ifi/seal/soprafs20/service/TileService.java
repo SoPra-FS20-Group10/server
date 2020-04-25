@@ -19,7 +19,7 @@ public class TileService {
         String alpha = "abcdefghijklmnopqrstuvwxyz";
 
         //create and save empty tiles
-        Tile tile = new Tile(1, null);
+        Tile tile = new Tile(1, null, "w");
         tile.setMultiplier(1);
         tileRepository.save(tile);
         tile.setMultiplier(2);

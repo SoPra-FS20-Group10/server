@@ -178,39 +178,71 @@ public class GameService {
     public void createGrid(Game game){
         List<Tile> grid = new ArrayList<>();
 
-        Integer[] doubles = {3, 11,16,20,24,28,32,36,38,42,45,48,52,56,59,64,70,76,80,84,88,92,96,98,102,108};
-        Integer[] triples= {0,7,14,105};
+        Integer[] doubles = {3, 11,16,28,32,36,38,42,45,48,52,56,59,64,70,84,92,96,98,102,108};
+        Integer[] triples= {0,7,14,20,24,76,80,84,88,105};
+        Integer[] doublesword = {16,28,32,42,48,56,64,70};
+        Integer[] triplesword = {0,7,14,105};
+
+
 
         //create half of board, then flip and append testTest
         for(int i =0; i < 112; i++){
 
             //check if double field
             if(Arrays.asList(doubles).contains(i)){
-                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(2,null);
 
-                // check if tile exists
-                if (foundTile.isEmpty()) {
-                    throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
-                } else {
-                    grid.add(foundTile.get());
+
+                //check if word or letter
+                if(Arrays.asList(doublesword).contains(i)){
+                    Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(2,null, "w");
+
+                    // check if tile exists
+                    if (foundTile.isEmpty()) {
+                        throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                    } else {
+                        grid.add(foundTile.get());
+                    }
+
+                }else{
+                    Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(2,null,"l");
+
+                    // check if tile exists
+                    if (foundTile.isEmpty()) {
+                        throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                    } else {
+                        grid.add(foundTile.get());
+                    }
                 }
             }
 
             //check if triple tile
             else if(Arrays.asList(triples).contains(i)){
-                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(3,null);
+                if(Arrays.asList(triplesword).contains(i)){
+                    Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(3,null,"w");
 
-                // check if tile exists
-                if (foundTile.isEmpty()) {
-                    throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
-                } else {
-                    grid.add(foundTile.get());
+                    // check if tile exists
+                    if (foundTile.isEmpty()) {
+                        throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                    } else {
+                        grid.add(foundTile.get());
+                    }
+
+                }else{
+                    Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(3,null, "l");
+
+                    // check if tile exists
+                    if (foundTile.isEmpty()) {
+                        throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                    } else {
+                        grid.add(foundTile.get());
+                    }
+
                 }
             }
 
             //else its single tile
             else{
-                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(1,null);
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(1,null,null);
 
                 // check if tile exists
                 if (foundTile.isEmpty()) {
@@ -226,7 +258,7 @@ public class GameService {
         Collections.reverse(clone);
 
         //add the middle star
-        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(2,null);
+        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(2,null,"w");
 
         // check if tile exists
         if (foundTile.isEmpty()) {
@@ -248,18 +280,35 @@ public class GameService {
 
         //create and save empty tiles
         for (int i = 1; i < 4; ++i) {
-            tileRepository.save(new Tile(i, null));
+            tileRepository.save(new Tile(i, null,"w"));
             tileRepository.flush();
+
+        }
+
+        for (int i = 1; i < 4; ++i) {
+            tileRepository.save(new Tile(i, null,"l"));
+            tileRepository.flush();
+
         }
 
         //add all other stone-tile combinations ot the repo
         for(int i = 0; i < alpha.length();i++){
             String symbol = Character.toString(alpha.charAt(i));
             for(int j = 1; j < 4; j++){
-                tileRepository.save(new Tile(j, symbol));
+                tileRepository.save(new Tile(j, symbol,"w"));
                 tileRepository.flush();
             }
         }
+
+        for(int i = 0; i < alpha.length();i++){
+            String symbol = Character.toString(alpha.charAt(i));
+            for(int j = 1; j < 4; j++){
+                tileRepository.save(new Tile(j, symbol,"l"));
+                tileRepository.flush();
+            }
+        }
+
+
     }
 
     private void addAllStones(Game game) {

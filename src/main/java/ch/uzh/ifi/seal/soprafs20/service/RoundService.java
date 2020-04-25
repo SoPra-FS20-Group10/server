@@ -303,8 +303,8 @@ public class RoundService {
         Tile tile;
 
         // fetch tile from db
-        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbol(grid.get(coordinate).getMultiplier(),
-                stone.getSymbol());
+        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(grid.get(coordinate).getMultiplier(),
+                stone.getSymbol(),grid.get(coordinate).getMultivariant() );
 
         // check if tile is present
         if (foundTile.isEmpty()) {
