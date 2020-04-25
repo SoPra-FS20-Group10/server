@@ -28,8 +28,12 @@ public class Tile implements Serializable {
     @Column
     private int multiplier;
 
-    @ManyToOne
-    private Game game;
+    public Tile() {}
+
+    public Tile(int multiplier, String stoneSymbol) {
+        this.multiplier = multiplier;
+        this.stoneSymbol = stoneSymbol;
+    }
 
     public String getStoneSymbol() {
         return stoneSymbol;
@@ -61,13 +65,5 @@ public class Tile implements Serializable {
 
     public void setValue(int value) {
         this.value = value;
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
     }
 }
