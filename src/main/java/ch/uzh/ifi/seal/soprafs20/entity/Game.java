@@ -38,7 +38,7 @@ public class Game implements Serializable {
     @OneToOne(mappedBy = "game", optional = false)
     private Chat chat;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Tile> grid;
 
     @OneToMany(cascade = CascadeType.ALL)

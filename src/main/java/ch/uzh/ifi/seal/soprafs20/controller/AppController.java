@@ -216,10 +216,10 @@ public class AppController {
 
         // fetch game and grid
         Game game = gameService.getGame(gameId);
-        List<Tile> oggrid = game.getGrid();
+        List<Tile> ogGrid = game.getGrid();
 
         // parse tile into TileGetDTO
-        for(Tile tile:oggrid){
+        for(Tile tile:ogGrid){
             grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
         }
 

@@ -67,19 +67,18 @@ public class RoundServiceTest {
 
     @Test
     public void test_pointCalculation_validInput() {
-        Tile tile1 = new Tile();
-        tile1.setMultiplier(1);
+        Tile tile1 = new Tile(1, null);
         tile1.setValue(4);
 
-        Tile tile2 = new Tile();
+        Tile tile2 = new Tile(2, null);
         tile2.setMultiplier(2);
         tile2.setValue(1);
 
-        Tile tile3 = new Tile();
+        Tile tile3 = new Tile(3, null);
         tile3.setMultiplier(3);
         tile3.setValue(6);
 
-        Tile tile4 = new Tile();
+        Tile tile4 = new Tile(1, null);
         tile4.setMultiplier(1);
         tile4.setValue(3);
 

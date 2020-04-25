@@ -15,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import ch.uzh.ifi.seal.soprafs20.service.TileService;
 
 import java.util.Optional;
 
@@ -52,7 +51,7 @@ public class GameServiceTest {
         testGame.setPassword("testPassword");
 
         //given tile
-        testTile = new Tile();
+        testTile = new Tile(1, null);
 
 
         // given player
@@ -65,11 +64,14 @@ public class GameServiceTest {
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
         Mockito.when(tileRepository.save(Mockito.any())).thenReturn(testTile);
+
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbol(Mockito.anyInt(), Mockito.eq(null)))
+                .thenReturn(Optional.ofNullable(testTile));
     }
 
     @Test
     public void getGame_validInput_success() {
-        // given game
+                // given game
         Game createdGame = gameService.createGame(testGame, testPlayer);
         Optional<Game> found = Optional.ofNullable(createdGame);
 
@@ -133,13 +135,11 @@ public class GameServiceTest {
     }
 
     @Test
-    public void addscores_test(){
+    public void addScores_test(){
         Game createdGame = gameService.createGame(testGame, testPlayer);
         gameService.addScores(createdGame);
-        assertEquals(testUser.getOverallScore(),100);
-        assertEquals(testPlayer.getScore(),0);
-
-
+        assertEquals(100, testUser.getOverallScore());
+        assertEquals(0, testPlayer.getScore());
     }
 
     @Test
