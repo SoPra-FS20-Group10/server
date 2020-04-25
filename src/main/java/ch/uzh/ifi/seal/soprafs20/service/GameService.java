@@ -64,7 +64,7 @@ public class GameService {
         // initialise list and add player
         game.initGame();
         game.addPlayer(owner);
-        //creategrid(game);
+        creategrid(game);
 
 
         // save changes

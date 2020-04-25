@@ -30,7 +30,7 @@ public class TileService {
         tileRepository.save(tile);
         tile.setMultiplier(3);
         tileRepository.save(tile);
-        tileRepository.flush();
+        //tileRepository.flush();
 
         //add all other stone-tile combinations ot the repo
 
