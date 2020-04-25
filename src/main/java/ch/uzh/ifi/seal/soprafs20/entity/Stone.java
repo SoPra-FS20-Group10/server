@@ -16,7 +16,6 @@ public class Stone implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
     private Long id;
 
     @Column
@@ -27,9 +26,10 @@ public class Stone implements Serializable {
 
     public Stone() {}
 
-    public Stone(String symbol, int value) {
+    public Stone(String symbol, int value, long id) {
         this.symbol = symbol;
         this.value = value;
+        this.id = id;
     }
 
     public Long getId() {

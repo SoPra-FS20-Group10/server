@@ -381,7 +381,7 @@ public class AppController {
         return stoneGetDTOs;
     }
 
-    @PutMapping("/games/{gameId}/players/{playerId}/bag?action=exchange")
+    @PutMapping("/games/{gameId}/players/{playerId}/exchange")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<StoneGetDTO> exchangeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
