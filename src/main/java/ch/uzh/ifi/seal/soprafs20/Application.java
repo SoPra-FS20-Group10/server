@@ -1,5 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Tile;
+import ch.uzh.ifi.seal.soprafs20.service.TileService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

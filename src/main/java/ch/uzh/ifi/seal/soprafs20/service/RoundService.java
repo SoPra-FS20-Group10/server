@@ -76,7 +76,7 @@ public class RoundService {
     public String placeWord(long gameId, List<Stone> stones, List<Integer> coordinates) {
         String word;
 
-        // fetch game from db, board from game, grid from game
+        // fetch game from db, grid from game
         Game game = getGame(gameId);
         List<Tile> grid = game.getGrid();
 

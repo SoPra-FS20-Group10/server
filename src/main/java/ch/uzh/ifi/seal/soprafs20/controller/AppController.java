@@ -1,7 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.*;
-import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -306,28 +306,6 @@ public class AppController {
         playerService.deletePlayer(player);
     }
 
-    @PutMapping("/game/stones/{stoneId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void layStones() {
-        //TODO: implement
-    }
-
-    /*
-    @GetMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public long getUserScore(@PathVariable("userId") long userId) {
-        User user = userService.getUser(userId);
-        if(user == null){
-            throw new NotFoundException("not found");
-        }
-        return user.getOverallScore();
-    }
-
-     */
-
-
     @PutMapping("/games/{gameId}/players{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -341,11 +319,15 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public long getPlayerScore(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
-
+        // fetch entities from db
+        Game game = gameService.getGame(gameId);
         Player player = playerService.getPlayer(playerId);
-        if(player == null){
-            throw new NotFoundException("player not found");
+
+        // check if player is part of game
+        if (!game.getPlayers().contains(player)) {
+            throw new ConflictException("The player " + playerId + " is not part of the game " + gameId);
         }
+
         return player.getScore();
     }
 
