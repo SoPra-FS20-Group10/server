@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Optional;
 
@@ -65,7 +67,7 @@ public class GameServiceTest {
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
         Mockito.when(tileRepository.save(Mockito.any())).thenReturn(testTile);
 
-        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(Mockito.anyInt(), Mockito.eq(null),Mockito.eq(null)))
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(Mockito.anyInt(), Mockito.eq(null),Mockito.anyString()))
                 .thenReturn(Optional.ofNullable(testTile));
     }
 

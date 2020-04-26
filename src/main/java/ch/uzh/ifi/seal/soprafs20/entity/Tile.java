@@ -33,6 +33,15 @@ public class Tile implements Serializable {
 
     public Tile() {}
 
+    public Tile(int multiplier){
+        this.multiplier = multiplier;
+    }
+
+    public Tile(int multiplier, String stoneSymbol){
+        this.multiplier = multiplier;
+        this.stoneSymbol = stoneSymbol;
+    }
+
     public Tile(int multiplier, String stoneSymbol, String multivariant) {
         this.multiplier = multiplier;
         this.stoneSymbol = stoneSymbol;

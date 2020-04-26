@@ -191,7 +191,6 @@ public class GameService {
             //check if double field
             if(Arrays.asList(doubles).contains(i)){
 
-
                 //check if word or letter
                 if(Arrays.asList(doublesword).contains(i)){
                     Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(2,null, "w");
@@ -217,6 +216,8 @@ public class GameService {
 
             //check if triple tile
             else if(Arrays.asList(triples).contains(i)){
+
+                //check if word or letter
                 if(Arrays.asList(triplesword).contains(i)){
                     Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(3,null,"w");
 
@@ -242,7 +243,7 @@ public class GameService {
 
             //else its single tile
             else{
-                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(1,null,null);
+                Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(1,null,"l");
 
                 // check if tile exists
                 if (foundTile.isEmpty()) {
@@ -280,16 +281,22 @@ public class GameService {
 
         //create and save empty tiles
         for (int i = 1; i < 4; ++i) {
-            tileRepository.save(new Tile(i, null,"w"));
+            tileRepository.save(new Tile(i, null,"l"));
             tileRepository.flush();
 
         }
 
         for (int i = 1; i < 4; ++i) {
-            tileRepository.save(new Tile(i, null,"l"));
+            tileRepository.save(new Tile(i, null,"w"));
             tileRepository.flush();
 
         }
+
+
+        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(3,null,"w");
+        foundTile.get();
+
+
 
         //add all other stone-tile combinations ot the repo
         for(int i = 0; i < alpha.length();i++){
