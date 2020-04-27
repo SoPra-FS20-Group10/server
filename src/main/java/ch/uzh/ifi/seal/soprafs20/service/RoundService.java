@@ -73,8 +73,9 @@ public class RoundService {
         return player;
     }
 
-    public String placeWord(long gameId, List<Stone> stones, List<Integer> coordinates) {
+    public String placeWord(long gameId, Player player, List<Long> stoneId, List<Integer> coordinates) {
         String word;
+        List<Stone> stones = getStones(stoneId);
 
         // fetch game from db, grid from game
         Game game = getGame(gameId);
@@ -98,6 +99,7 @@ public class RoundService {
         // place new stones
         for(int i = 0; i < stones.size(); ++i) {
             placeStone(grid, stones.get(i), coordinates.get(i));
+            returnStone(game, player, stones.get(i));
         }
 
         // save changes

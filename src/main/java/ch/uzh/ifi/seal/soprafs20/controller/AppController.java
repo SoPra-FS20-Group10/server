@@ -319,9 +319,16 @@ public class AppController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
-                            @RequestBody WordnikGetDTO wordnikGetDTO) {
+                            @RequestBody PlaceWordDTO placeWordDTO) {
+        // get player
+        Player player = playerService.getPlayer(playerId);
 
+        // check if user is authorized to perform exchange action
+        if (!player.getUser().getToken().equals(placeWordDTO.getToken())) {
+            throw new UnauthorizedException("The user is not authorized to perform this action.");
+        }
 
+        roundService.placeWord(gameId, player, placeWordDTO.getStoneIds(), placeWordDTO.getCoordinates());
     }
 
     @GetMapping("/games/{gameId}/players{playerId}")
