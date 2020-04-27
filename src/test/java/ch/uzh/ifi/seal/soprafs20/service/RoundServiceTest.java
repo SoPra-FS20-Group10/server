@@ -108,7 +108,7 @@ public class RoundServiceTest {
         Mockito.when(gameRepository.findByIdIs(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testGame));
         Mockito.when(playerRepository.findById(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testPlayer));
 
-        List<Stone> exchanged = roundService.exchangeStone(1, 1, request);
+        List<Stone> exchanged = roundService.exchangeStone(testGame, testPlayer, request);
 
         assertEquals(1, exchanged.size());
         assertEquals(stone2.getId(), testGame.getBag().get(0).getId());
