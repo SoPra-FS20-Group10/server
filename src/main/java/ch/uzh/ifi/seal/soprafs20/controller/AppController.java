@@ -331,7 +331,7 @@ public class AppController {
         roundService.placeWord(gameId, player, placeWordDTO.getStoneIds(), placeWordDTO.getCoordinates());
     }
 
-    @GetMapping("/games/{gameId}/players{playerId}")
+    @GetMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public long getPlayerScore(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
