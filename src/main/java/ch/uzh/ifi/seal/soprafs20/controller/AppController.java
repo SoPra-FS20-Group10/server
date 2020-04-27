@@ -262,6 +262,9 @@ public class AppController {
         // fetch players from game
         List<Player> players = game.getPlayers();
 
+        // set currentPlayer
+        game.setCurrentPlayer(roundService.getCurrentPlayer(game));
+
         // start the game
         gameService.startGame(game, token);
 
@@ -318,8 +321,13 @@ public class AppController {
     @PutMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
+    public List<StoneGetDTO> placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
                             @RequestBody PlaceWordDTO placeWordDTO) {
+        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
+
+        // get game
+        Game game = gameService.getGame(gameId);
+
         // get player
         Player player = playerService.getPlayer(playerId);
 
@@ -328,7 +336,31 @@ public class AppController {
             throw new UnauthorizedException("The user is not authorized to perform this action.");
         }
 
-        roundService.placeWord(gameId, player, placeWordDTO.getStoneIds(), placeWordDTO.getCoordinates());
+        // check if it's the players turn
+        if (game.getCurrentPlayer().getId() != playerId) {
+            throw new ConflictException("It's not the turn of the player " + playerId);
+        }
+
+        roundService.placeWord(game, player, placeWordDTO.getStoneIds(), placeWordDTO.getCoordinates());
+
+        game.setCurrentPlayer(roundService.getCurrentPlayer(game));
+
+        // fill the players bag
+        for (int i = 0; i < 7; ++i) {
+            // draw stone
+            Stone stone = roundService.drawStone(game);
+
+            // add stone to player's bag
+            player.addStone(stone);
+            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
+            playerService.savePlayer(player);
+
+            // remove stone from game's bag
+            game.removeStone(stone);
+        }
+        gameService.saveGame(game);
+
+        return stoneGetDTOs;
     }
 
     @GetMapping("/games/{gameId}/players{playerId}")
@@ -386,16 +418,25 @@ public class AppController {
                                             @RequestBody ExchangeStonesDTO exchangeStonesDTO) {
         List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
 
-        // get player
+        // get player and game
         Player player = playerService.getPlayer(playerId);
+        Game game = gameService.getGame(gameId);
 
         // check if user is authorized to perform exchange action
         if (!player.getUser().getToken().equals(exchangeStonesDTO.getToken())) {
             throw new UnauthorizedException("The user is not authorized to perform this action.");
         }
 
+        // check if it's the players turn
+        if (game.getCurrentPlayer().getId() != playerId) {
+            throw new ConflictException("It's not the turn of the player " + playerId);
+        }
+
         // exchange the stones
-        List<Stone> stones = roundService.exchangeStone(gameId, playerId, exchangeStonesDTO.getStoneIds());
+        List<Stone> stones = roundService.exchangeStone(game, player, exchangeStonesDTO.getStoneIds());
+
+        // end turn and set new currentPlayer
+        game.setCurrentPlayer(roundService.getCurrentPlayer(game));
 
         // parse stones into StoneGetDTO
         for (Stone stone : stones) {
@@ -405,4 +446,6 @@ public class AppController {
         // return
         return stoneGetDTOs;
     }
+
+
 }

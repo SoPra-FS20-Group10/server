@@ -61,10 +61,7 @@ public class RoundService {
         return sum;
     }
 
-    public Player getCurrentPlayer(long gameId) {
-        // fetch game from db
-        Game game = getGame(gameId);
-
+    public Player getCurrentPlayer(Game game) {
         // fetch current player and reposition it to the last place
         Player player = game.getPlayers().get(0);
         game.removePlayer(player);
@@ -73,12 +70,11 @@ public class RoundService {
         return player;
     }
 
-    public String placeWord(long gameId, Player player, List<Long> stoneId, List<Integer> coordinates) {
+    public String placeWord(Game game, Player player, List<Long> stoneId, List<Integer> coordinates) {
         String word;
         List<Stone> stones = getStones(stoneId);
 
         // fetch game from db, grid from game
-        Game game = getGame(gameId);
         List<Tile> grid = game.getGrid();
 
         // check if placing is valid
@@ -109,16 +105,12 @@ public class RoundService {
         return definition;
     }
 
-    public List<Stone> exchangeStone(long gameId, long playerId, List<Long> stoneIds) {
+    public List<Stone> exchangeStone(Game game, Player player, List<Long> stoneIds) {
         List<Stone> stones;
         List<Stone> answer = new ArrayList<>();
 
         // fetch all stones from the db
         stones = getStones(stoneIds);
-
-        // fetch game/player from db
-        Game game = getGame(gameId);
-        Player player = getPlayer(playerId);
 
         for (int i = 0; i < stones.size(); i++) {
             Stone stone = drawStone(game);
