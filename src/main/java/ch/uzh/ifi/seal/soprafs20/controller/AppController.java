@@ -315,7 +315,7 @@ public class AppController {
         playerService.deletePlayer(player);
     }
 
-    @PutMapping("/games/{gameId}/players{playerId}")
+    @PutMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
