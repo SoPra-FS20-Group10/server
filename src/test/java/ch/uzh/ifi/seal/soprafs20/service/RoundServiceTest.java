@@ -114,4 +114,23 @@ public class RoundServiceTest {
         assertEquals(stone2.getId(), testGame.getBag().get(0).getId());
         assertEquals(stone1.getId(), testPlayer.getBag().get(0).getId());
     }
+
+    @Test
+    public void drawStone_successful() {
+        testPlayer.initPlayer();
+        testGame.initGame();
+        testGame.addStone(stone1);
+        testGame.addStone(stone2);
+
+        roundService.drawStone(testGame, testPlayer);
+        assertEquals(1, testPlayer.getBag().size());
+        assertEquals(1, testGame.getBag().size());
+
+        roundService.drawStone(testGame, testPlayer);
+        assertEquals(2, testPlayer.getBag().size());
+        assertEquals(0, testGame.getBag().size());
+
+        assertTrue(testPlayer.getBag().contains(stone1));
+        assertTrue(testPlayer.getBag().contains(stone2));
+    }
 }

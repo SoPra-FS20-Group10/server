@@ -283,20 +283,15 @@ public class GameService {
         for (int i = 1; i < 4; ++i) {
             tileRepository.save(new Tile(i, null,"l"));
             tileRepository.flush();
-
         }
 
         for (int i = 1; i < 4; ++i) {
             tileRepository.save(new Tile(i, null,"w"));
             tileRepository.flush();
-
         }
-
 
         Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(3,null,"w");
         foundTile.get();
-
-
 
         //add all other stone-tile combinations ot the repo
         for(int i = 0; i < alpha.length();i++){
@@ -314,13 +309,11 @@ public class GameService {
                 tileRepository.flush();
             }
         }
-
-
     }
 
     private void addAllStones(Game game) {
-
         long id = 0;
+
         for (int i = 0; i < 10; i++) {
             game.addStone(new Stone("A", 1, id));
             id++;

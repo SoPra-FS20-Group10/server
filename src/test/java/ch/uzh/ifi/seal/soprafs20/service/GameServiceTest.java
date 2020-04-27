@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Tile;
@@ -15,8 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Optional;
 
@@ -44,6 +43,7 @@ public class GameServiceTest {
         // given user
         testUser = new User();
         testUser.setId(2L);
+        testUser.setToken("testToken");
 
         // given game
         testGame = new Game();
@@ -51,6 +51,7 @@ public class GameServiceTest {
         testGame.setOwner(testUser);
         testGame.setName("testName");
         testGame.setPassword("testPassword");
+        testGame.initGame();
 
         //given tile
         testTile = new Tile(1, null,null);
@@ -62,6 +63,7 @@ public class GameServiceTest {
         testPlayer.setId(2L);
         testPlayer.setUsername("testUsername");
         testPlayer.setScore(100);
+        testPlayer.initPlayer();
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
@@ -134,6 +136,29 @@ public class GameServiceTest {
         ConflictException exception = assertThrows(ConflictException.class,
                 () -> gameService.createGame(testGame, testPlayer), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    public void startGame_successful() {
+        // given
+        Player player = new Player();
+        player.setUsername("player");
+        player.setStatus(PlayerStatus.READY);
+        player.setId(3L);
+        player.setScore(0);
+        player.initPlayer();
+
+        testGame.setStatus(GameStatus.WAITING);
+        testGame.addPlayer(testPlayer);
+        testGame.addPlayer(player);
+
+        gameService.startGame(testGame, testPlayer.getUser().getToken());
+
+        assertNotNull(testPlayer.getBag());
+        assertNotNull(player.getBag());
+        assertNotNull(testGame.getBag());
+        assertEquals(GameStatus.RUNNING, testGame.getStatus());
+        assertEquals(119, testGame.getBag().size());
     }
 
     @Test
