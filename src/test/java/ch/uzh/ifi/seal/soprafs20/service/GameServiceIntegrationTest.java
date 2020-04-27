@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
@@ -62,6 +63,8 @@ public class GameServiceIntegrationTest {
         player = new Player();
         player.setId(1);
         player.setUser(user);
+        player.setScore(0);
+        player.setStatus(PlayerStatus.NOT_READY);
         player.setUsername("TestUsername");
     }
 

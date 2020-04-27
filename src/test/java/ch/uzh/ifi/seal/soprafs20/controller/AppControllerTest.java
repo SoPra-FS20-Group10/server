@@ -285,10 +285,14 @@ public class AppControllerTest {
         // given
         Player player = new Player();
         player.initPlayer();
+        Player player1 = new Player();
+        player1.initPlayer();
         List<Player> players = new ArrayList<>();
         players.add(player);
+        players.add(player1);
 
         Game game = new Game();
+        game.initGame();
         game.setPlayers(players);
 
         // when -> then: return player

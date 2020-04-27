@@ -267,10 +267,19 @@ public class AppController {
 
         // fill the players bag
         for (Player player : players) {
-            for (int i = 0; i < 8; ++i) {
-                roundService.drawStone(game, player);
+            for (int i = 0; i < 7; ++i) {
+                // draw stone
+                Stone stone = roundService.drawStone(game);
+
+                // add stone to player's bag
+                player.addStone(stone);
+                playerService.savePlayer(player);
+
+                // remove stone from game's bag
+                game.removeStone(stone);
             }
         }
+        gameService.saveGame(game);
     }
 
     @GetMapping("/games/{gameId}/players")

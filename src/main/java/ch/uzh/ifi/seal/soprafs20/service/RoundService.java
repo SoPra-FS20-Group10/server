@@ -119,42 +119,34 @@ public class RoundService {
         Player player = getPlayer(playerId);
 
         for (int i = 0; i < stones.size(); i++) {
-            answer.add(drawStone(game, player));
+            Stone stone = drawStone(game);
+            game.removeStone(stone);
+            player.addStone(stone);
+            answer.add(stone);
         }
 
         for (Stone stone : stones) {
             returnStone(game, player, stone);
         }
 
-        return answer;
-    }
-
-    public Stone drawStone(Game game, Player player) {
-        // get stones from game
-        List<Stone> stonesToChange;
-        stonesToChange = game.getBag();
-
-        // draw a random stone
-        int random = new Random().nextInt() % stonesToChange.size();
-        Stone stone = stonesToChange.get(abs(random));
-
-        // remove stone from game
-        game.removeStone(stone);
-
-        // add stone to player
-        stonesToChange = player.getBag();
-        stonesToChange.add(stone);
-        player.setBag(stonesToChange);
-
-        // save change
         gameRepository.save(game);
         gameRepository.flush();
 
         playerRepository.save(player);
         playerRepository.flush();
 
+        return answer;
+    }
+
+    public Stone drawStone(Game game) {
+        // get stones from game
+        List<Stone> stonesToChange = game.getBag();
+
+        // draw a random stone
+        int random = new Random().nextInt() % stonesToChange.size();
+
         // return
-        return stone;
+        return stonesToChange.get(abs(random));
     }
 
     private Game getGame(long gameId) {
@@ -318,28 +310,15 @@ public class RoundService {
     }
 
     private void returnStone(Game game, Player player, Stone stone) {
-        // get stones from game and player
-        List<Stone> gameStones = game.getBag();
-        List<Stone> playerStones = player.getBag();
-
         // check if player has stone in bag
-        if (!playerStones.contains(stone)) {
+        if (!player.getBag().contains(stone)) {
             throw new ConflictException("The player has no such stone.");
         }
 
         // remove stone from player
-        playerStones.remove(stone);
-        player.setBag(playerStones);
+        player.removeStone(stone);
 
         // add stone to the game
-        gameStones.add(stone);
-        game.setBag(gameStones);
-
-        // save changes
-        gameRepository.save(game);
-        gameRepository.flush();
-
-        playerRepository.save(player);
-        playerRepository.flush();
+        game.addStone(stone);
     }
 }

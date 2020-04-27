@@ -122,11 +122,15 @@ public class RoundServiceTest {
         testGame.addStone(stone1);
         testGame.addStone(stone2);
 
-        roundService.drawStone(testGame, testPlayer);
+        Stone stone = roundService.drawStone(testGame);
+        testPlayer.addStone(stone);
+        testGame.removeStone(stone);
         assertEquals(1, testPlayer.getBag().size());
         assertEquals(1, testGame.getBag().size());
 
-        roundService.drawStone(testGame, testPlayer);
+        stone = roundService.drawStone(testGame);
+        testPlayer.addStone(stone);
+        testGame.removeStone(stone);
         assertEquals(2, testPlayer.getBag().size());
         assertEquals(0, testGame.getBag().size());
 

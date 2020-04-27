@@ -45,10 +45,10 @@ public class PlayerService {
         player.initPlayer();
 
         // save in db
-        Player createdPlayer = playerRepository.save(player);
+        player = playerRepository.save(player);
         playerRepository.flush();
 
-        return createdPlayer;
+        return player;
     }
 
     public Player getPlayer(long playerId) {
@@ -64,6 +64,11 @@ public class PlayerService {
         }
 
         return player;
+    }
+
+    public void savePlayer(Player player) {
+        playerRepository.save(player);
+        playerRepository.flush();
     }
 
     public void readyPlayer(long playerId, String token) {

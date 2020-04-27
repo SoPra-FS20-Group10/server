@@ -47,6 +47,11 @@ public class GameService {
         return game;
     }
 
+    public void saveGame(Game game) {
+        gameRepository.save(game);
+        gameRepository.flush();
+    }
+
     public List<Game> getGames() {
         return gameRepository.findAll();
     }
@@ -61,11 +66,13 @@ public class GameService {
         game.setOwner(owner.getUser());
         game.setStatus(GameStatus.WAITING);
 
-        // initialise list and add player
+        // initialise list
         game.initGame();
         initTiles();
-        game.addPlayer(owner);
         createGrid(game);
+
+        // add player
+        game.addPlayer(owner);
 
         // save changes
         game = gameRepository.save(game);
