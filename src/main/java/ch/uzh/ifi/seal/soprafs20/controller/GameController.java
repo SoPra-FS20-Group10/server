@@ -23,55 +23,20 @@ import java.util.List;
  */
 
 @RestController
-public class AppController {
+public class GameController {
     private final UserService userService;
     private final GameService gameService;
     private final PlayerService playerService;
     private final RoundService roundService;
 
-    AppController(UserService userService, GameService gameService, PlayerService playerService,
-                  RoundService roundService) {
+    GameController(UserService userService, GameService gameService, PlayerService playerService,
+                   RoundService roundService) {
         this.userService = userService;
         this.gameService = gameService;
         this.playerService = playerService;
         this.roundService = roundService;
     }
 
-    @PutMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public ResponseEntity<UserGetDTO> loginUser(@RequestBody UserPostDTO userPostDTO) {
-        // convert API user to internal representation
-        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-
-        // search if user exists in database and change status
-        return userService.loginUser(userInput);
-    }
-
-    @PostMapping("/users")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    public String createUser(@RequestBody UserPostDTO userPostDTO) {
-        // convert API user to internal representation
-        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-
-        // create user
-        userService.createUser(userInput);
-
-        // returns new path
-        return "/login";
-    }
-
-    @PatchMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void logoutUser(@PathVariable("userId")long userId, @RequestBody UserTokenDTO userTokenDTO) {
-        // parse to String
-        String token = userTokenDTO.getToken();
-
-        // logout user
-        userService.logoutUser(token, userId);
-    }
 
     @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
@@ -128,84 +93,6 @@ public class AppController {
 
         // adds the game to the player
         playerService.addGame(player, game);
-    }
-
-    @GetMapping("/players/{playerId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public PlayerGetDTO getPlayer(@PathVariable("playerId")long playerId){
-        Player player = playerService.getPlayer(playerId);
-
-        return DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player);
-    }
-
-    @PutMapping("/players/{playerId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void readyPlayer(@PathVariable("playerId")long playerId, @RequestBody UserTokenDTO userTokenDTO) {
-        // parse input into String
-        String token = userTokenDTO.getToken();
-
-        // ready player
-        playerService.readyPlayer(playerId, token);
-    }
-
-    @GetMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public UserGetDTO getUser(@PathVariable("userId") Long userId) {
-        // search if user exists in database
-        User userInput = userService.getUser(userId);
-
-        // convert internal representation of user back to API
-        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
-    }
-
-    @PutMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void updateUser(@PathVariable("userId") long userId, @RequestBody UserPutDTO userPutDTO) {
-        // convert API user to internal representation
-        User userInputUpdate = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
-
-        // update the user infos
-        userService.updateUser(userInputUpdate, userId);
-    }
-
-    @DeleteMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void deleteUser(@PathVariable ("userId") Long userId) {
-        // delegate to userService
-        userService.deleteUser(userId);
-    }
-
-    @GetMapping("/chat")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void getGlobalMessages() {
-        //TODO: implement
-    }
-
-    @PutMapping("/chat")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void sendGlobalMessages() {
-        //TODO: implement
-    }
-
-    @GetMapping("/chat/{gameId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void getLocalMessages(@PathVariable ("gameId") Long gameId) {
-        //TODO: implement
-    }
-
-    @PutMapping("/chat/{gameId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void sendLocalMessages() {
-        //TODO: implement
     }
 
     @GetMapping("/games/{gameId}")
@@ -382,21 +269,6 @@ public class AppController {
         }
 
         return player.getScore();
-    }
-
-    @GetMapping("/users")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<UserGetDTO> getAllUsers() {
-        // fetch all users in the internal representation
-        List<User> users = userService.getUsers();
-        List<UserGetDTO> userGetDTOs = new ArrayList<>();
-
-        // convert each user to the API representation
-        for (User user : users) {
-            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-        }
-        return userGetDTOs;
     }
 
     @GetMapping("/games/{gameId}/players/{playerId}/bag")

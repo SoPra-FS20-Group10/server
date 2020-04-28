@@ -42,8 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This is a WebMvcTest which allows to test the UserController i.e. GET/POST request without actually sending them over the network.
  * This tests if the UserController works.
  */
-@WebMvcTest(AppController.class)
-public class AppControllerTest {
+@WebMvcTest(GameController.class)
+public class GameControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -59,149 +59,6 @@ public class AppControllerTest {
 
     @MockBean
     private RoundService roundService;
-
-    // user tests:
-
-    @Test
-    public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
-        // given
-        User user = new User();
-        user.setId(1);
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setStatus(UserStatus.OFFLINE);
-
-        List<User> allUsers = Collections.singletonList(user);
-
-        // this mocks the UserService -> we define above what the userService should return when getUsers() is called
-        given(userService.getUsers()).willReturn(allUsers);
-
-        // when
-        MockHttpServletRequestBuilder getRequest = get("/users").contentType(MediaType.APPLICATION_JSON);
-
-        // then
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(notNullValue())))
-                .andExpect(jsonPath("$[0].username", is(user.getUsername())))
-                .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
-    }
-
-    @Test
-    public void createUser_validInput_userCreated() throws Exception {
-        // given
-        User user = new User();
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-
-        UserPostDTO userPostDTO = new UserPostDTO();
-        userPostDTO.setUsername("testUsername");
-        userPostDTO.setPassword("testPassword");
-
-        given(userService.createUser(Mockito.any())).willReturn(user);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder postRequest = post("/users")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(userPostDTO));
-
-        // then
-        mockMvc.perform(postRequest).andExpect(status().isCreated());
-    }
-
-    @Test
-    public void loginUser_validInput_userLoggedIn() throws Exception {
-        // given
-        UserPostDTO userPostDTO = new UserPostDTO();
-        userPostDTO.setUsername("testUsername");
-        userPostDTO.setPassword("testPassword");
-
-        User user = new User();
-        user.setId(1);
-        user.setToken("testToken");
-        user.setUsername("testUsername");
-        user.setStatus(UserStatus.ONLINE);
-        UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
-
-        // when -> then: return user
-        given(userService.loginUser(Mockito.any())).willReturn(ResponseEntity.status(HttpStatus.OK).body(userGetDTO));
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPostDTO));
-
-        // then
-        mockMvc.perform(putRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(notNullValue())))
-                .andExpect(jsonPath("$.token", is(user.getToken())))
-                .andExpect(jsonPath("$.username", is(user.getUsername())))
-                .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
-    }
-
-    @Test
-    public void getUser_validInput() throws Exception {
-        // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setStatus(UserStatus.OFFLINE);
-
-        // when -> then: return user
-        given(userService.getUser(Mockito.anyLong())).willReturn(user);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder getRequest = get("/users/1")
-                .contentType(MediaType.APPLICATION_JSON);
-
-        // then
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(notNullValue())))
-                .andExpect(jsonPath("$.username", is(user.getUsername())))
-                .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
-    }
-
-    @Test
-    public void updateUser_validInput() throws Exception {
-        // given
-        UserPutDTO userPutDTO = new UserPutDTO();
-        userPutDTO.setUsername("bla");
-        userPutDTO.setPassword("bla");
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/users/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPutDTO));
-
-        // then
-        mockMvc.perform(putRequest).andExpect(status().isNoContent());
-    }
-
-    @Test
-    public void logoutUser_validInput() throws Exception {
-        UserTokenDTO userTokenDTO = new UserTokenDTO();
-        userTokenDTO.setToken("testToken");
-
-        // do the request + validate the result
-        MockHttpServletRequestBuilder patchRequest = patch("/users/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userTokenDTO));
-
-        // then
-        mockMvc.perform(patchRequest)
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void deleteUser_validInput() throws Exception {
-        // do the request + validate the result
-        MockHttpServletRequestBuilder deleteRequest = delete("/users/1")
-                .contentType(MediaType.APPLICATION_JSON);
-
-        // then
-        mockMvc.perform(deleteRequest)
-                .andExpect(status().isNoContent());
-    }
 
     // game tests:
 
@@ -339,28 +196,6 @@ public class AppControllerTest {
         mockMvc.perform(deleteRequest).andExpect(status().isOk());
     }
 
-    // player tests:
-
-    @Test
-    public void getPlayer_validInput() throws Exception {
-        // given
-        Player player = new Player();
-        player.setId(1L);
-        player.setUsername("testUsername");
-        player.setStatus(PlayerStatus.NOT_READY);
-        player.setScore(0);
-
-        // when -> then: return player
-        given(playerService.getPlayer(anyLong())).willReturn(player);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder getRequest = get("/players/1")
-                .contentType(MediaType.APPLICATION_JSON);
-
-        // then
-        mockMvc.perform(getRequest).andExpect(status().isOk());
-    }
-
     @Test
     public void getPlayersFromGame_validInput() throws Exception {
         // given
@@ -388,20 +223,7 @@ public class AppControllerTest {
                 .andExpect(jsonPath("$[0].score", is(player.getScore())));
     }
 
-    @Test
-    public void readyPlayer_validInput() throws Exception {
-        // given
-        UserTokenDTO userTokenDTO = new UserTokenDTO();
-        userTokenDTO.setToken("testToken");
 
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/players/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userTokenDTO));
-
-        // then
-        mockMvc.perform(putRequest).andExpect(status().isOk());
-    }
 
 
     /**

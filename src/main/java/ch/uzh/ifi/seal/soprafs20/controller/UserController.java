@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.UserTokenDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -27,25 +28,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    /*
-    @GetMapping("/users")
+    @PutMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<UserGetDTO> getAllUsers() {
-        // fetch all users in the internal representation
-        List<User> users = userService.getUsers();
-        List<UserGetDTO> userGetDTOs = new ArrayList<>();
+    public ResponseEntity<UserGetDTO> loginUser(@RequestBody UserPostDTO userPostDTO) {
+        // convert API user to internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
-        // convert each user to the API representation
-        for (User user : users) {
-            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-        }
-        return userGetDTOs;
+        // search if user exists in database and change status
+        return userService.loginUser(userInput);
     }
 
-     */
-
-    /*
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -60,23 +53,23 @@ public class UserController {
         return "/login";
     }
 
-    @PutMapping("/login")
+    @PatchMapping("/users/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<UserGetDTO> loginUser(@RequestBody UserPostDTO userPostDTO) {
-        // convert API user to internal representation
-        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    public void logoutUser(@PathVariable("userId")long userId, @RequestBody UserTokenDTO userTokenDTO) {
+        // parse to String
+        String token = userTokenDTO.getToken();
 
-        // search if user exists in database and change status
-        return userService.loginUser(userInput);
+        // logout user
+        userService.logoutUser(token, userId);
     }
 
     @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserGetDTO getUser(@PathVariable("userId") Long userId) {
-
         // search if user exists in database
-        User userInput = userService.getUserById(userId);
+        User userInput = userService.getUser(userId);
 
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
@@ -93,5 +86,29 @@ public class UserController {
         userService.updateUser(userInputUpdate, userId);
     }
 
-     */
+    @DeleteMapping("/users/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void deleteUser(@PathVariable ("userId") Long userId) {
+        // delegate to userService
+        userService.deleteUser(userId);
+    }
+
+    @GetMapping("/users")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<UserGetDTO> getAllUsers() {
+        // fetch all users in the internal representation
+        List<User> users = userService.getUsers();
+        List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
+        // convert each user to the API representation
+        for (User user : users) {
+            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+        }
+        return userGetDTOs;
+    }
+
+
+
 }
