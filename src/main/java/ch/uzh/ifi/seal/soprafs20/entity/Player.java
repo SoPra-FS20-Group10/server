@@ -37,6 +37,9 @@ public class Player implements Serializable {
     @OneToOne
     private User user;
 
+    @OneToOne
+    private Game currently;
+
     @ManyToOne
     private Game game;
 

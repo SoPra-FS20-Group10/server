@@ -47,8 +47,7 @@ public class Game implements Serializable {
     @OneToMany(mappedBy = "game")
     private List<Player> players;
 
-    @OneToOne
-    private Player currentPlayer;
+    private long currentPlayerId;
 
     public Long getId() {
         return id;
@@ -144,11 +143,11 @@ public class Game implements Serializable {
         players.remove(player);
     }
 
-    public Player getCurrentPlayer() {
-        return this.currentPlayer;
+    public long getCurrentPlayerId() {
+        return this.currentPlayerId;
     }
 
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
+    public void setCurrentPlayerId(long currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
     }
 }
