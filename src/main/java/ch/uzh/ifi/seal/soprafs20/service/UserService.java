@@ -218,6 +218,7 @@ public class UserService {
         User user = game.getOwner();
         user.setGame(null);
 
+
         // save change
         userRepository.save(user);
         userRepository.flush();

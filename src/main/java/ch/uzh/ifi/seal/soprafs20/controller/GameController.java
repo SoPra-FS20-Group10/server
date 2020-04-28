@@ -132,6 +132,8 @@ public class GameController {
 
         // delete all players and remove player from user
         for (Player player : players) {
+            User user = player.getUser();
+            user.setGame(null);
             userService.removePlayer(player);
             playerService.deletePlayer(player);
         }
@@ -270,6 +272,7 @@ public class GameController {
 
         return player.getScore();
     }
+
 
     @GetMapping("/games/{gameId}/players/{playerId}/bag")
     @ResponseStatus(HttpStatus.OK)
