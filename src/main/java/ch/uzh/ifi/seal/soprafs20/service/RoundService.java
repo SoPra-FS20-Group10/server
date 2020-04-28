@@ -245,12 +245,12 @@ public class RoundService {
             }
 
             // stone is already played
-            else if (!grid.get(i).getStoneSymbol().isEmpty()) {
+            else if (grid.get(i).getStoneSymbol() != null) {
                 word.append(grid.get(i).getStoneSymbol());
             }
 
             // if there's a gap, throw an error
-            else if (grid.get(i).getStoneSymbol().isEmpty()) {
+            else if (grid.get(i).getStoneSymbol() == null) {
                 throw new ConflictException("The stones played form more than one word");
             }
         }
