@@ -60,8 +60,6 @@ public class GameControllerTest {
     @MockBean
     private RoundService roundService;
 
-    // game tests:
-
     @Test
     public void getGames_validInput() throws Exception {
         // given
@@ -141,6 +139,7 @@ public class GameControllerTest {
 
         // given
         Player player = new Player();
+        player.setId(1L);
         player.initPlayer();
         Player player1 = new Player();
         player1.initPlayer();
@@ -154,6 +153,7 @@ public class GameControllerTest {
 
         // when -> then: return player
         given(gameService.getGame(anyLong())).willReturn(game);
+        given(roundService.getCurrentPlayer(Mockito.any())).willReturn(player);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/games/1")

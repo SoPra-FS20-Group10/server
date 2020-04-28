@@ -10,7 +10,6 @@ import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -98,20 +97,39 @@ public class GameController {
     @GetMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<TileGetDTO> getBoard(@PathVariable ("gameId") Long gameId) {
+    public GameGetDTO getGame(@PathVariable ("gameId") Long gameId) {
         List<TileGetDTO> grid = new ArrayList<>();
+        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
+        List<String> words = new ArrayList<>();
 
         // fetch game and grid
         Game game = gameService.getGame(gameId);
         List<Tile> ogGrid = game.getGrid();
+        List<Stone> bag = game.getBag();
+        GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+
+        System.out.println(game.getBag().size());
+        System.out.println(game.getGrid().size());
 
         // parse tile into TileGetDTO
-        for(Tile tile:ogGrid){
+        for(Tile tile : ogGrid){
             grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
         }
 
+        // parse stone into StoneGetDTO
+        for (Stone stone : bag) {
+            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
+        }
+
+        System.out.println(game.getCurrentPlayerId());
+        System.out.println(stoneGetDTOs.size());
+
+        gameGetDTO.setCurrentPlayerId(game.getCurrentPlayerId());
+        gameGetDTO.setStones(stoneGetDTOs);
+        gameGetDTO.setBoard(grid);
+
         // return
-        return grid;
+        return gameGetDTO;
     }
 
     @DeleteMapping("/games/{gameId}")
@@ -152,7 +170,7 @@ public class GameController {
         List<Player> players = game.getPlayers();
 
         // set currentPlayer
-        game.setCurrentPlayer(roundService.getCurrentPlayer(game));
+        game.setCurrentPlayerId(roundService.getCurrentPlayer(game).getId());
 
         // start the game
         gameService.startGame(game, token);
@@ -226,7 +244,7 @@ public class GameController {
         }
 
         // check if it's the players turn
-        if (game.getCurrentPlayer().getId() != playerId) {
+        if (game.getCurrentPlayerId() != playerId) {
             throw new ConflictException("It's not the turn of the player " + playerId);
         }
 
@@ -234,7 +252,7 @@ public class GameController {
         roundService.placeWord(game, player, placeWordDTO.getStoneIds(), placeWordDTO.getCoordinates());
 
         // set new current player after a successful turn
-        game.setCurrentPlayer(roundService.getCurrentPlayer(game));
+        game.setCurrentPlayerId(roundService.getCurrentPlayer(game).getId());
 
         // fill the players bag
         for (int i = 0; i < placeWordDTO.getStoneIds().size(); ++i) {
@@ -308,7 +326,7 @@ public class GameController {
         }
 
         // check if it's the players turn
-        if (game.getCurrentPlayer().getId() != playerId) {
+        if (game.getCurrentPlayerId() != playerId) {
             throw new ConflictException("It's not the turn of the player " + playerId);
         }
 
@@ -316,7 +334,7 @@ public class GameController {
         List<Stone> stones = roundService.exchangeStone(game, player, exchangeStonesDTO.getStoneIds());
 
         // end turn and set new currentPlayer
-        game.setCurrentPlayer(roundService.getCurrentPlayer(game));
+        game.setCurrentPlayerId(roundService.getCurrentPlayer(game).getId());
 
         // parse stones into StoneGetDTO
         for (Stone stone : stones) {
