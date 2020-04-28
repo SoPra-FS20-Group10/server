@@ -76,16 +76,17 @@ public class GameService {
         // starting with this character
         for (int i = 0; i < 15; i++)
             for (int j = 0; j < 15; j++)
-                if(board2d[i][j].getStoneSymbol() != null)
-                    word = this.findVerticalWords(board2d, visited, 0,0);
-                    if(!word.equals(""))
-                        if (!words.contains(word))
-                            words.add(word);
-                    word = this.findHorizontalWords(board2d, visited, 0,0);
-                    if(!word.equals(""))
+                if(board2d[i][j].getStoneSymbol() != null) {
+                    word = this.findVerticalWords(board2d, visited, i, j);
+                    if (!word.equals(""))
                         if (!words.contains(word))
                             words.add(word);
 
+                    word = this.findHorizontalWords(board2d, visited, i,j);
+                    if(!word.equals(""))
+                        if (!words.contains(word))
+                            words.add(word);
+                }
         return words;
         }
 
