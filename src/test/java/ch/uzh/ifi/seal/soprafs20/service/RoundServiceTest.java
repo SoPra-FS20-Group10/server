@@ -137,4 +137,5 @@ public class RoundServiceTest {
         assertTrue(testPlayer.getBag().contains(stone1));
         assertTrue(testPlayer.getBag().contains(stone2));
     }
+
 }
