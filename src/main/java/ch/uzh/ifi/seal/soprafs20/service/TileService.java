@@ -19,22 +19,22 @@ public class TileService {
         String alpha = "abcdefghijklmnopqrstuvwxyz";
 
         //create and save empty tiles
-        Tile tile = new Tile(1, null, "w");
-        tile.setMultiplier(1);
-        tileRepository.save(tile);
-        tile.setMultiplier(2);
-        tileRepository.save(tile);
-        tile.setMultiplier(3);
-        tileRepository.save(tile);
-        //tileRepository.flush();
+        for (int i = 1; i < 4; ++i) {
+            tileRepository.save(new Tile(i, null,"l"));
+            tileRepository.flush();
+
+            tileRepository.save(new Tile(i, null,"w"));
+            tileRepository.flush();
+        }
 
         //add all other stone-tile combinations ot the repo
-        for(int i = 0; i < alpha.length();i++){
+        for(int i = 0; i < alpha.length(); i++){
             String symbol = Character.toString(alpha.charAt(i));
             for(int j = 1; j < 4; j++){
-                tile.setMultiplier(j);
-                tile.setStoneSymbol(symbol);
-                tileRepository.save(tile);
+                tileRepository.save(new Tile(j, symbol,"w"));
+                tileRepository.flush();
+
+                tileRepository.save(new Tile(j, symbol,"l"));
                 tileRepository.flush();
             }
         }

@@ -161,6 +161,7 @@ public class GameService {
         }
 
         // delete the game
+        game.setStatus(GameStatus.ENDED);
         gameRepository.delete(game);
         gameRepository.flush();
     }

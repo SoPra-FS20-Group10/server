@@ -237,7 +237,7 @@ public class AppController {
         // fetch all players from the game
         List<Player> players = gameService.getPlayers(gameId);
 
-        // remove game from user
+        // remove game from owner
         userService.removeGame(gameService.getGame(gameId));
 
         // end game
