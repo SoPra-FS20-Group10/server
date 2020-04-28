@@ -157,7 +157,6 @@ public class GameServiceTest {
         assertNotNull(player.getBag());
         assertNotNull(testGame.getBag());
         assertEquals(GameStatus.RUNNING, testGame.getStatus());
-        assertEquals(119, testGame.getBag().size());
     }
 
     @Test

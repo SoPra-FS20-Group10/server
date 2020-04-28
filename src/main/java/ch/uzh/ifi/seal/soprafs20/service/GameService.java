@@ -72,8 +72,12 @@ public class GameService {
         game.initGame();
         createGrid(game);
 
+        // add stones to the game
+        addAllStones(game);
+
         // add player
         game.addPlayer(owner);
+        game.setCurrentPlayerId(owner.getId());
 
         // save changes
         game = gameRepository.save(game);
@@ -124,9 +128,6 @@ public class GameService {
         } else if (game.getStatus() == GameStatus.ENDED) {
             throw new ConflictException("The game has already ended.");
         }
-
-        // add stones to the game
-        addAllStones(game);
 
         // set flag to running
         game.setStatus(GameStatus.RUNNING);
