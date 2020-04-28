@@ -108,9 +108,6 @@ public class GameController {
         List<Stone> bag = game.getBag();
         GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
 
-        System.out.println(game.getBag().size());
-        System.out.println(game.getGrid().size());
-
         // parse tile into TileGetDTO
         for(Tile tile : ogGrid){
             grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
@@ -120,9 +117,6 @@ public class GameController {
         for (Stone stone : bag) {
             stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
         }
-
-        System.out.println(game.getCurrentPlayerId());
-        System.out.println(stoneGetDTOs.size());
 
         gameGetDTO.setCurrentPlayerId(game.getCurrentPlayerId());
         gameGetDTO.setStones(stoneGetDTOs);

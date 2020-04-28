@@ -3,11 +3,6 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
-
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.Stone;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
@@ -18,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 @Service
@@ -62,7 +56,7 @@ public class GameService {
     public ArrayList<String> checkBoard(List<Tile> board) {
         Tile[][] board2d = new Tile[15][15];
         Boolean[][] visited = new Boolean[15][15];
-        ArrayList<String> words = new ArrayList<String>();
+        ArrayList<String> words = new ArrayList<>();
         // Convert to 2dArray
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
@@ -71,7 +65,7 @@ public class GameService {
         }
 
         // List with all words
-        String word = "";
+        String word;
         // Consider every character and look for all words
         // starting with this character
         for (int i = 0; i < 15; i++)
@@ -398,122 +392,97 @@ public class GameService {
         long id = 0;
 
         for (int i = 0; i < 10; i++) {
-            game.addStone(new Stone("a", 1, id));
-            id++;
+            game.addStone(new Stone("a", 1));
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("b", 3, id));
-            id++;
+            game.addStone(new Stone("b", 3));
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("c", 3, id));
-            id++;
+            game.addStone(new Stone("c", 3));
         }
 
         for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("d", 2, id));
-            id++;
+            game.addStone(new Stone("d", 2));
         }
 
         for (int i = 0; i < 13; i++) {
-            game.addStone(new Stone("e", 1, id));
-            id++;
+            game.addStone(new Stone("e", 1));
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("f", 4, id));
-            id++;
+            game.addStone(new Stone("f", 4));
         }
 
         for (int i = 0; i < 4; i++) {
-            game.addStone(new Stone("g", 2, id));
-            id++;
+            game.addStone(new Stone("g", 2));
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("h", 4, id));
-            id++;
+            game.addStone(new Stone("h", 4));
         }
 
         for (int i = 0; i < 10; i++) {
-            game.addStone(new Stone("i", 1, id));
-            id++;
+            game.addStone(new Stone("i", 1));
         }
 
-        game.addStone(new Stone("j", 8, id));
-        id++;
+        game.addStone(new Stone("j", 8));
 
-        game.addStone(new Stone("k", 5, id));
-        id++;
+        game.addStone(new Stone("k", 5));
 
         for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("l", 1, id));
-            id++;
+            game.addStone(new Stone("l", 1));
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("m", 3, id));
-            id++;
+            game.addStone(new Stone("m", 3));
         }
 
         for (int i = 0; i < 7; i++) {
-            game.addStone(new Stone("n", 1, id));
-            id++;
+            game.addStone(new Stone("n", 1));
         }
 
         for (int i = 0; i < 9; i++) {
-            game.addStone(new Stone("o", 1, id));
-            id++;
+            game.addStone(new Stone("o", 1));
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("p", 3, id));
-            id++;
+            game.addStone(new Stone("p", 3));
         }
 
-        game.addStone(new Stone("q", 10, id));
-        id++;
+        game.addStone(new Stone("q", 10));
 
         for (int i = 0; i < 7; i++) {
-            game.addStone(new Stone("r", 1, id));
-            id++;
+            game.addStone(new Stone("r", 1));
         }
 
         for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("s", 1, id));
-            id++;
+            game.addStone(new Stone("s", 1));
         }
 
         for (int i = 0; i < 7; i++) {
-            game.addStone(new Stone("t", 1, id));
-            id++;
+            game.addStone(new Stone("t", 1));
         }
 
         for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("u", 1, id));
-            id++;
+            game.addStone(new Stone("u", 1));
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("v", 4, id));
-            id++;
+            game.addStone(new Stone("v", 4));
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("w", 4, id));
-            id++;
+            game.addStone(new Stone("w", 4));
         }
 
-        game.addStone(new Stone("x", 8, id));
-        id++;
+        game.addStone(new Stone("x", 8));
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("y", 4, id));
-            id++;
+            game.addStone(new Stone("y", 4));
         }
 
-        game.addStone(new Stone("z", 10, id));
+        game.addStone(new Stone("z", 10));
     }
 }
