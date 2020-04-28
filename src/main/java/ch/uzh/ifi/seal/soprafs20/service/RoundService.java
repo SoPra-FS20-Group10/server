@@ -109,13 +109,13 @@ public class RoundService {
         List<Stone> stones;
         List<Stone> answer = new ArrayList<>();
 
-        // fetch all stones from the db
+        // fetch all stones to exchange from the db
         stones = getStones(stoneIds);
 
         for (int i = 0; i < stones.size(); i++) {
             Stone stone = drawStone(game);
             game.removeStone(stone);
-            player.addStone(stone);
+            player.addStone(player.getBag().indexOf(stones.get(i)) + 1,stone);
             answer.add(stone);
         }
 

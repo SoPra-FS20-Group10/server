@@ -84,6 +84,10 @@ public class Player implements Serializable {
         bag.add(stone);
     }
 
+    public void addStone(int index, Stone stone) {
+        bag.add(index,stone);
+    }
+
     public void removeStone(Stone stone) {
         bag.remove(stone);
     }
