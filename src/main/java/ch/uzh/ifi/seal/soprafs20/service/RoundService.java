@@ -47,16 +47,37 @@ public class RoundService {
     public int calculatePoints(List<Tile> tiles) {
         // define sum and multiplicand
         int sum = 0;
-        int multiplicand = 1;
+        int triplew = 0;
+        int doublew = 0;
 
-        // calculate sum and multiplicand
+
+        //count word multiplicants
         for (Tile tile : tiles) {
-            sum += tile.getValue();
-            multiplicand *= tile.getMultiplier();
+            if((tile.getMultiplier() == 2)  && tile.getMultivariant().equals("w")){
+                doublew +=1;
+            }else if((tile.getMultiplier() == 3)  && tile.getMultivariant().equals("w")){
+                triplew +=1;
+            }
+        }
+
+        // calculate wordscore with letterbonus
+        for (Tile tile : tiles) {
+            if(tile.getMultivariant().equals("l")){
+                sum += (tile.getValue() * tile.getMultiplier());
+            }else{
+                sum += tile.getValue();
+            }
+        }
+
+        if(doublew!= 0){
+            sum *= doublew*2;
+        }
+
+        if(triplew !=0){
+            sum *= triplew*3;
         }
 
         // deploy multiplications
-        sum *= multiplicand;
 
         return sum;
     }
