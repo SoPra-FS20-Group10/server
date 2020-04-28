@@ -341,8 +341,10 @@ public class AppController {
             throw new ConflictException("It's not the turn of the player " + playerId);
         }
 
+        // check if placing is valid and place it if possible
         roundService.placeWord(game, player, placeWordDTO.getStoneIds(), placeWordDTO.getCoordinates());
 
+        // set new current player after a successful turn
         game.setCurrentPlayer(roundService.getCurrentPlayer(game));
 
         // fill the players bag
@@ -358,8 +360,11 @@ public class AppController {
             // remove stone from game's bag
             game.removeStone(stone);
         }
+
+        // save changes to the game
         gameService.saveGame(game);
 
+        // return
         return stoneGetDTOs;
     }
 
@@ -446,6 +451,4 @@ public class AppController {
         // return
         return stoneGetDTOs;
     }
-
-
 }

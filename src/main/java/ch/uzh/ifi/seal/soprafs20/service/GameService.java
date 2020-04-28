@@ -134,7 +134,7 @@ public class GameService {
 
     public void leaveGame(Game game, Player player, String token) {
         // check if player is the lobbyLeader
-        if (player.getUser().getId().equals(game.getOwner().getId())) {
+        if (game.getStatus()!=GameStatus.ENDED && player.getUser().getId().equals(game.getOwner().getId())) {
             throw new UnauthorizedException("The game owner cannot leave the game. Choose to end the game.");
         }
 
@@ -290,28 +290,18 @@ public class GameService {
         for (int i = 1; i < 4; ++i) {
             tileRepository.save(new Tile(i, null,"l"));
             tileRepository.flush();
-        }
 
-        for (int i = 1; i < 4; ++i) {
             tileRepository.save(new Tile(i, null,"w"));
             tileRepository.flush();
         }
 
-        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(3,null,"w");
-        foundTile.get();
-
         //add all other stone-tile combinations ot the repo
-        for(int i = 0; i < alpha.length();i++){
+        for(int i = 0; i < alpha.length(); i++){
             String symbol = Character.toString(alpha.charAt(i));
             for(int j = 1; j < 4; j++){
                 tileRepository.save(new Tile(j, symbol,"w"));
                 tileRepository.flush();
-            }
-        }
 
-        for(int i = 0; i < alpha.length();i++){
-            String symbol = Character.toString(alpha.charAt(i));
-            for(int j = 1; j < 4; j++){
                 tileRepository.save(new Tile(j, symbol,"l"));
                 tileRepository.flush();
             }
@@ -322,123 +312,122 @@ public class GameService {
         long id = 0;
 
         for (int i = 0; i < 10; i++) {
-            game.addStone(new Stone("A", 1, id));
+            game.addStone(new Stone("a", 1, id));
             id++;
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("B", 3, id));
+            game.addStone(new Stone("b", 3, id));
             id++;
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("C", 3, id));
+            game.addStone(new Stone("c", 3, id));
             id++;
         }
 
         for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("D", 2, id));
+            game.addStone(new Stone("d", 2, id));
             id++;
         }
 
         for (int i = 0; i < 13; i++) {
-            game.addStone(new Stone("E", 1, id));
+            game.addStone(new Stone("e", 1, id));
             id++;
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("F", 4, id));
+            game.addStone(new Stone("f", 4, id));
             id++;
         }
 
         for (int i = 0; i < 4; i++) {
-            game.addStone(new Stone("G", 2, id));
+            game.addStone(new Stone("g", 2, id));
             id++;
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("H", 4, id));
+            game.addStone(new Stone("h", 4, id));
             id++;
         }
 
         for (int i = 0; i < 10; i++) {
-            game.addStone(new Stone("I", 1, id));
+            game.addStone(new Stone("i", 1, id));
             id++;
         }
 
-        game.addStone(new Stone("J", 8, id));
+        game.addStone(new Stone("j", 8, id));
         id++;
 
-        game.addStone(new Stone("K", 5, id));
+        game.addStone(new Stone("k", 5, id));
         id++;
 
         for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("L", 1, id));
+            game.addStone(new Stone("l", 1, id));
             id++;
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("M", 3, id));
+            game.addStone(new Stone("m", 3, id));
             id++;
         }
 
         for (int i = 0; i < 7; i++) {
-            game.addStone(new Stone("N", 1, id));
+            game.addStone(new Stone("n", 1, id));
             id++;
         }
 
         for (int i = 0; i < 9; i++) {
-            game.addStone(new Stone("O", 1, id));
+            game.addStone(new Stone("o", 1, id));
             id++;
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("P", 3, id));
+            game.addStone(new Stone("p", 3, id));
             id++;
         }
 
-        game.addStone(new Stone("Q", 10, id));
+        game.addStone(new Stone("q", 10, id));
         id++;
 
         for (int i = 0; i < 7; i++) {
-            game.addStone(new Stone("R", 1, id));
+            game.addStone(new Stone("r", 1, id));
             id++;
         }
 
         for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("S", 1, id));
+            game.addStone(new Stone("s", 1, id));
             id++;
         }
 
         for (int i = 0; i < 7; i++) {
-            game.addStone(new Stone("T", 1, id));
+            game.addStone(new Stone("t", 1, id));
             id++;
         }
 
         for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("U", 1, id));
+            game.addStone(new Stone("u", 1, id));
             id++;
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("V", 4, id));
+            game.addStone(new Stone("v", 4, id));
             id++;
         }
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("W", 4, id));
+            game.addStone(new Stone("w", 4, id));
             id++;
         }
 
-        game.addStone(new Stone("X", 8, id));
+        game.addStone(new Stone("x", 8, id));
         id++;
 
         for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("Y", 4, id));
+            game.addStone(new Stone("y", 4, id));
             id++;
         }
 
-        game.addStone(new Stone("Z", 10, id));
+        game.addStone(new Stone("z", 10, id));
     }
-
 }

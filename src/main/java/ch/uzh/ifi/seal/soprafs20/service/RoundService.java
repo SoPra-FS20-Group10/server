@@ -10,7 +10,6 @@ import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.StoneRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.WordnikGetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -111,7 +110,11 @@ public class RoundService {
         }
 
         // check if word exists
-        String definition = checkWord(word);
+        try {
+            checkWord(word.toLowerCase());
+        } catch (Exception exception) {
+            throw new ConflictException(exception.getMessage());
+        }
 
         // place new stones
         for(int i = 0; i < stones.size(); ++i) {
@@ -123,7 +126,7 @@ public class RoundService {
         gameRepository.save(game);
         gameRepository.flush();
 
-        return definition;
+        return word;
     }
 
     public List<Stone> exchangeStone(Game game, Player player, List<Long> stoneIds) {
@@ -212,9 +215,7 @@ public class RoundService {
         return stones;
     }
 
-    private String checkWord(String word) {
-        WordnikGetDTO wordnikGetDTO;
-
+    private void checkWord(String word) {
         // check if word is empty
         if (word.isEmpty()) {
             throw new ConflictException("Cannot look up an empty word.");
@@ -229,12 +230,10 @@ public class RoundService {
         try {
             URL url = new URL(uri);
             URLConnection connection = url.openConnection();
-            wordnikGetDTO = (WordnikGetDTO) connection.getContent();
+            // wordnikGetDTO = (WordnikGetDTO) connection.getContent();
         } catch (Exception exception) {
             throw new ConflictException(exception.getMessage());
         }
-
-        return wordnikGetDTO.getText();
     }
 
     private String buildWord(List<Tile> grid, List<Stone> played, List<Integer> coordinates, String mode) {
@@ -269,7 +268,7 @@ public class RoundService {
         for (int i = coordinates.get(0); i <= coordinates.get(coordinates.size() - 1); i += toAdd) {
             // stone gets played by player
             if (coordinates.contains(i)) {
-                word.append(played.get(coordinates.indexOf(i)));
+                word.append(played.get(coordinates.indexOf(i)).getSymbol());
             }
 
             // stone is already played
@@ -286,7 +285,7 @@ public class RoundService {
         // check under/right of the stones played
         for (int i = coordinates.get(coordinates.size() - 1) + 1; i < end; i += toAdd) {
             // add letter to the back of the word if it exists
-            if (!grid.get(i).getStoneSymbol().isEmpty()) {
+            if (grid.get(i).getStoneSymbol() != null) {
                 word.append(grid.get(i).getStoneSymbol());
             }
 
@@ -311,7 +310,7 @@ public class RoundService {
 
         // fetch tile from db
         Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(grid.get(coordinate).getMultiplier(),
-                stone.getSymbol(),grid.get(coordinate).getMultivariant() );
+                stone.getSymbol(), grid.get(coordinate).getMultivariant());
 
         // check if tile is present
         if (foundTile.isEmpty()) {
