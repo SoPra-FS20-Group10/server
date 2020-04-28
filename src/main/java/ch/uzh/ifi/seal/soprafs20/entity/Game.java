@@ -133,6 +133,7 @@ public class Game implements Serializable {
     }
 
     public void setPlayers(List<Player> players) {
+
         this.players = players;
     }
 
@@ -149,6 +150,7 @@ public class Game implements Serializable {
     }
 
     public void setCurrentPlayerId(long currentPlayerId) {
+
         this.currentPlayerId = currentPlayerId;
     }
 }

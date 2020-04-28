@@ -219,15 +219,19 @@ public class GameController {
         playerService.deletePlayer(player);
     }
 
+    // TODO: Removed the return, or is it needed? -PM
     @PutMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<StoneGetDTO> placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
+//    public List<StoneGetDTO> placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
+    public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
                             @RequestBody PlaceWordDTO placeWordDTO) {
         List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
 
         // get game
         Game game = gameService.getGame(gameId);
+
+        System.out.println("");
 
         // get player
         Player player = playerService.getPlayer(playerId);
@@ -273,7 +277,7 @@ public class GameController {
         gameService.saveGame(game);
 
         // return
-        return stoneGetDTOs;
+//        return stoneGetDTOs;
     }
 
     @GetMapping("/games/{gameId}/players/{playerId}")

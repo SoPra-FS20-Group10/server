@@ -33,10 +33,10 @@ public class RoundService {
     private final StoneRepository stoneRepository;
 
     @Autowired
-    public RoundService(@Qualifier("gameRepository")GameRepository gameRepository,
-                        @Qualifier("tileRepository")TileRepository tileRepository,
-                        @Qualifier("playerRepository")PlayerRepository playerRepository,
-                        @Qualifier("stoneRepository")StoneRepository stoneRepository) {
+    public RoundService(@Qualifier("gameRepository") GameRepository gameRepository,
+                        @Qualifier("tileRepository") TileRepository tileRepository,
+                        @Qualifier("playerRepository") PlayerRepository playerRepository,
+                        @Qualifier("stoneRepository") StoneRepository stoneRepository) {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
         this.playerRepository = playerRepository;
@@ -52,28 +52,30 @@ public class RoundService {
 
         //count word multiplicands
         for (Tile tile : tiles) {
-            if((tile.getMultiplier() == 2)  && tile.getMultivariant().equals("w")){
-                doublew +=1;
-            }else if((tile.getMultiplier() == 3)  && tile.getMultivariant().equals("w")){
-                triplew +=1;
+            if ((tile.getMultiplier() == 2) && tile.getMultivariant().equals("w")) {
+                doublew += 1;
+            }
+            else if ((tile.getMultiplier() == 3) && tile.getMultivariant().equals("w")) {
+                triplew += 1;
             }
         }
 
         // calculate wordScore with letterBonus
         for (Tile tile : tiles) {
-            if(tile.getMultivariant().equals("l")){
+            if (tile.getMultivariant().equals("l")) {
                 sum += (tile.getValue() * tile.getMultiplier());
-            }else{
+            }
+            else {
                 sum += tile.getValue();
             }
         }
 
-        if(doublew!= 0){
-            sum *= doublew*2;
+        if (doublew != 0) {
+            sum *= doublew * 2;
         }
 
-        if(triplew !=0){
-            sum *= triplew*3;
+        if (triplew != 0) {
+            sum *= triplew * 3;
         }
 
         // deploy multiplications
@@ -93,39 +95,46 @@ public class RoundService {
         // players.set(players.size(), player);
         players.add(player);
 
+        game.setPlayers(players);
+
         return player;
     }
 
     public void placeWord(Game game, Player player, List<Long> stoneId, List<Integer> coordinates) {
-        String word;
-        List<Stone> stones = getStones(stoneId);
+        if (stoneId.size() > 0) {
+            String word;
+            List<Stone> stones = getStones(stoneId);
 
-        // fetch game from db, grid from game
-        List<Tile> grid = game.getGrid();
+            // fetch game from db, grid from game
+            List<Tile> grid = game.getGrid();
 
-        // check if placing is valid
-        for(int i = 0; i < stones.size(); ++i) {
-            placeStoneValid(grid, coordinates.get(i));
-        }
+            // check if placing is valid
+            for (int i = 0; i < stones.size(); ++i) {
+                placeStoneValid(grid, coordinates.get(i));
+            }
 
-        // check if word is vertical or horizontal
-        if ((coordinates.get(stones.size() - 1) % 15) == (coordinates.get(0) % 15)) {
-            word = buildWord(grid, stones, coordinates, "vertical");
-        } else {
-            word = buildWord(grid, stones, coordinates, "horizontal");
-        }
+            // check if word is vertical or horizontal
+            if ((coordinates.get(stones.size() - 1) % 15) == (coordinates.get(0) % 15)) {
+                word = buildWord(grid, stones, coordinates, "vertical");
+            }
+            else {
+                word = buildWord(grid, stones, coordinates, "horizontal");
+            }
 
-        // check if word exists
-        try {
-            checkWord(word.toLowerCase());
-        } catch (Exception exception) {
-            throw new ConflictException(exception.getMessage());
-        }
+            // check if word exists
+            try {
+                checkWord(word.toLowerCase());
+            }
+            catch (Exception exception) {
+                throw new ConflictException(exception.getMessage());
+            }
 
-        // place new stones
-        for(int i = 0; i < stones.size(); ++i) {
-            placeStone(grid, stones.get(i), coordinates.get(i));
-            returnStone(game, player, stones.get(i));
+            // place new stones
+            for (int i = 0; i < stones.size(); ++i) {
+                placeStone(grid, stones.get(i), coordinates.get(i));
+                returnStone(game, player, stones.get(i));
+            }
+
         }
 
         // save changes
@@ -184,7 +193,8 @@ public class RoundService {
 
             if (found.isEmpty()) {
                 throw new NotFoundException("The stone with the id " + id + " could not be found");
-            } else {
+            }
+            else {
                 stones.add(found.get());
             }
         }
@@ -209,7 +219,8 @@ public class RoundService {
             URL url = new URL(uri);
             URLConnection connection = url.openConnection();
             connection.getContent();
-        } catch (Exception exception) {
+        }
+        catch (Exception exception) {
             throw new ConflictException("There went something wrong while searching the dictionary: " +
                     exception.getMessage());
         }
@@ -224,7 +235,8 @@ public class RoundService {
             start = coordinates.get(0) % 15;
             end = 225;
             toAdd = 15;
-        } else {
+        }
+        else {
             start = coordinates.get(0) - (coordinates.get(0) % 15);
             end = start + 15;
             toAdd = 1;
@@ -294,7 +306,8 @@ public class RoundService {
         // check if tile is present
         if (foundTile.isEmpty()) {
             throw new ConflictException("There was a problem while fetching the tile");
-        } else {
+        }
+        else {
             tile = foundTile.get();
         }
 
@@ -337,14 +350,14 @@ public class RoundService {
         // starting with this character
         for (int i = 0; i < 15; i++)
             for (int j = 0; j < 15; j++)
-                if(board2d[i][j].getStoneSymbol() != null) {
+                if (board2d[i][j].getStoneSymbol() != null) {
                     word = findVerticalWords(board2d, visited, i, j);
                     if (!word.equals(""))
                         if (!words.contains(word))
                             words.add(word);
 
-                    word = findHorizontalWords(board2d, visited, i,j);
-                    if(!word.equals(""))
+                    word = findHorizontalWords(board2d, visited, i, j);
+                    if (!word.equals(""))
                         if (!words.contains(word))
                             words.add(word);
                 }
@@ -352,48 +365,48 @@ public class RoundService {
     }
 
     // vertical words
-    private String findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j){
+    private String findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
 
         // Mark current cell as visited
         visited[i][j] = true;
         String currentLetter = board[i][j].getStoneSymbol();
         // return nothing if there no more letters
-        if(currentLetter == null || i >= 15 || j >= 15){
+        if (currentLetter == null || i >= 15 || j >= 15) {
             return "";
         }
 
-        if(!visited[i-1][j] && !visited[i+1][j]){
-            return findVerticalWords(board,visited,i-1,j) + currentLetter + findVerticalWords(board,visited,i+j,j);
+        if (!visited[i - 1][j] && !visited[i + 1][j]) {
+            return findVerticalWords(board, visited, i - 1, j) + currentLetter + findVerticalWords(board, visited, i + j, j);
         }
-        else if (!visited[i-1][j] && visited[i+1][j]){
-            return findVerticalWords(board,visited,i-1,j) + currentLetter;
+        else if (!visited[i - 1][j] && visited[i + 1][j]) {
+            return findVerticalWords(board, visited, i - 1, j) + currentLetter;
         }
-        else if (visited[i-1][j] && !visited[i+1][j]){
-            return currentLetter + findVerticalWords(board,visited,i+j,j);
+        else if (visited[i - 1][j] && !visited[i + 1][j]) {
+            return currentLetter + findVerticalWords(board, visited, i + j, j);
         }
 
         return "";
     }
 
     // Horizontal words
-    private String findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j){
+    private String findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
 
         // Mark current cell as visited
         visited[i][j] = true;
         String currentLetter = board[i][j].getStoneSymbol();
         // return nothing if there no more letters
-        if(currentLetter == null || i >= 15 || j >= 15){
+        if (currentLetter == null || i >= 15 || j >= 15) {
             return "";
         }
 
-        if(!visited[i][j-1] && !visited[i][j+1]){
-            return findHorizontalWords(board,visited,i,j-1) + currentLetter +  findHorizontalWords(board,visited,i,j+1);
+        if (!visited[i][j - 1] && !visited[i][j + 1]) {
+            return findHorizontalWords(board, visited, i, j - 1) + currentLetter + findHorizontalWords(board, visited, i, j + 1);
         }
-        else if (!visited[i][j-1] && visited[i][j+1]){
-            return  findHorizontalWords(board,visited,i,j-1) + currentLetter;
+        else if (!visited[i][j - 1] && visited[i][j + 1]) {
+            return findHorizontalWords(board, visited, i, j - 1) + currentLetter;
         }
-        else if (visited[i][j-1] && !visited[i][j+1]){
-            return currentLetter +  findHorizontalWords(board,visited,i,j+1);
+        else if (visited[i][j - 1] && !visited[i][j + 1]) {
+            return currentLetter + findHorizontalWords(board, visited, i, j + 1);
         }
 
         return "";
