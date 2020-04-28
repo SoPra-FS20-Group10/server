@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Service
@@ -57,6 +58,84 @@ public class GameService {
     public List<Game> getGames() {
         return gameRepository.findAll();
     }
+
+    public ArrayList<String> checkBoard(List<Tile> board) {
+        Tile[][] board2d = new Tile[15][15];
+        Boolean[][] visited = new Boolean[15][15];
+        ArrayList<String> words = new ArrayList<String>();
+        // Convert to 2dArray
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                board2d[i][j] = board.get((i * 15) + j);
+            }
+        }
+
+        // List with all words
+        String word = "";
+        // Consider every character and look for all words
+        // starting with this character
+        for (int i = 0; i < 15; i++)
+            for (int j = 0; j < 15; j++)
+                if(board2d[i][j].getStoneSymbol() != null)
+                    word = this.findVerticalWords(board2d, visited, 0,0);
+                    if(!word.equals(""))
+                        if (!words.contains(word))
+                            words.add(word);
+                    word = this.findHorizontalWords(board2d, visited, 0,0);
+                    if(!word.equals(""))
+                        if (!words.contains(word))
+                            words.add(word);
+
+        return words;
+        }
+
+ // vertical words
+    public String findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j){
+
+        // Mark current cell as visited
+        visited[i][j] = true;
+        String currentLetter = board[i][j].getStoneSymbol();
+        // return nothing if there no more letters
+        if(currentLetter == null || i >= 15 || j >= 15){
+            return "";
+        }
+
+        if(!visited[i-1][j] && !visited[i+1][j]){
+            return findVerticalWords(board,visited,i-1,j) + currentLetter + findVerticalWords(board,visited,i+j,j);
+        }
+        else if (!visited[i-1][j] && visited[i+1][j]){
+            return findVerticalWords(board,visited,i-1,j) + currentLetter;
+        }
+        else if (visited[i-1][j] && !visited[i+1][j]){
+            return currentLetter + findVerticalWords(board,visited,i+j,j);
+        }
+
+        return "";
+    }
+
+    // Horizontal words
+    public String findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j){
+
+        // Mark current cell as visited
+        visited[i][j] = true;
+        String currentLetter = board[i][j].getStoneSymbol();
+        // return nothing if there no more letters
+        if(currentLetter == null || i >= 15 || j >= 15){
+            return "";
+        }
+
+        if(!visited[i][j-1] && !visited[i][j+1]){
+            return findHorizontalWords(board,visited,i,j-1) + currentLetter +  findHorizontalWords(board,visited,i,j+1);
+        }
+        else if (!visited[i][j-1] && visited[i][j+1]){
+            return  findHorizontalWords(board,visited,i,j-1) + currentLetter;
+        }
+        else if (visited[i][j-1] && !visited[i][j+1]){
+            return currentLetter +  findHorizontalWords(board,visited,i,j+1);
+        }
+        return "";
+    }
+
 
     public Game createGame(Game game, Player owner) {
         // check if owner is already hosting another game
