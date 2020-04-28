@@ -90,7 +90,8 @@ public class RoundService {
         player = players.remove(0);
 
         // place the player to the back of the list
-        players.set(players.size(), player);
+        // players.set(players.size(), player);
+        players.add(player);
 
         return player;
     }
