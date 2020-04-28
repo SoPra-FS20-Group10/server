@@ -89,7 +89,7 @@ public class RoundService {
         return player;
     }
 
-    public String placeWord(Game game, Player player, List<Long> stoneId, List<Integer> coordinates) {
+    public void placeWord(Game game, Player player, List<Long> stoneId, List<Integer> coordinates) {
         String word;
         List<Stone> stones = getStones(stoneId);
 
@@ -124,8 +124,6 @@ public class RoundService {
         // save changes
         gameRepository.save(game);
         gameRepository.flush();
-
-        return word;
     }
 
     public List<Stone> exchangeStone(Game game, Player player, List<Long> stoneIds) {
@@ -135,19 +133,19 @@ public class RoundService {
         // fetch all stones to exchange from the db
         stones = getStones(stoneIds);
 
+        // draw new stones for the player
         for (Stone value : stones) {
             Stone stone = drawStone(game);
             player.addStone(player.getBag().indexOf(value) + 1, stone);
             answer.add(stone);
         }
 
+        // return the exchanged stones from the player's bag to the game's bag
         for (Stone stone : stones) {
             returnStone(game, player, stone);
         }
 
-        gameRepository.save(game);
-        gameRepository.flush();
-
+        // save the changes
         playerRepository.save(player);
         playerRepository.flush();
 
@@ -292,6 +290,9 @@ public class RoundService {
             tile = foundTile.get();
         }
 
+        // set value
+        tile.setValue(stone.getValue());
+
         // place stone on tile
         grid.set(coordinate, tile);
     }
@@ -307,5 +308,86 @@ public class RoundService {
 
         // add stone to the game
         game.addStone(stone);
+    }
+
+    public ArrayList<String> checkBoard(List<Tile> board) {
+        Tile[][] board2d = new Tile[15][15];
+        Boolean[][] visited = new Boolean[15][15];
+        ArrayList<String> words = new ArrayList<>();
+
+        // Convert to 2dArray
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                board2d[i][j] = board.get((i * 15) + j);
+            }
+        }
+
+        // List with all words
+        String word;
+
+        // Consider every character and look for all words
+        // starting with this character
+        for (int i = 0; i < 15; i++)
+            for (int j = 0; j < 15; j++)
+                if(board2d[i][j].getStoneSymbol() != null) {
+                    word = findVerticalWords(board2d, visited, i, j);
+                    if (!word.equals(""))
+                        if (!words.contains(word))
+                            words.add(word);
+
+                    word = findHorizontalWords(board2d, visited, i,j);
+                    if(!word.equals(""))
+                        if (!words.contains(word))
+                            words.add(word);
+                }
+        return words;
+    }
+
+    // vertical words
+    private String findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j){
+
+        // Mark current cell as visited
+        visited[i][j] = true;
+        String currentLetter = board[i][j].getStoneSymbol();
+        // return nothing if there no more letters
+        if(currentLetter == null || i >= 15 || j >= 15){
+            return "";
+        }
+
+        if(!visited[i-1][j] && !visited[i+1][j]){
+            return findVerticalWords(board,visited,i-1,j) + currentLetter + findVerticalWords(board,visited,i+j,j);
+        }
+        else if (!visited[i-1][j] && visited[i+1][j]){
+            return findVerticalWords(board,visited,i-1,j) + currentLetter;
+        }
+        else if (visited[i-1][j] && !visited[i+1][j]){
+            return currentLetter + findVerticalWords(board,visited,i+j,j);
+        }
+
+        return "";
+    }
+
+    // Horizontal words
+    private String findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j){
+
+        // Mark current cell as visited
+        visited[i][j] = true;
+        String currentLetter = board[i][j].getStoneSymbol();
+        // return nothing if there no more letters
+        if(currentLetter == null || i >= 15 || j >= 15){
+            return "";
+        }
+
+        if(!visited[i][j-1] && !visited[i][j+1]){
+            return findHorizontalWords(board,visited,i,j-1) + currentLetter +  findHorizontalWords(board,visited,i,j+1);
+        }
+        else if (!visited[i][j-1] && visited[i][j+1]){
+            return  findHorizontalWords(board,visited,i,j-1) + currentLetter;
+        }
+        else if (visited[i][j-1] && !visited[i][j+1]){
+            return currentLetter +  findHorizontalWords(board,visited,i,j+1);
+        }
+
+        return "";
     }
 }

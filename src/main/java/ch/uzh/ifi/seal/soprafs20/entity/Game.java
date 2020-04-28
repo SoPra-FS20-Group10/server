@@ -47,6 +47,7 @@ public class Game implements Serializable {
     @OneToMany(mappedBy = "game")
     private List<Player> players;
 
+    @Column
     private long currentPlayerId;
 
     public Long getId() {

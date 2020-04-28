@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
@@ -232,6 +233,11 @@ public class GameController {
         // get player
         Player player = playerService.getPlayer(playerId);
 
+        // check if game is running
+        if (game.getStatus() != GameStatus.RUNNING) {
+            throw new ConflictException("The game with the id " + gameId + " is not running." );
+        }
+
         // check if user is authorized to perform exchange action
         if (!player.getUser().getToken().equals(placeWordDTO.getToken())) {
             throw new UnauthorizedException("The user is not authorized to perform this action.");
@@ -261,6 +267,8 @@ public class GameController {
             // remove stone from game's bag
             game.removeStone(stone);
         }
+
+        gameService.checkIfGameEnded(game);
 
         // save changes to the game
         gameService.saveGame(game);
@@ -314,6 +322,11 @@ public class GameController {
         Player player = playerService.getPlayer(playerId);
         Game game = gameService.getGame(gameId);
 
+        // check if game is running
+        if (game.getStatus() != GameStatus.ENDED) {
+            throw new ConflictException("The game with the id " + gameId + " is not running." );
+        }
+
         // check if user is authorized to perform exchange action
         if (!player.getUser().getToken().equals(exchangeStonesDTO.getToken())) {
             throw new UnauthorizedException("The user is not authorized to perform this action.");
@@ -334,6 +347,11 @@ public class GameController {
         for (Stone stone : stones) {
             stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
         }
+
+        // check if game has ended
+        gameService.checkIfGameEnded(game);
+
+        gameService.saveGame(game);
 
         // return
         return stoneGetDTOs;
