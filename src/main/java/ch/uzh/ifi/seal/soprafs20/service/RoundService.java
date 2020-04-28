@@ -81,10 +81,17 @@ public class RoundService {
     }
 
     public Player getCurrentPlayer(Game game) {
-        // fetch current player and reposition it to the last place
-        Player player = game.getPlayers().get(0);
-        game.removePlayer(player);
-        game.addPlayer(player);
+        Player player;
+
+        // fetch players
+        List<Player> players = game.getPlayers();
+
+        // fetch player from the front
+        player = players.get(0);
+
+        // place the player to the back of the list
+        players.remove(0);
+        players.set(3, player);
 
         return player;
     }
@@ -203,7 +210,8 @@ public class RoundService {
             URLConnection connection = url.openConnection();
             connection.getContent();
         } catch (Exception exception) {
-            throw new ConflictException(exception.getMessage());
+            throw new ConflictException("There went something wrong while searching the dictionary: " +
+                    exception.getMessage());
         }
     }
 

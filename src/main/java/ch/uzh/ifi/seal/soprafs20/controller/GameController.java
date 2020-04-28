@@ -101,7 +101,6 @@ public class GameController {
     public GameGetDTO getGame(@PathVariable ("gameId") Long gameId) {
         List<TileGetDTO> grid = new ArrayList<>();
         List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
-        List<String> words = new ArrayList<>();
 
         // fetch game and grid
         Game game = gameService.getGame(gameId);

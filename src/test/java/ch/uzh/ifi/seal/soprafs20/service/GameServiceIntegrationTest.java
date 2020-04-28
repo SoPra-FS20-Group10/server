@@ -38,10 +38,6 @@ public class GameServiceIntegrationTest {
     @Autowired
     private GameRepository gameRepository;
 
-    @Qualifier("playerRepository")
-    @Autowired
-    private PlayerRepository playerRepository;
-
     @Qualifier("userRepository")
     @Autowired
     private UserRepository userRepository;
