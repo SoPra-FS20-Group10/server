@@ -348,7 +348,7 @@ public class AppController {
         game.setCurrentPlayer(roundService.getCurrentPlayer(game));
 
         // fill the players bag
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < placeWordDTO.getStoneIds().size(); ++i) {
             // draw stone
             Stone stone = roundService.drawStone(game);
 

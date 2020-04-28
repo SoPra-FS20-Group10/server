@@ -84,9 +84,8 @@ public class GameService {
     public Game joinGame(long gameId, Player player, String password) {
         // fetch game from db
         Game game = getGame(gameId);
-
         // check if password is correct
-        if (!game.getPassword().equals(password)) {
+        if (!(game.getPassword()== password)) {
             throw new ConflictException("Wrong password. Therefore the player could not join the game");
         }
 

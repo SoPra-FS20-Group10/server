@@ -136,10 +136,9 @@ public class RoundService {
         // fetch all stones to exchange from the db
         stones = getStones(stoneIds);
 
-        for (int i = 0; i < stones.size(); i++) {
+        for (Stone value : stones) {
             Stone stone = drawStone(game);
-            game.removeStone(stone);
-            player.addStone(player.getBag().indexOf(stones.get(i)) + 1,stone);
+            player.addStone(player.getBag().indexOf(value) + 1, stone);
             answer.add(stone);
         }
 
@@ -160,42 +159,15 @@ public class RoundService {
         // get stones from game
         List<Stone> stonesToChange = game.getBag();
 
+        if (stonesToChange.size() == 0) {
+            return null;
+        }
+
         // draw a random stone
         int random = new Random().nextInt() % stonesToChange.size();
 
         // return
-        return stonesToChange.get(abs(random));
-    }
-
-    private Game getGame(long gameId) {
-        // fetch game from db
-        Game game;
-        Optional<Game> foundGame = gameRepository.findByIdIs(gameId);
-
-        // check if game exists
-        if (foundGame.isEmpty()) {
-            throw new NotFoundException("The game with the id " + gameId + " is not existing.");
-        }
-        else {
-            game = foundGame.get();
-        }
-
-        return game;
-    }
-
-    private Player getPlayer(long playerId) {
-        // fetch player from db
-        Player player;
-        Optional<Player> foundPlayer = playerRepository.findById(playerId);
-
-        // check if player is present
-        if (foundPlayer.isEmpty()) {
-            throw new NotFoundException("The player with the id " + playerId + " could not be found.");
-        } else {
-            player = foundPlayer.get();
-        }
-
-        return player;
+        return stonesToChange.remove(abs(random));
     }
 
     private List<Stone> getStones(List<Long> stoneIds) {
@@ -230,7 +202,7 @@ public class RoundService {
         try {
             URL url = new URL(uri);
             URLConnection connection = url.openConnection();
-            // wordnikGetDTO = (WordnikGetDTO) connection.getContent();
+            connection.getContent();
         } catch (Exception exception) {
             throw new ConflictException(exception.getMessage());
         }
