@@ -87,11 +87,10 @@ public class RoundService {
         List<Player> players = game.getPlayers();
 
         // fetch player from the front
-        player = players.get(0);
+        player = players.remove(0);
 
         // place the player to the back of the list
-        players.remove(0);
-        players.set(3, player);
+        players.set(players.size(), player);
 
         return player;
     }
