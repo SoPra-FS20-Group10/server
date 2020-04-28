@@ -32,7 +32,7 @@ public class Game implements Serializable {
     @Column
     private String password;
 
-    @OneToOne(mappedBy = "game", optional = false)
+    @OneToOne(mappedBy = "game")
     private User owner;
 
     @OneToOne

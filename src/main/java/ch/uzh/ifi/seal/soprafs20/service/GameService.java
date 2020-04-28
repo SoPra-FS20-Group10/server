@@ -30,6 +30,8 @@ public class GameService {
     public GameService(@Qualifier("gameRepository")GameRepository gameRepository, @Qualifier("tileRepository")TileRepository tileRepository) {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
+
+        initTiles();
     }
 
     public Game getGame(long gameId) {
@@ -58,10 +60,8 @@ public class GameService {
 
     public Game createGame(Game game, Player owner) {
         // check if owner is already hosting another game
-        Optional<Game> foundGame = gameRepository.findByOwner(owner.getUser());
-
-        if (foundGame.isPresent()) {
-            throw new ConflictException("The user with the id " + owner.getId() + " is hosting another game.");
+        if (owner.getUser().getGame() != null) {
+            throw new ConflictException("The user with the id " + owner.getUser().getId() + " is hosting another game.");
         }
 
         //game.setChat(new Chat());
@@ -70,7 +70,6 @@ public class GameService {
 
         // initialise list
         game.initGame();
-        initTiles();
         createGrid(game);
 
         // add player
