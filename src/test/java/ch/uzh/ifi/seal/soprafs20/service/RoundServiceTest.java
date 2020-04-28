@@ -67,18 +67,18 @@ public class RoundServiceTest {
 
     @Test
     public void test_pointCalculation_validInput() {
-        Tile tile1 = new Tile(1, null,null);
+        Tile tile1 = new Tile(1, null,"l");
         tile1.setValue(4);
 
-        Tile tile2 = new Tile(2, null,null);
+        Tile tile2 = new Tile(2, null,"w");
         tile2.setMultiplier(2);
         tile2.setValue(1);
 
-        Tile tile3 = new Tile(3, null,null);
+        Tile tile3 = new Tile(3, null,"l");
         tile3.setMultiplier(3);
         tile3.setValue(6);
 
-        Tile tile4 = new Tile(1, null,null);
+        Tile tile4 = new Tile(1, null,"l");
         tile4.setMultiplier(1);
         tile4.setValue(3);
 
@@ -88,7 +88,7 @@ public class RoundServiceTest {
         tiles.add(tile3);
         tiles.add(tile4);
 
-        assertEquals(84, roundService.calculatePoints(tiles));
+        assertEquals(52, roundService.calculatePoints(tiles));
     }
 
     @Test
