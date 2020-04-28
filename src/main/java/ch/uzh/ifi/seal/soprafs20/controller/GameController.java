@@ -323,7 +323,7 @@ public class GameController {
         Game game = gameService.getGame(gameId);
 
         // check if game is running
-        if (game.getStatus() != GameStatus.ENDED) {
+        if (game.getStatus() != GameStatus.RUNNING) {
             throw new ConflictException("The game with the id " + gameId + " is not running." );
         }
 
