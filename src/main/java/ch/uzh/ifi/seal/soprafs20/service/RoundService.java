@@ -225,7 +225,7 @@ public class RoundService {
         }
 
         // check left/on-top of the played stones
-        for (int i = coordinates.get(0) - 1; i >= start; i -= toAdd) {
+        for (int i = coordinates.get(0) - toAdd; i >= start; i -= toAdd) {
             // add letter to the front of the word if it exists
             if (grid.get(i).getStoneSymbol() != null) {
                 word.insert(0, grid.get(i).getStoneSymbol());
