@@ -418,8 +418,19 @@ public class GameService {
                 // if a player has no stones left, the game has ended
                 if (player.getBag().isEmpty()) {
                     game.setStatus(GameStatus.ENDED);
+                    updateScore(game);
                 }
             }
+        }
+    }
+
+    private void updateScore(Game game) {
+        List<Player> players = game.getPlayers();
+
+        // update score for every player/user
+        for (Player player : players) {
+            User user = player.getUser();
+            user.setOverallScore(user.getOverallScore() + player.getScore());
         }
     }
 }
