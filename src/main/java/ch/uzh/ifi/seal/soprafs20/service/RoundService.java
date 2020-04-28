@@ -50,7 +50,7 @@ public class RoundService {
         int doublew = 0;
 
 
-        //count word multiplicants
+        //count word multiplicands
         for (Tile tile : tiles) {
             if((tile.getMultiplier() == 2)  && tile.getMultivariant().equals("w")){
                 doublew +=1;
@@ -59,7 +59,7 @@ public class RoundService {
             }
         }
 
-        // calculate wordscore with letterbonus
+        // calculate wordScore with letterBonus
         for (Tile tile : tiles) {
             if(tile.getMultivariant().equals("l")){
                 sum += (tile.getValue() * tile.getMultiplier());
@@ -77,7 +77,6 @@ public class RoundService {
         }
 
         // deploy multiplications
-
         return sum;
     }
 
@@ -163,10 +162,10 @@ public class RoundService {
             return null;
         }
 
-        // draw a random stone
+        // draw a random number
         int random = new Random().nextInt() % stonesToChange.size();
 
-        // return
+        // return stone
         return stonesToChange.remove(abs(random));
     }
 
@@ -174,6 +173,7 @@ public class RoundService {
         List<Stone> stones = new ArrayList<>();
         Optional<Stone> found;
 
+        // fetch all stones from the db
         for (Long id : stoneIds) {
             found = stoneRepository.findByIdIs(id);
 
@@ -184,6 +184,7 @@ public class RoundService {
             }
         }
 
+        // return
         return stones;
     }
 
@@ -226,7 +227,7 @@ public class RoundService {
         // check left/on-top of the played stones
         for (int i = coordinates.get(0) - 1; i >= start; i -= toAdd) {
             // add letter to the front of the word if it exists
-            if (!grid.get(i).getStoneSymbol().isEmpty()) {
+            if (grid.get(i).getStoneSymbol() != null) {
                 word.insert(0, grid.get(i).getStoneSymbol());
             }
 

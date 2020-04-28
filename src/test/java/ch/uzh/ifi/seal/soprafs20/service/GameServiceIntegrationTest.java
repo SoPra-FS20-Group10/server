@@ -61,7 +61,7 @@ public class GameServiceIntegrationTest {
 
         // setup player
         player = new Player();
-        player.setId(1);
+        player.setId(2);
         player.setUser(user);
         player.setScore(0);
         player.setStatus(PlayerStatus.NOT_READY);

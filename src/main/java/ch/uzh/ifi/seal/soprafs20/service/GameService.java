@@ -57,9 +57,11 @@ public class GameService {
     }
 
     public Game createGame(Game game, Player owner) {
-        // check if owner has no other game
-        if (owner.getUser().getGame() != null) {
-            throw new ConflictException("The user with the id " + owner.getUser().getId() + " is hosting another game.");
+        // check if owner is already hosting another game
+        Optional<Game> foundGame = gameRepository.findByOwner(owner.getUser());
+
+        if (foundGame.isPresent()) {
+            throw new ConflictException("The user with the id " + owner.getId() + " is hosting another game.");
         }
 
         //game.setChat(new Chat());
@@ -85,7 +87,7 @@ public class GameService {
         // fetch game from db
         Game game = getGame(gameId);
         // check if password is correct
-        if (!(game.getPassword()== password)) {
+        if (!(game.getPassword().equals(password))) {
             throw new ConflictException("Wrong password. Therefore the player could not join the game");
         }
 

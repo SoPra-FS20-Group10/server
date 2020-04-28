@@ -126,7 +126,6 @@ public class GameServiceTest {
         // given -> a first game has already been created
         gameService.createGame(testGame, testPlayer);
         Optional<Game> found = Optional.ofNullable(testGame);
-        testUser.setGame(testGame);
 
         // when
         Mockito.when(gameRepository.findByOwner(Mockito.any())).thenReturn(found);
