@@ -131,7 +131,7 @@ public class RoundService {
             // place new stones
             for (int i = 0; i < stones.size(); ++i) {
                 placeStone(grid, stones.get(i), coordinates.get(i));
-                returnStone(game, player, stones.get(i));
+                deleteStone(player, stones.get(i));
             }
 
 
@@ -327,6 +327,20 @@ public class RoundService {
         grid.set(coordinate, tile);
     }
 
+    private void deleteStone(Player player, Stone stone) {
+        // check if player has stone in bag
+        if (!player.getBag().contains(stone)) {
+            throw new ConflictException("The player has no stone with the letter " + stone.getSymbol());
+        }
+
+        // remove stone from player
+        player.removeStone(stone);
+
+        // delete stone
+        stoneRepository.delete(stone);
+        stoneRepository.flush();
+    }
+
     private void returnStone(Game game, Player player, Stone stone) {
         // check if player has stone in bag
         if (!player.getBag().contains(stone)) {
@@ -375,7 +389,7 @@ public class RoundService {
 
                     word = findHorizontalWords(board2d, visited, i, j);
 
-                    if (!word.isEmpty() && !word.contains(word)) {
+                    if (!word.isEmpty() && !words.contains(word)) {
                         words.add(word);
                     }
                 }
