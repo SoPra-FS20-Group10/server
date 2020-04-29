@@ -161,7 +161,11 @@ public class GameServiceTest {
 
     @Test
     public void checkIfGameEnded_successful() {
+        testGame.addPlayer(testPlayer);
 
+        gameService.checkIfGameEnded(testGame);
+
+        assertEquals(GameStatus.ENDED, testGame.getStatus());
     }
 
     @Test
@@ -179,8 +183,8 @@ public class GameServiceTest {
 
         gameService.checkIfGameEnded(testGame);
 
-        assertEquals(testPlayer.getScore(), testUser.getOverallScore());
-        assertEquals(player.getScore(), user.getOverallScore());
+        assertEquals(100, testUser.getOverallScore());
+        assertEquals(200, user.getOverallScore());
     }
 }
 

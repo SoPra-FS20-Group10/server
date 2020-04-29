@@ -421,6 +421,7 @@ public class GameService {
         for (Player player : players) {
             User user = player.getUser();
             user.setOverallScore(user.getOverallScore() + player.getScore());
+            player.setScore(0);
         }
     }
 }
