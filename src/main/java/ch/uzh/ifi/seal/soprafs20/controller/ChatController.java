@@ -1,6 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-
 import ch.uzh.ifi.seal.soprafs20.service.ChatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -9,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
     private final ChatService chatService;
 
-    ChatController(ChatService chatService){ this.chatService = chatService;}
-
-
+    ChatController(ChatService chatService){
+        this.chatService = chatService;
+    }
 
     @GetMapping("/chat")
     @ResponseStatus(HttpStatus.OK)

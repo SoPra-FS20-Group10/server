@@ -39,6 +39,37 @@ public class GameController {
         this.roundService = roundService;
     }
 
+    @GetMapping("/games/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO getGame(@PathVariable ("gameId") Long gameId) {
+        List<TileGetDTO> grid = new ArrayList<>();
+        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
+
+        // fetch game and grid
+        Game game = gameService.getGame(gameId);
+        List<Tile> ogGrid = game.getGrid();
+        List<Stone> bag = game.getBag();
+        GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+
+        // parse tile into TileGetDTO
+        for(Tile tile : ogGrid){
+            grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
+        }
+
+        // parse stone into StoneGetDTO
+        for (Stone stone : bag) {
+            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
+        }
+
+        gameGetDTO.setCurrentPlayerId(game.getCurrentPlayerId());
+        gameGetDTO.setStones(stoneGetDTOs);
+        gameGetDTO.setBoard(grid);
+
+        // return
+        return gameGetDTO;
+    }
+
 
     @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
@@ -54,6 +85,54 @@ public class GameController {
         }
 
         return gameGetDTOs;
+    }
+
+    @GetMapping("/games/{gameId}/players/{playerId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public long getPlayerScore(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
+        // fetch entities from db
+        Game game = gameService.getGame(gameId);
+        Player player = playerService.getPlayer(playerId);
+
+        // check if player is part of game
+        if (!game.getPlayers().contains(player)) {
+            throw new ConflictException("The player " + playerId + " is not part of the game " + gameId);
+        }
+
+        return player.getScore();
+    }
+
+    @GetMapping("/games/{gameId}/players")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<PlayerGetDTO> getPlayersFromGame(@PathVariable("gameId")Long gameId) {
+        // fetch all users in the internal representation
+        List<Player> players = gameService.getPlayers(gameId);
+        List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
+
+        // convert each user to the API representation
+        for (Player player : players) {
+            playerGetDTOs.add(DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
+        }
+        return playerGetDTOs;
+    }
+
+    @GetMapping("/games/{gameId}/players/{playerId}/bag")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<StoneGetDTO> getStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
+        // get stones from player
+        List<Stone> stones = playerService.getStones(playerId, gameId);
+
+        // parse stone entities into stone DTOs
+        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
+
+        for (Stone stone : stones) {
+            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
+        }
+
+        return stoneGetDTOs;
     }
 
     @PostMapping("/games")
@@ -97,62 +176,6 @@ public class GameController {
         playerService.addGame(player, game);
     }
 
-    @GetMapping("/games/{gameId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public GameGetDTO getGame(@PathVariable ("gameId") Long gameId) {
-        List<TileGetDTO> grid = new ArrayList<>();
-        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
-
-        // fetch game and grid
-        Game game = gameService.getGame(gameId);
-        List<Tile> ogGrid = game.getGrid();
-        List<Stone> bag = game.getBag();
-        GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
-
-        // parse tile into TileGetDTO
-        for(Tile tile : ogGrid){
-            grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
-        }
-
-        // parse stone into StoneGetDTO
-        for (Stone stone : bag) {
-            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
-        }
-
-        gameGetDTO.setCurrentPlayerId(game.getCurrentPlayerId());
-        gameGetDTO.setStones(stoneGetDTOs);
-        gameGetDTO.setBoard(grid);
-
-        // return
-        return gameGetDTO;
-    }
-
-    @DeleteMapping("/games/{gameId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserTokenDTO userTokenDTO) {
-        // parse input into user entity
-        String token = userTokenDTO.getToken();
-
-        // fetch all players from the game
-        List<Player> players = gameService.getPlayers(gameId);
-
-        // remove game from owner
-        userService.removeGame(gameService.getGame(gameId));
-
-        // end game
-        gameService.endGame(gameId, token);
-
-        // delete all players and remove player from user
-        for (Player player : players) {
-            User user = player.getUser();
-            user.setGame(null);
-            userService.removePlayer(player);
-            playerService.deletePlayer(player);
-        }
-    }
-
     @PutMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -185,21 +208,6 @@ public class GameController {
         gameService.saveGame(game);
     }
 
-    @GetMapping("/games/{gameId}/players")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<PlayerGetDTO> getPlayersFromGame(@PathVariable("gameId")Long gameId) {
-        // fetch all users in the internal representation
-        List<Player> players = gameService.getPlayers(gameId);
-        List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
-
-        // convert each user to the API representation
-        for (Player player : players) {
-            playerGetDTOs.add(DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
-        }
-        return playerGetDTOs;
-    }
-
     @DeleteMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -216,6 +224,31 @@ public class GameController {
         gameService.leaveGame(game, player, token);
         userService.removePlayer(player);
         playerService.deletePlayer(player);
+    }
+
+    @DeleteMapping("/games/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserTokenDTO userTokenDTO) {
+        // parse input into user entity
+        String token = userTokenDTO.getToken();
+
+        // fetch all players from the game
+        List<Player> players = gameService.getPlayers(gameId);
+
+        // remove game from owner
+        userService.removeGame(gameService.getGame(gameId));
+
+        // end game
+        gameService.endGame(gameId, token);
+
+        // delete all players and remove player from user
+        for (Player player : players) {
+            User user = player.getUser();
+            user.setGame(null);
+            userService.removePlayer(player);
+            playerService.deletePlayer(player);
+        }
     }
 
     @PutMapping("/games/{gameId}/players/{playerId}")
@@ -269,40 +302,6 @@ public class GameController {
         // save changes to the game
         playerService.savePlayer(player);
         gameService.saveGame(game);
-    }
-
-    @GetMapping("/games/{gameId}/players/{playerId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public long getPlayerScore(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
-        // fetch entities from db
-        Game game = gameService.getGame(gameId);
-        Player player = playerService.getPlayer(playerId);
-
-        // check if player is part of game
-        if (!game.getPlayers().contains(player)) {
-            throw new ConflictException("The player " + playerId + " is not part of the game " + gameId);
-        }
-
-        return player.getScore();
-    }
-
-
-    @GetMapping("/games/{gameId}/players/{playerId}/bag")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<StoneGetDTO> getStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
-        // get stones from player
-        List<Stone> stones = playerService.getStones(playerId, gameId);
-
-        // parse stone entities into stone DTOs
-        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
-
-        for (Stone stone : stones) {
-            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
-        }
-
-        return stoneGetDTOs;
     }
     
     @PutMapping("/games/{gameId}/players/{playerId}/exchange")

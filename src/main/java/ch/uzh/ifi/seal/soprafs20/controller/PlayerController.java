@@ -33,7 +33,4 @@ public class PlayerController {
         // ready player
         playerService.readyPlayer(playerId, token);
     }
-
-
-
 }

@@ -37,9 +37,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * UserControllerTest
- * This is a WebMvcTest which allows to test the UserController i.e. GET/POST request without actually sending them over the network.
- * This tests if the UserController works.
+ * GameControllerTest
+ * This is a WebMvcTest which allows to test the GameController i.e. GET/POST request without actually sending them over the network.
+ * This tests if the GameController works.
  */
 @WebMvcTest(GameController.class)
 public class GameControllerTest {
