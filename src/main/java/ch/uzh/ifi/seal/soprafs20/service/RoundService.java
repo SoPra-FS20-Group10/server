@@ -395,7 +395,7 @@ public class RoundService {
                 if (board2d[i][j].getStoneSymbol() != null) {
                     word = findVerticalWords(board2d, visited, i, j, new ArrayList<>());
 
-                    if ((word.size() != 0)) {
+                    if (word.size() != 0) {
                         for (Triplet tile : word) {
                             if (coordinates.contains(tile.j * 15 + tile.i)) {
                                 String newWord = this.buildString(word);
@@ -438,8 +438,22 @@ public class RoundService {
             return new ArrayList<>();
         }
 
+        // check edge case i = 0
+        if (i == 0 && !visited[i + 1][j]) {
+            words.add(currentLetter);
+            words.addAll(findVerticalWords(board, visited, i + 1, j, words));
+            return words;
+        }
+
+        // check edge case i = 14
+        else if (i == 14 && !visited[i - 1][j]) {
+            words.addAll(findVerticalWords(board, visited, i - 1, j, words));
+            words.add(currentLetter);
+            return words;
+        }
+
         // if tiles left and right have not been visited
-        if (!visited[i - 1][j] && !visited[i + 1][j] ) {
+        else if (!visited[i - 1][j] && !visited[i + 1][j]) {
             words.addAll(findVerticalWords(board, visited, i - 1, j,words));
             words.add(currentLetter);
             words.addAll(findVerticalWords(board, visited, i + 1, j, words));
@@ -460,14 +474,14 @@ public class RoundService {
             return words;
         }
 
-        // if tiles left and right have been visited
+        // if tiles left and right have both been visited
         else {
             words.add(currentLetter);
             return words;
         }
     }
 
-    private List<Triplet> findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j,List<Triplet> words) {
+    private List<Triplet> findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j, List<Triplet> words) {
         Triplet currentLetter = new Triplet(board[i][j], i, j);
 
         // Mark current cell as visited
@@ -478,30 +492,44 @@ public class RoundService {
             return new ArrayList<>();
         }
 
+        // check edge case j = 0
+        if (j == 0 && !visited[i][j + 1]) {
+            words.add(currentLetter);
+            words.addAll(findHorizontalWords(board, visited, i, j + 1, words));
+            return words;
+        }
+
+        // check edge case j = 14
+        else if (j == 14 && !visited[i][j - 1]) {
+            words.addAll(findHorizontalWords(board, visited, i, j - 1, words));
+            words.add(currentLetter);
+            return words;
+        }
+
         // if tiles up and down have not been visited
         if (!visited[i][j - 1] && !visited[i][j + 1] ) {
-            words.addAll(findVerticalWords(board, visited, i, j - 1,words));
+            words.addAll(findHorizontalWords(board, visited, i, j - 1,words));
             words.add(currentLetter);
-            words.addAll(findVerticalWords(board, visited, i, j + 1, words));
+            words.addAll(findHorizontalWords(board, visited, i, j + 1, words));
             return words;
         }
 
         // if tile up has not been visited
-        else if (!visited[i][j-1] && visited[i][j+1]) {
-            words.addAll(findVerticalWords(board, visited, i, j-1,words));
+        else if (!visited[i][j - 1] && visited[i][j + 1]) {
+            words.addAll(findHorizontalWords(board, visited, i, j - 1,words));
             words.add(currentLetter);
             return words;
         }
 
         // if tile down has not been visited
-        else if (visited[i][j-1] && !visited[i][j+1]) {
+        else if (visited[i][j - 1] && !visited[i][j + 1]) {
             words.add(currentLetter);
-            words.addAll(findVerticalWords(board, visited, i , j+1, words));
+            words.addAll(findHorizontalWords(board, visited, i , j + 1, words));
             return words;
 
         }
 
-        // if tiles up and down have been visited
+        // if tiles up and down have both been visited
         else {
             words.add(currentLetter);
             return new ArrayList<>();
@@ -519,5 +547,4 @@ public class RoundService {
             this.j = j;
         }
     }
-
 }
