@@ -101,7 +101,7 @@ public class RoundService {
     }
 
     public void placeWord(Game game, Player player, List<Long> stoneId, List<Integer> coordinates) {
-        if (stoneId.size() > 0) {
+        if (!stoneId.isEmpty()) {
             String word;
             List<Stone> stones = getStones(stoneId);
 
@@ -172,7 +172,7 @@ public class RoundService {
         // get stones from game
         List<Stone> stonesToChange = game.getBag();
 
-        if (stonesToChange.size() == 0) {
+        if (stonesToChange.isEmpty()) {
             return null;
         }
 
@@ -228,7 +228,9 @@ public class RoundService {
 
     private String buildWord(List<Tile> grid, List<Stone> played, List<Integer> coordinates, String mode) {
         StringBuilder word = new StringBuilder(new StringBuilder());
-        int start, end, toAdd;
+        int start;
+        int end;
+        int toAdd;
 
         // set start/end-point and toAdd according whether word is vertical or horizontal
         if (mode.equals("vertical")) {
@@ -331,7 +333,7 @@ public class RoundService {
         game.addStone(stone);
     }
 
-    public ArrayList<String> checkBoard(List<Tile> board) {
+    public List<String> checkBoard(List<Tile> board) {
         Tile[][] board2d = new Tile[15][15];
         Boolean[][] visited = new Boolean[15][15];
         ArrayList<String> words = new ArrayList<>();
@@ -352,15 +354,18 @@ public class RoundService {
             for (int j = 0; j < 15; j++)
                 if (board2d[i][j].getStoneSymbol() != null) {
                     word = findVerticalWords(board2d, visited, i, j);
-                    if (!word.equals(""))
-                        if (!words.contains(word))
-                            words.add(word);
+
+                    if (!word.isEmpty() && !words.contains(word)) {
+                        words.add(word);
+                    }
 
                     word = findHorizontalWords(board2d, visited, i, j);
-                    if (!word.equals(""))
-                        if (!words.contains(word))
-                            words.add(word);
+
+                    if (!word.isEmpty() && !word.contains(word)) {
+                        words.add(word);
+                    }
                 }
+
         return words;
     }
 

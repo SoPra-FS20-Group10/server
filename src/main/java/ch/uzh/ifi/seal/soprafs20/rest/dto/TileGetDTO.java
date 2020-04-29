@@ -1,7 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
-import javax.persistence.Column;
-
 public class TileGetDTO {
     private String stoneSymbol;
     private int value;

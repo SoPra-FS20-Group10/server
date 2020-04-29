@@ -183,7 +183,7 @@ public class GameService {
         Integer[] doublesword = {16,28,32,42,48,56,64,70};
         Integer[] triplesword = {0,7,14,105};
 
-
+        String error = "Grid cannot be initialized since the tiles couldn't be found";
 
         //create half of board, then flip and append testTest
         for(int i =0; i < 112; i++){
@@ -197,7 +197,7 @@ public class GameService {
 
                     // check if tile exists
                     if (foundTile.isEmpty()) {
-                        throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                        throw new NotFoundException(error);
                     } else {
                         grid.add(foundTile.get());
                     }
@@ -207,7 +207,7 @@ public class GameService {
 
                     // check if tile exists
                     if (foundTile.isEmpty()) {
-                        throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                        throw new NotFoundException(error);
                     } else {
                         grid.add(foundTile.get());
                     }
@@ -223,7 +223,7 @@ public class GameService {
 
                     // check if tile exists
                     if (foundTile.isEmpty()) {
-                        throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                        throw new NotFoundException(error);
                     } else {
                         grid.add(foundTile.get());
                     }
@@ -233,7 +233,7 @@ public class GameService {
 
                     // check if tile exists
                     if (foundTile.isEmpty()) {
-                        throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                        throw new NotFoundException(error);
                     } else {
                         grid.add(foundTile.get());
                     }
@@ -247,7 +247,7 @@ public class GameService {
 
                 // check if tile exists
                 if (foundTile.isEmpty()) {
-                    throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+                    throw new NotFoundException(error);
                 } else {
                     grid.add(foundTile.get());
                 }
@@ -263,7 +263,7 @@ public class GameService {
 
         // check if tile exists
         if (foundTile.isEmpty()) {
-            throw new NotFoundException("Grid cannot be initialized since the tiles couldn't be found");
+            throw new NotFoundException(error);
         } else {
             grid.add(foundTile.get());
         }

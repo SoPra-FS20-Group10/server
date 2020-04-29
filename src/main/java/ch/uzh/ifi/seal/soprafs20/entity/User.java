@@ -152,9 +152,9 @@ public class User implements Serializable {
     public void setWinPercentage() {
         if(playedGames == 0){
             this.winPercentage = 0;
+        } else {
+            this.winPercentage = (float) wonGames / playedGames;
         }
-
-        this.winPercentage = (float) wonGames / playedGames;
     }
 
     public int getOverallScore() {

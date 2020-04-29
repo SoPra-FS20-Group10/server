@@ -101,10 +101,10 @@ public class GameServiceIntegrationTest {
         Game createdGame = gameService.createGame(game, player);
 
         // then
-        assertEquals(createdGame.getName(), game.getName());
-        assertEquals(createdGame.getPassword(), game.getPassword());
-        assertEquals(createdGame.getOwner().getId(), game.getOwner().getId());
-        assertEquals(createdGame.getStatus(), GameStatus.WAITING);
+        assertEquals(game.getName(), createdGame.getName());
+        assertEquals(game.getPassword(), createdGame.getPassword());
+        assertEquals(game.getOwner().getId(), createdGame.getOwner().getId());
+        assertEquals(GameStatus.WAITING, createdGame.getStatus());
     }
 
     @Test
