@@ -43,7 +43,7 @@ public class RoundService {
         this.stoneRepository = stoneRepository;
     }
 
-    public int calculatePoints(List<Tile> tiles, Player player) {
+    public int calculatePoints(List<Tile> tiles) {
         // define sum and multiplicand
         int sum = 0;
         int triplew = 0;
