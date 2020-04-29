@@ -26,6 +26,7 @@ public class GameService {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
 
+        // initialise all the tiles
         initTiles();
     }
 
@@ -84,13 +85,14 @@ public class GameService {
     public Game joinGame(long gameId, Player player, String password) {
         // fetch game from db
         Game game = getGame(gameId);
+
         // check if password is correct
         if(!(game.getPassword() == null || password == null)){
             if(!(game.getPassword().equals(password))){
                 throw new ConflictException("Wrong password. Therefore the player could not join the game");
             }
-        }else if (!(game.getPassword().equals(password))){
-            throw new ConflictException("Wrong password. Therefore the player could not join the game");
+        } else {
+            throw new ConflictException("There was a problem with the password: password mustn't be null");
         }
 
         // add player to the game
@@ -134,7 +136,7 @@ public class GameService {
 
     public void leaveGame(Game game, Player player, String token) {
         // check if player is the lobbyLeader
-        if (game.getStatus()!=GameStatus.ENDED && player.getUser().getId().equals(game.getOwner().getId())) {
+        if (game.getStatus() != GameStatus.ENDED && player.getUser().getId().equals(game.getOwner().getId())) {
             throw new UnauthorizedException("The game owner cannot leave the game. Choose to end the game.");
         }
 
@@ -210,7 +212,7 @@ public class GameService {
                         grid.add(foundTile.get());
                     }
 
-                }else{
+                } else {
                     Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(2,null,"l");
 
                     // check if tile exists
@@ -236,7 +238,7 @@ public class GameService {
                         grid.add(foundTile.get());
                     }
 
-                }else{
+                } else {
                     Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(3,null, "l");
 
                     // check if tile exists
@@ -250,7 +252,7 @@ public class GameService {
             }
 
             //else its single tile
-            else{
+            else {
                 Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(1,null,"l");
 
                 // check if tile exists
@@ -310,8 +312,6 @@ public class GameService {
     }
 
     private void addAllStones(Game game) {
-        long id = 0;
-
         for (int i = 0; i < 10; i++) {
             game.addStone(new Stone("a", 1));
         }

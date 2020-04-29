@@ -219,19 +219,13 @@ public class GameController {
         playerService.deletePlayer(player);
     }
 
-    // TODO: Removed the return, or is it needed? -PM
     @PutMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-//    public List<StoneGetDTO> placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
     public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
                             @RequestBody PlaceWordDTO placeWordDTO) {
-        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
-
         // get game
         Game game = gameService.getGame(gameId);
-
-        System.out.println("");
 
         // get player
         Player player = playerService.getPlayer(playerId);
@@ -264,20 +258,17 @@ public class GameController {
 
             // add stone to player's bag
             player.addStone(stone);
-            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
             playerService.savePlayer(player);
 
             // remove stone from game's bag
             game.removeStone(stone);
         }
 
+        // check if game is over
         gameService.checkIfGameEnded(game);
 
         // save changes to the game
         gameService.saveGame(game);
-
-        // return
-//        return stoneGetDTOs;
     }
 
     @GetMapping("/games/{gameId}/players/{playerId}")
@@ -317,9 +308,8 @@ public class GameController {
     @PutMapping("/games/{gameId}/players/{playerId}/exchange")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<StoneGetDTO> exchangeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
+    public void exchangeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
                                             @RequestBody ExchangeStonesDTO exchangeStonesDTO) {
-        List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
 
         // get player and game
         Player player = playerService.getPlayer(playerId);
@@ -341,22 +331,15 @@ public class GameController {
         }
 
         // exchange the stones
-        List<Stone> stones = roundService.exchangeStone(game, player, exchangeStonesDTO.getStoneIds());
+        roundService.exchangeStone(game, player, exchangeStonesDTO.getStoneIds());
 
         // end turn and set new currentPlayer
         game.setCurrentPlayerId(roundService.getCurrentPlayer(game).getId());
 
-        // parse stones into StoneGetDTO
-        for (Stone stone : stones) {
-            stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
-        }
-
         // check if game has ended
         gameService.checkIfGameEnded(game);
 
+        // save changes
         gameService.saveGame(game);
-
-        // return
-        return stoneGetDTOs;
     }
 }
