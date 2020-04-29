@@ -168,16 +168,6 @@ public class GameService {
         gameRepository.flush();
     }
 
-    public void addScores(Game game){
-        //adds the scores at the end of a game to the user
-        List<Player> players = game.getPlayers();
-        for(Player player: players){
-            User user = player.getUser();
-            user.setOverallScore(user.getOverallScore() + player.getScore());
-            player.setScore(0);
-        }
-    }
-
     public List<Player> getPlayers(long gameId) {
         // fetch game from db
         Game game = getGame(gameId);

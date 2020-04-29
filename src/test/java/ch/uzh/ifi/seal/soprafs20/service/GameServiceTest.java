@@ -125,7 +125,7 @@ public class GameServiceTest {
     public void createGame_duplicateInputs_throwsException() {
         // given -> a first game has already been created
         gameService.createGame(testGame, testPlayer);
-        Optional<Game> found = Optional.ofNullable(testGame);
+        //Optional<Game> found = Optional.ofNullable(testGame);
 
         // when
         testUser.setGame(testGame);
@@ -160,16 +160,27 @@ public class GameServiceTest {
     }
 
     @Test
-    public void addScores_test(){
-        Game createdGame = gameService.createGame(testGame, testPlayer);
-        gameService.addScores(createdGame);
-        assertEquals(100, testUser.getOverallScore());
-        assertEquals(0, testPlayer.getScore());
+    public void checkIfGameEnded_successful() {
+
     }
 
     @Test
-    public void test_test(){
+    public void updateScore_afterGameEnded_successful() {
+        // given
+        User user = new User();
+        Player player = new Player();
+        player.setScore(200);
+        player.setUser(user);
+        player.initPlayer();
 
+        testGame.setStatus(GameStatus.RUNNING);
+        testGame.addPlayer(testPlayer);
+        testGame.addPlayer(player);
+
+        gameService.checkIfGameEnded(testGame);
+
+        assertEquals(testPlayer.getScore(), testUser.getOverallScore());
+        assertEquals(player.getScore(), user.getOverallScore());
     }
 }
 
