@@ -101,7 +101,7 @@ public class RoundService {
 
     public void placeWord(Game game, Player player, List<Long> stoneId, List<Integer> coordinates) {
         if (!stoneId.isEmpty()) {
-            String word;
+
             List<Stone> stones = getStones(stoneId);
 
             // fetch game from db, grid from game
@@ -112,6 +112,9 @@ public class RoundService {
                 placeStoneValid(grid, coordinates.get(i));
             }
 
+            List<Tile> copyGrid = new ArrayList<>(grid);
+            List<String> words = checkBoard(copyGrid, coordinates);
+            /*
             // check if word is vertical or horizontal
             if ((coordinates.get(stones.size() - 1) % 15) == (coordinates.get(0) % 15)) {
                 word = buildWord(grid, stones, coordinates, "vertical");
@@ -119,10 +122,13 @@ public class RoundService {
             else {
                 word = buildWord(grid, stones, coordinates, "horizontal");
             }
+            */
 
             // check if word exists
             try {
-                checkWord(word.toLowerCase());
+                for(String word:words) {
+                    checkWord(word.toLowerCase());
+                }
             }
             catch (Exception exception) {
                 throw new ConflictException(exception.getMessage());
@@ -359,7 +365,16 @@ public class RoundService {
         gameRepository.flush();
     }
 
-    public List<String> checkBoard(List<Tile> board) {
+        public String buildString(List<Triplet> word){
+            StringBuilder newWord = new StringBuilder();
+        for (Triplet letter:word){
+                newWord.append(letter.tile.getStoneSymbol());
+            }
+        return newWord.toString();
+        }
+
+        public List<String> checkBoard(List<Tile> board, List<Integer> coordinates ) {
+
         Tile[][] board2d = new Tile[15][15];
         Boolean[][] visited = new Boolean[15][15];
         ArrayList<String> words = new ArrayList<>();
@@ -372,23 +387,35 @@ public class RoundService {
         }
 
         // List with all words
-        String word;
+        List<Triplet> word;
 
         // Consider every character and look for all words
         // starting with this character
         for (int i = 0; i < 15; i++)
             for (int j = 0; j < 15; j++)
                 if (board2d[i][j].getStoneSymbol() != null) {
-                    word = findVerticalWords(board2d, visited, i, j);
+                    word = findVerticalWords(board2d, visited, i, j, new ArrayList<>());
 
-                    if (!word.isEmpty() && !words.contains(word)) {
-                        words.add(word);
+                    if (!(word.size() == 0) && !words.contains(word)) {
+                        for (Triplet tile : word) {
+                            if (coordinates.contains(tile.i * 15 + tile.j)) {
+                                String newWord = this.buildString(word);
+                                words.add(newWord);
+                            }
+                        }
+
                     }
 
-                    word = findHorizontalWords(board2d, visited, i, j);
+                    word = findHorizontalWords(board2d, visited, i, j, new ArrayList<>());
 
-                    if (!word.isEmpty() && !words.contains(word)) {
-                        words.add(word);
+                    if (!(word.size() == 0) && !words.contains(word)) {
+                        for (Triplet tile : word) {
+                            if (coordinates.contains(tile.i * 15 + tile.j)) {
+                                String newWord = this.buildString(word);
+                                words.add(newWord);
+                            }
+                        }
+
                     }
                 }
 
@@ -396,50 +423,82 @@ public class RoundService {
     }
 
     // vertical words
-    private String findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
+    private List<Triplet> findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j, List<Triplet> words) {
 
         // Mark current cell as visited
+
         visited[i][j] = true;
-        String currentLetter = board[i][j].getStoneSymbol();
+        Triplet currentLetter = new Triplet(board[i][j], i, j);
+
         // return nothing if there no more letters
-        if (currentLetter == null || i >= 15 || j >= 15) {
-            return "";
+        if (currentLetter.tile == null || i >= 15 || j >= 15) {
+            return new ArrayList<>();
         }
 
-        if (!visited[i - 1][j] && !visited[i + 1][j]) {
-            return findVerticalWords(board, visited, i - 1, j) + currentLetter + findVerticalWords(board, visited, i + j, j);
+        if (!visited[i - 1][j] && !visited[i + 1][j] ) {
+            words.addAll(findVerticalWords(board, visited, i - 1, j,words));
+            words.add(currentLetter);
+            words.addAll(findVerticalWords(board, visited, i + 1, j, words));
+            return words;
         }
         else if (!visited[i - 1][j] && visited[i + 1][j]) {
-            return findVerticalWords(board, visited, i - 1, j) + currentLetter;
+            words.addAll(findVerticalWords(board, visited, i - 1, j,words));
+            words.add(currentLetter);
+            return words;
         }
         else if (visited[i - 1][j] && !visited[i + 1][j]) {
-            return currentLetter + findVerticalWords(board, visited, i + j, j);
-        }
+            words.add(currentLetter);
+            words.addAll(findVerticalWords(board, visited, i + 1, j, words));
+            return words;
 
-        return "";
+        }
+        return new ArrayList<>();
     }
 
     // Horizontal words
-    private String findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
+    private List<Triplet> findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j,List<Triplet> words) {
 
         // Mark current cell as visited
         visited[i][j] = true;
-        String currentLetter = board[i][j].getStoneSymbol();
+        Triplet currentLetter = new Triplet(board[i][j], i, j);
         // return nothing if there no more letters
-        if (currentLetter == null || i >= 15 || j >= 15) {
-            return "";
+        if (currentLetter.tile == null || i >= 15 || j >= 15) {
+            return new ArrayList<>();
         }
 
-        if (!visited[i][j - 1] && !visited[i][j + 1]) {
-            return findHorizontalWords(board, visited, i, j - 1) + currentLetter + findHorizontalWords(board, visited, i, j + 1);
-        }
-        else if (!visited[i][j - 1] && visited[i][j + 1]) {
-            return findHorizontalWords(board, visited, i, j - 1) + currentLetter;
-        }
-        else if (visited[i][j - 1] && !visited[i][j + 1]) {
-            return currentLetter + findHorizontalWords(board, visited, i, j + 1);
+
+        if (!visited[i][j - 1] && !visited[i][j + 1] ) {
+            words.addAll(findVerticalWords(board, visited, i, j - 1,words));
+            words.add(currentLetter);
+            words.addAll(findVerticalWords(board, visited, i, j + 1, words));
+            return words;
         }
 
-        return "";
+        else if (!visited[i][j-1] && visited[i][j+1]) {
+            words.addAll(findVerticalWords(board, visited, i, j-1,words));
+            words.add(currentLetter);
+            return words;
+        }
+
+        else if (visited[i][j-1] && !visited[i][j+1]) {
+            words.add(currentLetter);
+            words.addAll(findVerticalWords(board, visited, i , j+1, words));
+            return words;
+
+        }
+
+        return new ArrayList<>();
     }
+
+    private class Triplet{
+        public final Tile tile;
+        public final int i;
+        public final int j;
+        private Triplet(Tile tile, int i, int j) {
+            this.tile = tile;
+            this.i = i;
+            this.j = j;
+        }
+    }
+
 }
