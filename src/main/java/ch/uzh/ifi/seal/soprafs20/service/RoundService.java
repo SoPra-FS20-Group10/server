@@ -140,6 +140,8 @@ public class RoundService {
                 deleteStone(player, stones.get(i));
             }
 
+
+
         }
 
         // save changes
