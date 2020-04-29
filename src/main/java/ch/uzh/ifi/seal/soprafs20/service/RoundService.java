@@ -82,20 +82,19 @@ public class RoundService {
         return sum;
     }
 
-    public Player getCurrentPlayer(Game game) {
-        Player player;
-
+    public Player getCurrentPlayer(Game game, Player player) {
         // fetch players
         List<Player> players = game.getPlayers();
 
-        // fetch player from the front
-        player = players.remove(0);
+        // assign currentPlayer to next player in the list
+        player = players.get((players.indexOf(player) + 1) % players.size());
 
-        // place the player to the back of the list
-        // players.set(players.size(), player);
-        players.add(player);
+        // save the changes
+        playerRepository.save(player);
+        playerRepository.flush();
 
-        game.setPlayers(players);
+        gameRepository.save(game);
+        gameRepository.flush();
 
         return player;
     }
@@ -138,6 +137,9 @@ public class RoundService {
         }
 
         // save changes
+        playerRepository.save(player);
+        playerRepository.flush();
+
         gameRepository.save(game);
         gameRepository.flush();
     }
@@ -164,6 +166,9 @@ public class RoundService {
         // save the changes
         playerRepository.save(player);
         playerRepository.flush();
+
+        gameRepository.save(game);
+        gameRepository.flush();
 
         return answer;
     }
@@ -331,6 +336,13 @@ public class RoundService {
 
         // add stone to the game
         game.addStone(stone);
+
+        // save changes
+        playerRepository.save(player);
+        playerRepository.flush();
+
+        gameRepository.save(game);
+        gameRepository.flush();
     }
 
     public List<String> checkBoard(List<Tile> board) {

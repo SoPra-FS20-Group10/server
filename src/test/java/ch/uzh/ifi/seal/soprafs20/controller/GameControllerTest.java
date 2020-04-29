@@ -152,7 +152,7 @@ public class GameControllerTest {
 
         // when -> then: return player
         given(gameService.getGame(anyLong())).willReturn(game);
-        given(roundService.getCurrentPlayer(Mockito.any())).willReturn(player);
+        given(roundService.getCurrentPlayer(Mockito.any(), Mockito.any())).willReturn(player);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/games/1")

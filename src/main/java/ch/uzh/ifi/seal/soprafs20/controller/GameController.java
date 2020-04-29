@@ -13,16 +13,18 @@ import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * App Controller
- * This class is responsible for handling all REST request.
+ * Game Controller
+ * This class is responsible for handling all REST request regarding the game.
  * The controller will receive the request and delegate the execution to the services and finally return the result.
  */
 
 @RestController
+@Transactional
 public class GameController {
     private final UserService userService;
     private final GameService gameService;
@@ -163,9 +165,6 @@ public class GameController {
         // fetch players from game
         List<Player> players = game.getPlayers();
 
-        // set currentPlayer
-        game.setCurrentPlayerId(roundService.getCurrentPlayer(game).getId());
-
         // start the game
         gameService.startGame(game, token);
 
@@ -249,7 +248,7 @@ public class GameController {
         roundService.placeWord(game, player, placeWordDTO.getStoneIds(), placeWordDTO.getCoordinates());
 
         // set new current player after a successful turn
-        game.setCurrentPlayerId(roundService.getCurrentPlayer(game).getId());
+        game.setCurrentPlayerId(roundService.getCurrentPlayer(game, player).getId());
 
         // fill the players bag
         for (int i = 0; i < placeWordDTO.getStoneIds().size(); ++i) {
@@ -268,6 +267,7 @@ public class GameController {
         gameService.checkIfGameEnded(game);
 
         // save changes to the game
+        playerService.savePlayer(player);
         gameService.saveGame(game);
     }
 
@@ -334,12 +334,13 @@ public class GameController {
         roundService.exchangeStone(game, player, exchangeStonesDTO.getStoneIds());
 
         // end turn and set new currentPlayer
-        game.setCurrentPlayerId(roundService.getCurrentPlayer(game).getId());
+        game.setCurrentPlayerId(roundService.getCurrentPlayer(game, player).getId());
 
         // check if game has ended
         gameService.checkIfGameEnded(game);
 
         // save changes
+        playerService.savePlayer(player);
         gameService.saveGame(game);
     }
 }

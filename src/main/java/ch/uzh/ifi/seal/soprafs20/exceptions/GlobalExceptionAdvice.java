@@ -52,14 +52,14 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseStatusException handleUnauthorizedException(UnauthorizedException ex) {
-        log.error(String.format("LoginException raised: raised %s", ex));
+        log.error(String.format("UnauthorizedException raised: raised %s", ex));
         return new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseStatusException handleNotFoundException(NotFoundException ex) {
-        log.error(String.format("UpdateException raised: raised %s", ex));
+        log.error(String.format("NotFoundException raised: raised %s", ex));
         return new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
