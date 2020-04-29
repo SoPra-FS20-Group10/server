@@ -43,7 +43,7 @@ public class RoundService {
         this.stoneRepository = stoneRepository;
     }
 
-    public int calculatePoints(List<Tile> tiles) {
+    public void calculatePoints(List<Tile> tiles, Player player) {
         // define sum and multiplicand
         int sum = 0;
         int triplew = 0;
@@ -79,7 +79,7 @@ public class RoundService {
         }
 
         // deploy multiplications
-        return sum;
+        player.setScore(player.getScore() + sum);
     }
 
     public Player getCurrentPlayer(Game game, Player player) {
@@ -133,6 +133,8 @@ public class RoundService {
                 placeStone(grid, stones.get(i), coordinates.get(i));
                 returnStone(game, player, stones.get(i));
             }
+
+
 
         }
 
