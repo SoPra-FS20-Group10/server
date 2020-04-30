@@ -111,7 +111,7 @@ public class RoundService {
                 placeStoneValid(grid, coordinates.get(i));
             }
 
-            List<String> words = checkBoard(new ArrayList<>(grid), coordinates);
+            List<String> words = checkBoard(new ArrayList<>(grid), stones, coordinates);
 
             /*
             // check if word is vertical or horizontal
@@ -368,21 +368,31 @@ public class RoundService {
 
         // append the letter of all triplets to the word
         for (Triplet letter : word){
-            newWord.append(letter.tile.getStoneSymbol());
+            if (letter.tile.getStoneSymbol() != null) {
+                newWord.append(letter.tile.getStoneSymbol());
+            }
         }
 
         return newWord.toString();
     }
 
-    public List<String> checkBoard(List<Tile> board, List<Integer> coordinates ) {
+    public List<String> checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
         Tile[][] board2d = new Tile[15][15];
-        Boolean[][] visited = new Boolean[15][15];
+        Boolean[][] visitedVertical = new Boolean[15][15];
+        Boolean[][] visitedHorizontal = new Boolean[15][15];
         ArrayList<String> words = new ArrayList<>();
 
+        // place stones on temporary board copy
+        for (int i = 0; i < stones.size(); ++i) {
+            placeStone(board, stones.get(i), coordinates.get(i));
+        }
+
         // convert to 2dArray
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 15; j++) {
-                board2d[i][j] = board.get((i * 15) + j);
+        for (int j = 0; j < 15; ++j) {
+            for (int i = 0; i < 15; ++i) {
+                board2d[i][j] = board.get((j * 15) + i);
+                visitedVertical[i][j] = false;
+                visitedHorizontal[i][j] = false;
             }
         }
 
@@ -393,9 +403,9 @@ public class RoundService {
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
                 if (board2d[i][j].getStoneSymbol() != null) {
-                    word = findVerticalWords(board2d, visited, i, j, new ArrayList<>());
+                    word = findVerticalWords(board2d, visitedVertical, i, j);
 
-                    if (word.size() != 0) {
+                    if (word.size() > 1) {
                         for (Triplet tile : word) {
                             if (coordinates.contains(tile.j * 15 + tile.i)) {
                                 String newWord = this.buildString(word);
@@ -407,9 +417,9 @@ public class RoundService {
                         }
                     }
 
-                    word = findHorizontalWords(board2d, visited, i, j, new ArrayList<>());
+                    word = findHorizontalWords(board2d, visitedHorizontal, i, j);
 
-                    if (word.size() != 0) {
+                    if (word.size() > 1) {
                         for (Triplet tile : word) {
                             if (coordinates.contains(tile.j * 15 + tile.i)) {
                                 String newWord = this.buildString(word);
@@ -427,42 +437,60 @@ public class RoundService {
         return words;
     }
 
-    private List<Triplet> findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j, List<Triplet> words) {
+    private List<Triplet> findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
         Triplet currentLetter = new Triplet(board[i][j], i, j);
+        List<Triplet> words = new ArrayList<>();
+
+        // if already visited return empty list
+        if (visited[i][j]) {
+            return new ArrayList<>();
+        }
 
         // Mark current cell as visited
         visited[i][j] = true;
 
         // return nothing if there are no more letters
-        if (currentLetter.tile == null || i >= 15 || j >= 15) {
+        if (currentLetter.tile.getStoneSymbol() == null || i >= 15 || j >= 15) {
             return new ArrayList<>();
         }
 
-        // check edge case i = 0
+        // check edge case i = 0 and right tile has not been visited
         if (i == 0 && !visited[i + 1][j]) {
             words.add(currentLetter);
-            words.addAll(findVerticalWords(board, visited, i + 1, j, words));
+            words.addAll(findVerticalWords(board, visited, i + 1, j));
             return words;
         }
 
-        // check edge case i = 14
+        // check edge case i = 0 and right tile has been visited
+        if (i == 0 && visited[i + 1][j]) {
+            words.add(currentLetter);
+            return words;
+        }
+
+        // check edge case i = 14 and left tile has not been visited
         else if (i == 14 && !visited[i - 1][j]) {
-            words.addAll(findVerticalWords(board, visited, i - 1, j, words));
+            words.addAll(findVerticalWords(board, visited, i - 1, j));
+            words.add(currentLetter);
+            return words;
+        }
+
+        // check edge case i = 14 and left tile has been visited
+        else if (i == 14 && visited[i - 1][j]) {
             words.add(currentLetter);
             return words;
         }
 
         // if tiles left and right have not been visited
         else if (!visited[i - 1][j] && !visited[i + 1][j]) {
-            words.addAll(findVerticalWords(board, visited, i - 1, j,words));
+            words.addAll(findVerticalWords(board, visited, i - 1, j));
             words.add(currentLetter);
-            words.addAll(findVerticalWords(board, visited, i + 1, j, words));
+            words.addAll(findVerticalWords(board, visited, i + 1, j));
             return words;
         }
 
         // if tile left has not been visited
         else if (!visited[i - 1][j] && visited[i + 1][j]) {
-            words.addAll(findVerticalWords(board, visited, i - 1, j,words));
+            words.addAll(findVerticalWords(board, visited, i - 1, j));
             words.add(currentLetter);
             return words;
         }
@@ -470,7 +498,7 @@ public class RoundService {
         // if tile right has not been visited
         else if (visited[i - 1][j] && !visited[i + 1][j]) {
             words.add(currentLetter);
-            words.addAll(findVerticalWords(board, visited, i + 1, j, words));
+            words.addAll(findVerticalWords(board, visited, i + 1, j));
             return words;
         }
 
@@ -481,8 +509,14 @@ public class RoundService {
         }
     }
 
-    private List<Triplet> findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j, List<Triplet> words) {
+    private List<Triplet> findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
         Triplet currentLetter = new Triplet(board[i][j], i, j);
+        List<Triplet> words = new ArrayList<>();
+
+        // if already visited return empty list
+        if (visited[i][j]) {
+            return new ArrayList<>();
+        }
 
         // Mark current cell as visited
         visited[i][j] = true;
@@ -492,31 +526,43 @@ public class RoundService {
             return new ArrayList<>();
         }
 
-        // check edge case j = 0
+        // check edge case j = 0 and down tile has not been visited
         if (j == 0 && !visited[i][j + 1]) {
             words.add(currentLetter);
-            words.addAll(findHorizontalWords(board, visited, i, j + 1, words));
+            words.addAll(findHorizontalWords(board, visited, i, j + 1));
             return words;
         }
 
-        // check edge case j = 14
+        // check edge case j = 0 and down tile has been visited
+        if (j == 0 && visited[i][j + 1]) {
+            words.add(currentLetter);
+            return words;
+        }
+
+        // check edge case j = 14 and up tile has not been visited
         else if (j == 14 && !visited[i][j - 1]) {
-            words.addAll(findHorizontalWords(board, visited, i, j - 1, words));
+            words.addAll(findHorizontalWords(board, visited, i, j - 1));
+            words.add(currentLetter);
+            return words;
+        }
+
+        // check edge case j = 14 and up tile has been visited
+        else if (j == 14 && visited[i][j - 1]) {
             words.add(currentLetter);
             return words;
         }
 
         // if tiles up and down have not been visited
         if (!visited[i][j - 1] && !visited[i][j + 1] ) {
-            words.addAll(findHorizontalWords(board, visited, i, j - 1,words));
+            words.addAll(findHorizontalWords(board, visited, i, j - 1));
             words.add(currentLetter);
-            words.addAll(findHorizontalWords(board, visited, i, j + 1, words));
+            words.addAll(findHorizontalWords(board, visited, i, j + 1));
             return words;
         }
 
         // if tile up has not been visited
         else if (!visited[i][j - 1] && visited[i][j + 1]) {
-            words.addAll(findHorizontalWords(board, visited, i, j - 1,words));
+            words.addAll(findHorizontalWords(board, visited, i, j - 1));
             words.add(currentLetter);
             return words;
         }
@@ -524,7 +570,7 @@ public class RoundService {
         // if tile down has not been visited
         else if (visited[i][j - 1] && !visited[i][j + 1]) {
             words.add(currentLetter);
-            words.addAll(findHorizontalWords(board, visited, i , j + 1, words));
+            words.addAll(findHorizontalWords(board, visited, i , j + 1));
             return words;
 
         }
