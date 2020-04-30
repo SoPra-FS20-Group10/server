@@ -71,6 +71,14 @@ public class Player implements Serializable {
         return score;
     }
 
+    public Game getCurrently() {
+        return currently;
+    }
+
+    public void setCurrently(Game currently) {
+        this.currently = currently;
+    }
+
     public void setScore(int score) {
         this.score = score;
     }

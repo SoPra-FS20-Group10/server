@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
@@ -35,6 +36,10 @@ public class UserController {
         // search if user exists in database
         User userInput = userService.getUser(userId);
 
+        if(userInput == null){
+            throw new NotFoundException("sorry the user could not be found");
+        }
+
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
     }
@@ -45,6 +50,11 @@ public class UserController {
     public List<UserGetDTO> getAllUsers() {
         // fetch all users in the internal representation
         List<User> users = userService.getUsers();
+
+        if(users == null){
+            throw new NotFoundException("sorry the users could not be found");
+        }
+
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
@@ -75,6 +85,10 @@ public class UserController {
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
+        if(userInput == null){
+            throw new NotFoundException("sorry the user could not be found");
+        }
+
         // search if user exists in database and change status
         return userService.loginUser(userInput);
     }
@@ -85,6 +99,10 @@ public class UserController {
     public void logoutUser(@PathVariable("userId")long userId, @RequestBody UserTokenDTO userTokenDTO) {
         // parse to String
         String token = userTokenDTO.getToken();
+
+        if(token == null){
+            throw new NotFoundException("the token is empty");
+        }
 
         // logout user
         userService.logoutUser(token, userId);

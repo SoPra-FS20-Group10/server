@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -48,8 +49,18 @@ public class GameController {
 
         // fetch game and grid
         Game game = gameService.getGame(gameId);
+
+        if(game == null){
+            throw new NotFoundException("the game could not be found");
+        }
+
         List<Tile> ogGrid = game.getGrid();
         List<Stone> bag = game.getBag();
+
+        if(bag == null){
+            throw new NotFoundException("the bag could not be found");
+        }
+
         GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
 
         // parse tile into TileGetDTO
@@ -77,6 +88,12 @@ public class GameController {
     public List<GameGetDTO> getGames() {
         // fetch all games in the internal representation
         List<Game> games = gameService.getGames();
+
+        if(games == null){
+            throw new NotFoundException("the games could not be found");
+        }
+
+
         List<GameGetDTO> gameGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
@@ -93,7 +110,16 @@ public class GameController {
     public long getPlayerScore(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
         // fetch entities from db
         Game game = gameService.getGame(gameId);
+
+        if(game == null){
+            throw new NotFoundException("the game could not be found");
+        }
+
         Player player = playerService.getPlayer(playerId);
+
+        if(player == null){
+            throw new NotFoundException("the player could not be found");
+        }
 
         // check if player is part of game
         if (!game.getPlayers().contains(player)) {
@@ -109,6 +135,12 @@ public class GameController {
     public List<PlayerGetDTO> getPlayersFromGame(@PathVariable("gameId")Long gameId) {
         // fetch all users in the internal representation
         List<Player> players = gameService.getPlayers(gameId);
+
+        if(players == null){
+            throw new NotFoundException("the players could not be found");
+        }
+
+
         List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
@@ -182,11 +214,23 @@ public class GameController {
     public void startGame(@PathVariable("gameId")long gameId, @RequestBody UserTokenDTO userTokenDTO) {
         String token = userTokenDTO.getToken();
 
+        if(token == null){
+            throw new NotFoundException("the token could not be found");
+        }
+
         // fetch game from db
         Game game = gameService.getGame(gameId);
 
+        if(game == null){
+            throw new NotFoundException("the game could not be found");
+        }
+
         // fetch players from game
         List<Player> players = game.getPlayers();
+
+        if(players == null){
+            throw new NotFoundException("the players could not be found");
+        }
 
         // start the game
         gameService.startGame(game, token);
@@ -216,9 +260,13 @@ public class GameController {
         // parse input into user
         String token = userTokenDTO.getToken();
 
+
         // get game and player instance
         Game game = gameService.getGame(gameId);
+
+
         Player player = playerService.getPlayer(playerId);
+
 
         // leave game, remove player from user and delete player
         gameService.leaveGame(game, player, token);
@@ -235,6 +283,10 @@ public class GameController {
 
         // fetch all players from the game
         List<Player> players = gameService.getPlayers(gameId);
+
+        if(players == null){
+            throw new NotFoundException("the players could not be found");
+        }
 
         // remove game from owner
         userService.removeGame(gameService.getGame(gameId));
@@ -259,8 +311,16 @@ public class GameController {
         // get game
         Game game = gameService.getGame(gameId);
 
+        if(game == null){
+            throw new NotFoundException("the game could not be found");
+        }
+
         // get player
         Player player = playerService.getPlayer(playerId);
+
+        if(player == null){
+            throw new NotFoundException("the player could not be found");
+        }
 
         // check if game is running
         if (game.getStatus() != GameStatus.RUNNING) {
@@ -312,7 +372,17 @@ public class GameController {
 
         // get player and game
         Player player = playerService.getPlayer(playerId);
+
+        if(player == null){
+            throw new NotFoundException("the player could not be found");
+        }
+
+
         Game game = gameService.getGame(gameId);
+
+        if(game == null){
+            throw new NotFoundException("the game could not be found");
+        }
 
         // check if game is running
         if (game.getStatus() != GameStatus.RUNNING) {
