@@ -111,7 +111,10 @@ public class RoundService {
                 placeStoneValid(grid, coordinates.get(i));
             }
 
-            List<String> words = checkBoard(new ArrayList<>(grid), stones, coordinates);
+            // List<String> words = checkBoard(new ArrayList<>(grid), stones, coordinates);
+            Tuple tuple = checkBoard(new ArrayList<>(grid), stones, coordinates);
+            List<String> words = tuple.words;
+            List<Tile> tiles = tuple.tiles;
 
             /*
             // check if word is vertical or horizontal
@@ -376,11 +379,12 @@ public class RoundService {
         return newWord.toString();
     }
 
-    public List<String> checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
+    public Tuple checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
         Tile[][] board2d = new Tile[15][15];
         Boolean[][] visitedVertical = new Boolean[15][15];
         Boolean[][] visitedHorizontal = new Boolean[15][15];
         ArrayList<String> words = new ArrayList<>();
+        ArrayList<Tile> tiles = new ArrayList<>();
 
         // place stones on temporary board copy
         for (int i = 0; i < stones.size(); ++i) {
@@ -413,6 +417,10 @@ public class RoundService {
                                 if (!words.contains(newWord)) {
                                     words.add(newWord);
                                 }
+
+                                if (!tiles.contains(tile.tile)) {
+                                    tiles.add(tile.tile);
+                                }
                             }
                         }
                     }
@@ -427,6 +435,10 @@ public class RoundService {
                                 if (!words.contains(newWord)) {
                                     words.add(newWord);
                                 }
+
+                                if (!tiles.contains(tile.tile)) {
+                                    tiles.add(tile.tile);
+                                }
                             }
                         }
                     }
@@ -434,7 +446,7 @@ public class RoundService {
             }
         }
 
-        return words;
+        return new Tuple(words, tiles);
     }
 
     private List<Triplet> findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
@@ -591,6 +603,16 @@ public class RoundService {
             this.tile = tile;
             this.i = i;
             this.j = j;
+        }
+    }
+
+    private static class Tuple {
+        public final List<String> words;
+        public final List<Tile> tiles;
+
+        private Tuple(List<String> words, List<Tile> tiles) {
+            this.words = words;
+            this.tiles = tiles;
         }
     }
 }
