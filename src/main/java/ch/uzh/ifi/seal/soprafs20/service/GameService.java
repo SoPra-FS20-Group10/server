@@ -157,6 +157,9 @@ public class GameService {
         // fetch game from db
         Game game = getGame(gameId);
 
+        // delete bag so that global tiles wont be deleted
+        game.setGrid(null);
+
         // delete the game
         gameRepository.delete(game);
         gameRepository.flush();
