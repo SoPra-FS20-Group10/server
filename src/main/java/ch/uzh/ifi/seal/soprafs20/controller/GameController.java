@@ -93,7 +93,6 @@ public class GameController {
             throw new NotFoundException("the games could not be found");
         }
 
-
         List<GameGetDTO> gameGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
@@ -110,16 +109,7 @@ public class GameController {
     public long getPlayerScore(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId) {
         // fetch entities from db
         Game game = gameService.getGame(gameId);
-
-        if(game == null){
-            throw new NotFoundException("the game could not be found");
-        }
-
         Player player = playerService.getPlayer(playerId);
-
-        if(player == null){
-            throw new NotFoundException("the player could not be found");
-        }
 
         // check if player is part of game
         if (!game.getPlayers().contains(player)) {
