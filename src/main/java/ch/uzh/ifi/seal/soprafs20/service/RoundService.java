@@ -108,6 +108,11 @@ public class RoundService {
             throw new ConflictException("Player cannot lay empty word.");
         }
 
+        // check if list of coordinates is empty
+        if (coordinates.isEmpty()) {
+            throw new ConflictException("The stones must be played on the board");
+        }
+
         // fetch all stones from list
         stones = getStones(stoneId);
 
