@@ -66,16 +66,17 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void test_pointCalculation_validInput() {
+    public void test_pointCalculation_no_multiplier() {
         Tile tile1 = new Tile(1, null,"l");
+        tile1.setMultiplier(1);
         tile1.setValue(4);
 
-        Tile tile2 = new Tile(2, null,"w");
-        tile2.setMultiplier(2);
+        Tile tile2 = new Tile(1, null,"w");
+        tile2.setMultiplier(1);
         tile2.setValue(1);
 
-        Tile tile3 = new Tile(3, null,"l");
-        tile3.setMultiplier(3);
+        Tile tile3 = new Tile(1, null,"l");
+        tile3.setMultiplier(1);
         tile3.setValue(6);
 
         Tile tile4 = new Tile(1, null,"l");
@@ -88,7 +89,34 @@ public class RoundServiceTest {
         tiles.add(tile3);
         tiles.add(tile4);
 
-        assertEquals(52, roundService.calculatePoints(tiles));
+        assertEquals(14, roundService.calculatePoints(tiles));
+    }
+
+    @Test
+    public void test_pointCalculation_doubleletter() {
+        Tile tile1 = new Tile(1, null,"l");
+        tile1.setMultiplier(2);
+        tile1.setValue(4);
+
+        Tile tile2 = new Tile(2, null,"w");
+        tile2.setMultiplier(1);
+        tile2.setValue(1);
+
+        Tile tile3 = new Tile(3, null,"l");
+        tile3.setMultiplier(1);
+        tile3.setValue(6);
+
+        Tile tile4 = new Tile(1, null,"l");
+        tile4.setMultiplier(2);
+        tile4.setValue(3);
+
+        List<Tile> tiles = new ArrayList<>();
+        tiles.add(tile1);
+        tiles.add(tile2);
+        tiles.add(tile3);
+        tiles.add(tile4);
+
+        assertEquals(21, roundService.calculatePoints(tiles));
     }
 
     @Test
@@ -136,6 +164,114 @@ public class RoundServiceTest {
 
         assertTrue(testPlayer.getBag().contains(stone1));
         assertTrue(testPlayer.getBag().contains(stone2));
+    }
+
+    @Test
+    public void test_pointCalculation_tripleletter() {
+        Tile tile1 = new Tile(1, null,"l");
+        tile1.setMultiplier(3);
+        tile1.setValue(4);
+
+        Tile tile2 = new Tile(2, null,"w");
+        tile2.setMultiplier(1);
+        tile2.setValue(1);
+
+        Tile tile3 = new Tile(3, null,"l");
+        tile3.setMultiplier(1);
+        tile3.setValue(6);
+
+        Tile tile4 = new Tile(1, null,"l");
+        tile4.setMultiplier(3);
+        tile4.setValue(3);
+
+        List<Tile> tiles = new ArrayList<>();
+        tiles.add(tile1);
+        tiles.add(tile2);
+        tiles.add(tile3);
+        tiles.add(tile4);
+
+        assertEquals(28, roundService.calculatePoints(tiles));
+    }
+
+    @Test
+    public void test_pointCalculation_doubleword() {
+        Tile tile1 = new Tile(1, null,"l");
+        tile1.setMultiplier(1);
+        tile1.setValue(4);
+
+        Tile tile2 = new Tile(2, null,"w");
+        tile2.setMultiplier(2);
+        tile2.setValue(2);
+
+        Tile tile3 = new Tile(3, null,"l");
+        tile3.setMultiplier(1);
+        tile3.setValue(6);
+
+        Tile tile4 = new Tile(1, null,"l");
+        tile4.setMultiplier(3);
+        tile4.setValue(2);
+
+        List<Tile> tiles = new ArrayList<>();
+        tiles.add(tile1);
+        tiles.add(tile2);
+        tiles.add(tile3);
+        tiles.add(tile4);
+
+        assertEquals(36, roundService.calculatePoints(tiles));
+    }
+
+    @Test
+    public void test_pointCalculation_tripleword() {
+        Tile tile1 = new Tile(1, null,"l");
+        tile1.setMultiplier(1);
+        tile1.setValue(4);
+
+        Tile tile2 = new Tile(2, null,"w");
+        tile2.setMultiplier(3);
+        tile2.setValue(2);
+
+        Tile tile3 = new Tile(3, null,"l");
+        tile3.setMultiplier(1);
+        tile3.setValue(6);
+
+        Tile tile4 = new Tile(1, null,"l");
+        tile4.setMultiplier(3);
+        tile4.setValue(2);
+
+        List<Tile> tiles = new ArrayList<>();
+        tiles.add(tile1);
+        tiles.add(tile2);
+        tiles.add(tile3);
+        tiles.add(tile4);
+
+        assertEquals(54, roundService.calculatePoints(tiles));
+    }
+
+    @Test
+    public void test_pointCalculation_everything_mixed() {
+        Tile tile1 = new Tile(1, null,"l");
+        tile1.setMultiplier(2);
+        tile1.setValue(4);
+
+        Tile tile2 = new Tile(2, null,"w");
+        tile2.setMultiplier(3);
+        tile2.setValue(2);
+
+        Tile tile3 = new Tile(3, null,"l");
+        tile3.setMultiplier(1);
+        tile3.setValue(6);
+
+        Tile tile4 = new Tile(1, null,"l");
+        tile4.setMultiplier(3);
+        tile4.setValue(2);
+
+        List<Tile> tiles = new ArrayList<>();
+        tiles.add(tile1);
+        tiles.add(tile2);
+        tiles.add(tile3);
+        tiles.add(tile4);
+
+        assertEquals(66, roundService.calculatePoints(tiles));
     }
 
 }
