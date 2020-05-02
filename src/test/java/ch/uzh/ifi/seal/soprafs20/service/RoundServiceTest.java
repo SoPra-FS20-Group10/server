@@ -274,4 +274,5 @@ public class RoundServiceTest {
         assertEquals(66, roundService.calculatePoints(tiles));
     }
 
+
 }
