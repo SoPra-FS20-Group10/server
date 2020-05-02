@@ -93,7 +93,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void test_pointCalculation_doubleletter() {
+    public void test_pointCalculation_doubleLetter() {
         Tile tile1 = new Tile(1, null,"l");
         tile1.setMultiplier(2);
         tile1.setValue(4);
@@ -120,54 +120,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void test_exchangeStones_successful() {
-        List<Stone> stonesGame = new ArrayList<>();
-        List<Stone> stonesPlayer = new ArrayList<>();
-        List<Long> request = new ArrayList<>();
-
-        stonesGame.add(stone1);
-        stonesPlayer.add(stone2);
-        request.add(stone2.getId());
-
-        testGame.setBag(stonesGame);
-        testPlayer.setBag(stonesPlayer);
-
-        Mockito.when(stoneRepository.findByIdIs(Mockito.anyLong())).thenReturn(Optional.ofNullable(stone2));
-        Mockito.when(gameRepository.findByIdIs(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testGame));
-        Mockito.when(playerRepository.findById(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testPlayer));
-
-        List<Stone> exchanged = roundService.exchangeStone(testGame, testPlayer, request);
-
-        assertEquals(1, exchanged.size());
-        assertEquals(stone2.getId(), testGame.getBag().get(0).getId());
-        assertEquals(stone1.getId(), testPlayer.getBag().get(0).getId());
-    }
-
-    @Test
-    public void drawStone_successful() {
-        testPlayer.initPlayer();
-        testGame.initGame();
-        testGame.addStone(stone1);
-        testGame.addStone(stone2);
-
-        Stone stone = roundService.drawStone(testGame);
-        testPlayer.addStone(stone);
-        testGame.removeStone(stone);
-        assertEquals(1, testPlayer.getBag().size());
-        assertEquals(1, testGame.getBag().size());
-
-        stone = roundService.drawStone(testGame);
-        testPlayer.addStone(stone);
-        testGame.removeStone(stone);
-        assertEquals(2, testPlayer.getBag().size());
-        assertEquals(0, testGame.getBag().size());
-
-        assertTrue(testPlayer.getBag().contains(stone1));
-        assertTrue(testPlayer.getBag().contains(stone2));
-    }
-
-    @Test
-    public void test_pointCalculation_tripleletter() {
+    public void test_pointCalculation_tripleLetter() {
         Tile tile1 = new Tile(1, null,"l");
         tile1.setMultiplier(3);
         tile1.setValue(4);
@@ -194,7 +147,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void test_pointCalculation_doubleword() {
+    public void test_pointCalculation_doubleWord() {
         Tile tile1 = new Tile(1, null,"l");
         tile1.setMultiplier(1);
         tile1.setValue(4);
@@ -221,7 +174,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void test_pointCalculation_tripleword() {
+    public void test_pointCalculation_tripleWord() {
         Tile tile1 = new Tile(1, null,"l");
         tile1.setMultiplier(1);
         tile1.setValue(4);
@@ -274,5 +227,50 @@ public class RoundServiceTest {
         assertEquals(66, roundService.calculatePoints(tiles));
     }
 
+    @Test
+    public void test_exchangeStones_successful() {
+        List<Stone> stonesGame = new ArrayList<>();
+        List<Stone> stonesPlayer = new ArrayList<>();
+        List<Long> request = new ArrayList<>();
 
+        stonesGame.add(stone1);
+        stonesPlayer.add(stone2);
+        request.add(stone2.getId());
+
+        testGame.setBag(stonesGame);
+        testPlayer.setBag(stonesPlayer);
+
+        Mockito.when(stoneRepository.findByIdIs(Mockito.anyLong())).thenReturn(Optional.ofNullable(stone2));
+        Mockito.when(gameRepository.findByIdIs(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testGame));
+        Mockito.when(playerRepository.findById(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(testPlayer));
+
+        List<Stone> exchanged = roundService.exchangeStone(testGame, testPlayer, request);
+
+        assertEquals(1, exchanged.size());
+        assertEquals(stone2.getId(), testGame.getBag().get(0).getId());
+        assertEquals(stone1.getId(), testPlayer.getBag().get(0).getId());
+    }
+
+    @Test
+    public void drawStone_successful() {
+        testPlayer.initPlayer();
+        testGame.initGame();
+        testGame.addStone(stone1);
+        testGame.addStone(stone2);
+
+        Stone stone = roundService.drawStone(testGame);
+        testPlayer.addStone(stone);
+        testGame.removeStone(stone);
+        assertEquals(1, testPlayer.getBag().size());
+        assertEquals(1, testGame.getBag().size());
+
+        stone = roundService.drawStone(testGame);
+        testPlayer.addStone(stone);
+        testGame.removeStone(stone);
+        assertEquals(2, testPlayer.getBag().size());
+        assertEquals(0, testGame.getBag().size());
+
+        assertTrue(testPlayer.getBag().contains(stone1));
+        assertTrue(testPlayer.getBag().contains(stone2));
+    }
 }

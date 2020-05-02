@@ -310,7 +310,7 @@ public class GameController {
         List<Player> players = gameService.getPlayers(gameId);
 
         // check if there are still players in the game
-        if (players != null){
+        if (!players.isEmpty()){
             throw new NotFoundException("There are still players in the game");
         }
 

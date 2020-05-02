@@ -379,15 +379,16 @@ public class GameControllerTest {
     @Test
     public void deleteGame_validInput() throws Exception {
         // given
-        UserPutDTO userPutDTO = new UserPutDTO();
-        userPutDTO.setId(1L);
-        userPutDTO.setUsername("testUsername");
-        userPutDTO.setPassword("testPassword");
+        Game game = new Game();
+        game.initGame();
+
+        // mock services
+        given(gameService.getPlayers(Mockito.anyLong())).willReturn(game.getPlayers());
+        given(gameService.getGame(Mockito.anyLong())).willReturn(game);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest = delete("/games/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPutDTO));
+                .contentType(MediaType.APPLICATION_JSON);
 
         // then
         mockMvc.perform(deleteRequest).andExpect(status().isOk());
