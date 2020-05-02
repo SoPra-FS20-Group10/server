@@ -4,12 +4,10 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Stone;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.JoinGameDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserTokenDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import ch.uzh.ifi.seal.soprafs20.service.RoundService;
@@ -60,6 +58,38 @@ public class GameControllerTest {
     private RoundService roundService;
 
     @Test
+    public void getGame_validInput() throws Exception {
+        // given
+        Game game = new Game();
+        game.setId(1L);
+        game.setName("testName");
+        game.setStatus(GameStatus.WAITING);
+        game.setCurrentPlayerId(2L);
+        game.initGame();
+
+        GameGetDTO gameGetDTO = new GameGetDTO();
+        gameGetDTO.setId(1L);
+        gameGetDTO.setName("testName");
+        gameGetDTO.setStatus(GameStatus.WAITING);
+
+        // this mocks the GameService
+        given(gameService.getGame(Mockito.anyLong())).willReturn(game);
+        //given(DTOMapper.INSTANCE.convertEntityToGameGetDTO(Mockito.any())).willReturn(gameGetDTO);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/games/1").contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is(game.getName())))
+                .andExpect(jsonPath("$.status", is(game.getStatus().toString())))
+                .andExpect(jsonPath("$.currentPlayerId", is(2)))
+                .andExpect(jsonPath("$.stones", is(game.getBag())))
+                .andExpect(jsonPath("$.board", is(game.getGrid())));
+    }
+
+    @Test
     public void getGames_validInput() throws Exception {
         // given
         Game game = new Game();
@@ -68,7 +98,7 @@ public class GameControllerTest {
 
         List<Game> allGames = Collections.singletonList(game);
 
-        // this mocks the UserService -> we define above what the userService should return when getUsers() is called
+        // this mocks the GameService -> we define above what the gameService should return when getGames() is called
         given(gameService.getGames()).willReturn(allGames);
 
         // when
@@ -81,6 +111,79 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$[0].status", is(game.getStatus().toString())));
     }
 
+    @Test void getPlayerScore_validInput() throws Exception {
+        // given
+        Player player = new Player();
+        player.setId(1);
+        player.setUsername("testName");
+        player.setStatus(PlayerStatus.NOT_READY);
+        player.setScore(0);
+
+        Game game = new Game();
+        game.initGame();
+        game.addPlayer(player);
+
+        // mocks the services
+        given(gameService.getGame(Mockito.anyLong())).willReturn(game);
+        given(playerService.getPlayer(Mockito.anyLong())).willReturn(player);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/games/1/players/1").contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk());
+    }
+
+    @Test
+    public void getPlayersFromGame_validInput() throws Exception {
+        // given
+        Player player = new Player();
+        player.setId(1);
+        player.setUsername("testName");
+        player.setStatus(PlayerStatus.NOT_READY);
+        player.setScore(0);
+
+        List<Player> allPlayers = Collections.singletonList(player);
+
+        // this mocks the UserService -> we define above what the userService should return when getUsers() is called
+        given(gameService.getPlayers(anyLong())).willReturn(allPlayers);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/games/1/players")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(notNullValue())))
+                .andExpect(jsonPath("$[0].username", is(player.getUsername())))
+                .andExpect(jsonPath("$[0].status", is(player.getStatus().toString())))
+                .andExpect(jsonPath("$[0].score", is(player.getScore())));
+    }
+
+    @Test
+    public void getStones_validInput() throws Exception {
+        // given
+        Stone stone = new Stone();
+        stone.setId(1L);
+        stone.setSymbol("b");
+        stone.setValue(2);
+
+        List<Stone> allStones = Collections.singletonList(stone);
+
+        // this mocks the GameService -> we define above what the gameService should return when getGames() is called
+        given(playerService.getStones(Mockito.anyLong(), Mockito.anyLong())).willReturn(allStones);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/games/1/players/1/bag").contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].symbol", is(stone.getSymbol())))
+                .andExpect(jsonPath("$[0].value", is(stone.getValue())));
+    }
 
     @Test
     public void createGame_validInput() throws Exception {
@@ -112,7 +215,38 @@ public class GameControllerTest {
 
         // then
         mockMvc.perform(postRequest).andExpect(status().isCreated());
-                // and return game id
+    }
+
+    @Test
+    public void createGame_InputWithPassword() throws Exception {
+        // given request
+        GamePostDTO gamePostDTO = new GamePostDTO();
+        gamePostDTO.setOwnerId(2L);
+        gamePostDTO.setName("otherTestGame");
+        gamePostDTO.setPassword("test123");
+
+        // given user
+        User user = new User();
+        user.setUsername("TestUsername");
+        user.setPassword("TestPassword");
+        userService.createUser(user);
+
+        // given game
+        Game testGame = new Game();
+        testGame.setId(2L);
+        testGame.setOwner(user);
+        testGame.setName("testGame");
+        testGame.setPassword("");
+
+        given(gameService.createGame(Mockito.any(), Mockito.any())).willReturn(testGame);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = post("/games")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gamePostDTO));
+
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isCreated());
     }
 
     @Test
@@ -165,72 +299,6 @@ public class GameControllerTest {
     }
 
     @Test
-    public void createGame_otherInputwithPassword() throws Exception {
-        // given request
-        GamePostDTO gamePostDTO = new GamePostDTO();
-        gamePostDTO.setOwnerId(2L);
-        gamePostDTO.setName("othertestgame");
-        gamePostDTO.setPassword("test123");
-
-        // given user
-        User user = new User();
-        user.setUsername("TestUsername");
-        user.setPassword("TestPassword");
-        userService.createUser(user);
-
-        // given game
-        Game testGame = new Game();
-        testGame.setId(2L);
-        testGame.setOwner(user);
-        testGame.setName("testGame");
-        testGame.setPassword("");
-
-        given(gameService.createGame(Mockito.any(), Mockito.any())).willReturn(testGame);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder postRequest = post("/games")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(gamePostDTO));
-
-        // then
-        mockMvc.perform(postRequest).andExpect(status().isCreated());
-        // and return game id
-    }
-
-    @Test
-    public void leaveGame_validInput() throws Exception {
-        // given
-        UserTokenDTO userTokenDTO = new UserTokenDTO();
-        userTokenDTO.setToken("testToken");
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder deleteRequest = delete("/games/1/players/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userTokenDTO));
-
-        // then
-        mockMvc.perform(deleteRequest).andExpect(status().isOk());
-    }
-
-    @Test
-    public void endGame_validInput() throws Exception {
-        // given
-        UserPutDTO userPutDTO = new UserPutDTO();
-        userPutDTO.setId(1L);
-        userPutDTO.setUsername("testUsername");
-        userPutDTO.setPassword("testPassword");
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder deleteRequest = delete("/games/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPutDTO));
-
-        // then
-        mockMvc.perform(deleteRequest).andExpect(status().isOk());
-    }
-
-
-    @Test
     public void startGame_otherInput() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
@@ -267,34 +335,64 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getPlayersFromGame_validInput() throws Exception {
+    public void leaveGame_validInput() throws Exception {
         // given
-        Player player = new Player();
-        player.setId(1);
-        player.setUsername("testName");
-        player.setStatus(PlayerStatus.NOT_READY);
-        player.setScore(0);
+        UserTokenDTO userTokenDTO = new UserTokenDTO();
+        userTokenDTO.setToken("testToken");
 
-        List<Player> allPlayers = Collections.singletonList(player);
-
-        // this mocks the UserService -> we define above what the userService should return when getUsers() is called
-        given(gameService.getPlayers(anyLong())).willReturn(allPlayers);
-
-        // when
-        MockHttpServletRequestBuilder getRequest = get("/games/1/players")
-                .contentType(MediaType.APPLICATION_JSON);
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder deleteRequest = delete("/games/1/players/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userTokenDTO));
 
         // then
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(notNullValue())))
-                .andExpect(jsonPath("$[0].username", is(player.getUsername())))
-                .andExpect(jsonPath("$[0].status", is(player.getStatus().toString())))
-                .andExpect(jsonPath("$[0].score", is(player.getScore())));
+        mockMvc.perform(deleteRequest).andExpect(status().isOk());
     }
 
+    @Test
+    public void endGame_validInput() throws Exception {
+        // given
+        UserTokenDTO userTokenDTO = new UserTokenDTO();
+        userTokenDTO.setToken("testToken");
 
+        User user = new User();
+        user.setToken("testToken");
 
+        Player player = new Player();
+        player.setUser(user);
+
+        Game game = new Game();
+        game.initGame();
+        game.addPlayer(player);
+
+        // mock services
+        given(gameService.getGame(Mockito.anyLong())).willReturn(game);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder patchRequest = patch("/games/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userTokenDTO));
+
+        // then
+        mockMvc.perform(patchRequest).andExpect(status().isOk());
+    }
+
+    @Test
+    public void deleteGame_validInput() throws Exception {
+        // given
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setId(1L);
+        userPutDTO.setUsername("testUsername");
+        userPutDTO.setPassword("testPassword");
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder deleteRequest = delete("/games/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPutDTO));
+
+        // then
+        mockMvc.perform(deleteRequest).andExpect(status().isOk());
+    }
 
     /**
      * Helper Method to convert userPostDTO into a JSON string such that the input can be processed

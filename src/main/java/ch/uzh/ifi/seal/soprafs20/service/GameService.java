@@ -157,8 +157,6 @@ public class GameService {
         // fetch game from db
         Game game = getGame(gameId);
 
-
-
         //check if user is authorized to end game
         if (!game.getOwner().getToken().equals(token)) {
             throw new UnauthorizedException("The game can not be ended by this user");
