@@ -6,7 +6,6 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.PlayerGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserTokenDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

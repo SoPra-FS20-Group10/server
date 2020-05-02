@@ -74,7 +74,6 @@ public class GameControllerTest {
 
         // this mocks the GameService
         given(gameService.getGame(Mockito.anyLong())).willReturn(game);
-        //given(DTOMapper.INSTANCE.convertEntityToGameGetDTO(Mockito.any())).willReturn(gameGetDTO);
 
         // when
         MockHttpServletRequestBuilder getRequest = get("/games/1").contentType(MediaType.APPLICATION_JSON);
