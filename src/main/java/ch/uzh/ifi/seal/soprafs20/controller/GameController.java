@@ -305,30 +305,20 @@ public class GameController {
     @DeleteMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void deleteGame(@PathVariable("gameId")Long gameId, @RequestBody UserTokenDTO userTokenDTO) {
-        // parse input into String
-        String token = userTokenDTO.getToken();
-
+    public void deleteGame(@PathVariable("gameId")Long gameId) {
         // fetch all players from the game
         List<Player> players = gameService.getPlayers(gameId);
 
-        if(players == null){
-            throw new NotFoundException("the players could not be found");
+        // check if there are still players in the game
+        if (players != null){
+            throw new NotFoundException("There are still players in the game");
         }
 
         // remove game from owner
         userService.removeGame(gameService.getGame(gameId));
 
         // end game
-        gameService.endGame(gameId, token);
-
-        // delete all players and remove player from user
-        for (Player player : players) {
-            User user = player.getUser();
-            user.setGame(null);
-            userService.removePlayer(player);
-            playerService.deletePlayer(player);
-        }
+        gameService.endGame(gameId);
     }
 
     @PutMapping("/games/{gameId}/players/{playerId}")

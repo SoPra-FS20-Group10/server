@@ -153,17 +153,11 @@ public class GameService {
         gameRepository.flush();
     }
 
-    public void endGame(long gameId, String token) {
+    public void endGame(long gameId) {
         // fetch game from db
         Game game = getGame(gameId);
 
-        //check if user is authorized to end game
-        if (!game.getOwner().getToken().equals(token)) {
-            throw new UnauthorizedException("The game can not be ended by this user");
-        }
-
         // delete the game
-        game.setStatus(GameStatus.ENDED);
         gameRepository.delete(game);
         gameRepository.flush();
     }
