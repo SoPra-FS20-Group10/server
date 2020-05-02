@@ -274,11 +274,49 @@ public class GameController {
         playerService.deletePlayer(player);
     }
 
-    @DeleteMapping("/games/{gameId}")
+    @PatchMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void endGame(@PathVariable("gameId")Long gameId, @RequestBody UserTokenDTO userTokenDTO) {
-        // parse input into user entity
+        boolean authorised = false;
+
+        // parse input into String
+        String token = userTokenDTO.getToken();
+
+        // fetch game from db
+        Game game = gameService.getGame(gameId);
+
+        // fetch all players from the game
+        List<Player> players = game.getPlayers();
+
+        // check if user is authorised to end the game
+        for (Player player : players) {
+            if (player.getUser().getToken().equals(token)) {
+                authorised = true;
+                break;
+            }
+        }
+
+        // if the token belongs to no player, throw exception
+        if (!authorised) {
+            throw new ConflictException("The user is not authorised to end the game");
+        }
+
+        // empty bag of game and all players
+        game.setBag(new ArrayList<>());
+        for (Player player : players) {
+            player.setBag(new ArrayList<>());
+        }
+
+        // check if game should be ended -> all bags are emptied => game ends
+        gameService.checkIfGameEnded(game);
+    }
+
+    @DeleteMapping("/games/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void deleteGame(@PathVariable("gameId")Long gameId, @RequestBody UserTokenDTO userTokenDTO) {
+        // parse input into String
         String token = userTokenDTO.getToken();
 
         // fetch all players from the game

@@ -396,6 +396,7 @@ public class GameService {
                 if (player.getBag().isEmpty()) {
                     game.setStatus(GameStatus.ENDED);
                     updateScore(game);
+                    break;
                 }
             }
         }
