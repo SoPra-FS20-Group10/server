@@ -119,20 +119,11 @@ public class RoundService {
             placeStoneValid(grid, coordinates.get(i));
         }
 
-            /*
-            // check if word is vertical or horizontal
-            if ((coordinates.get(stones.size() - 1) % 15) == (coordinates.get(0) % 15)) {
-                word = buildWord(grid, stones, coordinates, "vertical");
-            }
-            else {
-                word = buildWord(grid, stones, coordinates, "horizontal");
-            }
-            */
         // scan board for all new words with length > 1
         tuple = checkBoard(new ArrayList<>(grid), stones, coordinates);
 
-        // calculate points and add to player's score
-        player.setScore(player.getScore() + calculatePoints(tuple.tiles));
+        // add score to the player
+        player.setScore(player.getScore() + tuple.score);
 
         // check if words exists
         try {
@@ -313,7 +304,7 @@ public class RoundService {
         gameRepository.flush();
     }
 
-    public String buildString(List<Triplet> word){
+    private String buildString(List<Triplet> word){
         StringBuilder newWord = new StringBuilder();
 
         // append the letter of all triplets to the word
@@ -326,9 +317,21 @@ public class RoundService {
         return newWord.toString();
     }
 
-    public Tuple checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
+    private List<Tile> buildList(List<Triplet> triplets) {
+        List<Tile> tiles = new ArrayList<>();
+
+        // build a tile list
+        for (Triplet triplet : triplets) {
+            tiles.add(triplet.tile);
+        }
+
+        // return
+        return tiles;
+    }
+
+    private Tuple checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
+        int score = 0;
         Tile[][] board2d = new Tile[15][15];
-        ArrayList<Tile> tiles = new ArrayList<>();
         ArrayList<String> words = new ArrayList<>();
         Boolean[][] visitedVertical = new Boolean[15][15];
         Boolean[][] visitedHorizontal = new Boolean[15][15];
@@ -356,34 +359,35 @@ public class RoundService {
                 if (board2d[i][j].getStoneSymbol() != null) {
                     // check board vertical
                     word = findVerticalWords(board2d, visitedVertical, i, j);
-                    checkIfNewWord(coordinates, words, tiles, word);
+                    score += checkIfNewWordAndCalculatePoints(coordinates, words, word);
 
                     // check board horizontal
                     word = findHorizontalWords(board2d, visitedHorizontal, i, j);
-                    checkIfNewWord(coordinates, words, tiles, word);
+                    score += checkIfNewWordAndCalculatePoints(coordinates, words, word);
                 }
             }
         }
 
-        return new Tuple(words, tiles);
+        return new Tuple(words, score);
     }
 
-    private void checkIfNewWord(List<Integer> coordinates, ArrayList<String> words, ArrayList<Tile> tiles, List<Triplet> word) {
+    private int checkIfNewWordAndCalculatePoints(List<Integer> coordinates, ArrayList<String> words, List<Triplet> word) {
+        int points = 0;
+
         if (word.size() > 1) {
-            for (Triplet tile : word) {
-                if (coordinates.contains(tile.j * 15 + tile.i)) {
+            for (Triplet triplet : word) {
+                if (coordinates.contains(triplet.j * 15 + triplet.i)) {
                     String newWord = this.buildString(word);
 
                     if (!words.contains(newWord)) {
                         words.add(newWord);
-                    }
-
-                    if (!tiles.contains(tile.tile)) {
-                        tiles.add(tile.tile);
+                        points = calculatePoints(buildList(word));
                     }
                 }
             }
         }
+
+        return points;
     }
 
     private List<Triplet> findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
@@ -545,11 +549,11 @@ public class RoundService {
 
     private static class Tuple {
         public final List<String> words;
-        public final List<Tile> tiles;
+        public final int score;
 
-        private Tuple(List<String> words, List<Tile> tiles) {
+        private Tuple(List<String> words, int score) {
             this.words = words;
-            this.tiles = tiles;
+            this.score = score;
         }
     }
 }
