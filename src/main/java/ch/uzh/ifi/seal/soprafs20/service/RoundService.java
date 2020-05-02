@@ -116,6 +116,9 @@ public class RoundService {
             List<String> words = tuple.words;
             List<Tile> tiles = tuple.tiles;
 
+            int points = calculatePoints(tiles);
+            player.setScore(player.getScore() + points);
+
             /*
             // check if word is vertical or horizontal
             if ((coordinates.get(stones.size() - 1) % 15) == (coordinates.get(0) % 15)) {
