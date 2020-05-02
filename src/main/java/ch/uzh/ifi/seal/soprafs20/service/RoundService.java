@@ -69,6 +69,7 @@ public class RoundService {
             }
         }
 
+        // deploy multiplications
         if (doublew != 0) {
             sum *= doublew * 2;
         }
@@ -77,7 +78,6 @@ public class RoundService {
             sum *= triplew * 3;
         }
 
-        // deploy multiplications
         return sum;
     }
 
@@ -99,48 +99,48 @@ public class RoundService {
     }
 
     public void placeWord(Game game, Player player, List<Long> stoneId, List<Integer> coordinates) {
-        if (!stoneId.isEmpty()) {
+        Tuple tuple;
+        List<Tile> grid;
+        List<Stone> stones;
 
-            List<Stone> stones = getStones(stoneId);
+        // check if list of stones is empty
+        if (stoneId.isEmpty()) {
+            throw new ConflictException("Player cannot lay empty word.");
+        }
 
-            // fetch game from db, grid from game
-            List<Tile> grid = game.getGrid();
+        // fetch all stones from list
+        stones = getStones(stoneId);
 
-            // check if placing is valid
-            for (int i = 0; i < stones.size(); ++i) {
-                placeStoneValid(grid, coordinates.get(i));
+        // fetch game from db, grid from game
+        grid = game.getGrid();
+
+        // check if placing is available
+        for (int i = 0; i < stones.size(); ++i) {
+            placeStoneValid(grid, coordinates.get(i));
+        }
+
+        // scan board for all new words with length > 1
+        tuple = checkBoard(new ArrayList<>(grid), stones, coordinates);
+
+        // calculate points and add to player's score
+        player.setScore(player.getScore() + calculatePoints(tuple.tiles));
+
+        // check if words exists
+        try {
+            for (String word : tuple.words) {
+                checkWord(word.toLowerCase());
             }
+        }
 
-            // List<String> words = checkBoard(new ArrayList<>(grid), stones, coordinates);
-            Tuple tuple = checkBoard(new ArrayList<>(grid), stones, coordinates);
-            List<String> words = tuple.words;
-            List<Tile> tiles = tuple.tiles;
+        // if not throw exception
+        catch (Exception exception) {
+            throw new ConflictException(exception.getMessage());
+        }
 
-            /*
-            // check if word is vertical or horizontal
-            if ((coordinates.get(stones.size() - 1) % 15) == (coordinates.get(0) % 15)) {
-                word = buildWord(grid, stones, coordinates, "vertical");
-            }
-            else {
-                word = buildWord(grid, stones, coordinates, "horizontal");
-            }
-            */
-
-            // check if words exists
-            try {
-                for(String word:words) {
-                    checkWord(word.toLowerCase());
-                }
-            }
-            catch (Exception exception) {
-                throw new ConflictException(exception.getMessage());
-            }
-
-            // place new stones
-            for (int i = 0; i < stones.size(); ++i) {
-                placeStone(grid, stones.get(i), coordinates.get(i));
-                deleteStone(player, stones.get(i));
-            }
+        // place new stones
+        for (int i = 0; i < stones.size(); ++i) {
+            placeStone(grid, stones.get(i), coordinates.get(i));
+            deleteStone(player, stones.get(i));
         }
 
         // save changes
@@ -197,8 +197,8 @@ public class RoundService {
     }
 
     private List<Stone> getStones(List<Long> stoneIds) {
-        List<Stone> stones = new ArrayList<>();
         Optional<Stone> found;
+        List<Stone> stones = new ArrayList<>();
 
         // fetch all stones from the db
         for (Long id : stoneIds) {
@@ -233,75 +233,12 @@ public class RoundService {
             URLConnection connection = url.openConnection();
             connection.getContent();
         }
+
+        // throw exception if api returns an exception
         catch (Exception exception) {
             throw new ConflictException("There went something wrong while searching the dictionary: " +
                     exception.getMessage());
         }
-    }
-
-    private String buildWord(List<Tile> grid, List<Stone> played, List<Integer> coordinates, String mode) {
-        StringBuilder word = new StringBuilder();
-        int start;
-        int end;
-        int toAdd;
-
-        // set start/end-point and toAdd according whether word is vertical or horizontal
-        if (mode.equals("vertical")) {
-            start = coordinates.get(0) % 15;
-            end = 225;
-            toAdd = 15;
-        }
-        else {
-            start = coordinates.get(0) - (coordinates.get(0) % 15);
-            end = start + 15;
-            toAdd = 1;
-        }
-
-        // check left/on-top of the played stones
-        for (int i = coordinates.get(0) - toAdd; i >= start; i -= toAdd) {
-            // add letter to the front of the word if it exists
-            if (grid.get(i).getStoneSymbol() != null) {
-                word.insert(0, grid.get(i).getStoneSymbol());
-            }
-
-            // if tile is empty: break
-            else {
-                break;
-            }
-        }
-
-        // check between first and last stones played
-        for (int i = coordinates.get(0); i <= coordinates.get(coordinates.size() - 1); i += toAdd) {
-            // stone gets played by player
-            if (coordinates.contains(i)) {
-                word.append(played.get(coordinates.indexOf(i)).getSymbol());
-            }
-
-            // stone is already played
-            else if (grid.get(i).getStoneSymbol() != null) {
-                word.append(grid.get(i).getStoneSymbol());
-            }
-
-            // if there's a gap, throw an error
-            else if (grid.get(i).getStoneSymbol() == null) {
-                throw new ConflictException("The stones played form more than one word");
-            }
-        }
-
-        // check under/right of the stones played
-        for (int i = coordinates.get(coordinates.size() - 1) + 1; i < end; i += toAdd) {
-            // add letter to the back of the word if it exists
-            if (grid.get(i).getStoneSymbol() != null) {
-                word.append(grid.get(i).getStoneSymbol());
-            }
-
-            // if tile is empty: break
-            else {
-                break;
-            }
-        }
-
-        return word.toString();
     }
 
     private void placeStoneValid(List<Tile> grid, int coordinate) {
@@ -313,9 +250,10 @@ public class RoundService {
 
     private void placeStone(List<Tile> grid, Stone stone, int coordinate) {
         Tile tile;
+        Optional<Tile> foundTile;
 
         // fetch tile from db
-        Optional<Tile> foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(grid.get(coordinate).getMultiplier(),
+        foundTile = tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(grid.get(coordinate).getMultiplier(),
                 stone.getSymbol(), grid.get(coordinate).getMultivariant());
 
         // check if tile is present
@@ -381,10 +319,10 @@ public class RoundService {
 
     public Tuple checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
         Tile[][] board2d = new Tile[15][15];
+        ArrayList<Tile> tiles = new ArrayList<>();
+        ArrayList<String> words = new ArrayList<>();
         Boolean[][] visitedVertical = new Boolean[15][15];
         Boolean[][] visitedHorizontal = new Boolean[15][15];
-        ArrayList<String> words = new ArrayList<>();
-        ArrayList<Tile> tiles = new ArrayList<>();
 
         // place stones on temporary board copy
         for (int i = 0; i < stones.size(); ++i) {
@@ -407,46 +345,36 @@ public class RoundService {
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
                 if (board2d[i][j].getStoneSymbol() != null) {
+                    // check board vertical
                     word = findVerticalWords(board2d, visitedVertical, i, j);
+                    checkIfNewWord(coordinates, words, tiles, word);
 
-                    if (word.size() > 1) {
-                        for (Triplet tile : word) {
-                            if (coordinates.contains(tile.j * 15 + tile.i)) {
-                                String newWord = this.buildString(word);
-
-                                if (!words.contains(newWord)) {
-                                    words.add(newWord);
-                                }
-
-                                if (!tiles.contains(tile.tile)) {
-                                    tiles.add(tile.tile);
-                                }
-                            }
-                        }
-                    }
-
+                    // check board horizontal
                     word = findHorizontalWords(board2d, visitedHorizontal, i, j);
-
-                    if (word.size() > 1) {
-                        for (Triplet tile : word) {
-                            if (coordinates.contains(tile.j * 15 + tile.i)) {
-                                String newWord = this.buildString(word);
-
-                                if (!words.contains(newWord)) {
-                                    words.add(newWord);
-                                }
-
-                                if (!tiles.contains(tile.tile)) {
-                                    tiles.add(tile.tile);
-                                }
-                            }
-                        }
-                    }
+                    checkIfNewWord(coordinates, words, tiles, word);
                 }
             }
         }
 
         return new Tuple(words, tiles);
+    }
+
+    private void checkIfNewWord(List<Integer> coordinates, ArrayList<String> words, ArrayList<Tile> tiles, List<Triplet> word) {
+        if (word.size() > 1) {
+            for (Triplet tile : word) {
+                if (coordinates.contains(tile.j * 15 + tile.i)) {
+                    String newWord = this.buildString(word);
+
+                    if (!words.contains(newWord)) {
+                        words.add(newWord);
+                    }
+
+                    if (!tiles.contains(tile.tile)) {
+                        tiles.add(tile.tile);
+                    }
+                }
+            }
+        }
     }
 
     private List<Triplet> findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
