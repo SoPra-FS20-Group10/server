@@ -11,7 +11,7 @@ public class UserGetDTO {
     private UserStatus status;
     private Date birthday;
     private Date cakeDay;
-    private int playtime;
+    private int playTime;
     private int overallScore;
     private int playedGames;
     private int wonGames;
@@ -65,12 +65,12 @@ public class UserGetDTO {
         this.cakeDay = cakeDay;
     }
 
-    public int getPlaytime() {
-        return playtime;
+    public int getPlayTime() {
+        return playTime;
     }
 
-    public void setPlaytime(int playtime) {
-        this.playtime = playtime;
+    public void setPlayTime(int playTime) {
+        this.playTime = playTime;
     }
 
     public int getOverallScore() {

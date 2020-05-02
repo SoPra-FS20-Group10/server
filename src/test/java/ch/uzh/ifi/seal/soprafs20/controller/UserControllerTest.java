@@ -1,6 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
@@ -9,7 +8,6 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserTokenDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
-import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,10 +23,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,6 +40,41 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
+    @Test
+    public void getUser_validInput() throws Exception {
+        // given
+        User user = new User();
+        user.setId(1L);
+        user.setToken("testToken");
+        user.setUsername("testUsername");
+        user.setStatus(UserStatus.OFFLINE);
+        user.setBirthday(new Date());
+        user.setCakeDay(new Date());
+        user.setPlayTime(100);
+        user.setOverallScore(150);
+        user.setPlayedGames(200);
+        user.setWonGames(50);
+        user.setWinPercentage();
+
+        // when -> then: return user
+        given(userService.getUser(Mockito.anyLong())).willReturn(user);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder getRequest = get("/users/1")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(notNullValue())))
+                .andExpect(jsonPath("$.token", is(user.getToken())))
+                .andExpect(jsonPath("$.username", is(user.getUsername())))
+                .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$.playTime", is(user.getPlayTime())))
+                .andExpect(jsonPath("$.overallScore", is(user.getOverallScore())))
+                .andExpect(jsonPath("$.playedGames", is(user.getPlayedGames())))
+                .andExpect(jsonPath("$.wonGames", is(user.getWonGames())))
+                .andExpect(jsonPath("$.winPercentage", is(0.25)));
+    }
 
     @Test
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
@@ -121,44 +154,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void getUser_validInput() throws Exception {
-        // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setStatus(UserStatus.OFFLINE);
-
-        // when -> then: return user
-        given(userService.getUser(Mockito.anyLong())).willReturn(user);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder getRequest = get("/users/1")
-                .contentType(MediaType.APPLICATION_JSON);
-
-        // then
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(notNullValue())))
-                .andExpect(jsonPath("$.username", is(user.getUsername())))
-                .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
-    }
-
-    @Test
-    public void updateUser_validInput() throws Exception {
-        // given
-        UserPutDTO userPutDTO = new UserPutDTO();
-        userPutDTO.setUsername("bla");
-        userPutDTO.setPassword("bla");
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/users/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userPutDTO));
-
-        // then
-        mockMvc.perform(putRequest).andExpect(status().isNoContent());
-    }
-
-    @Test
     public void logoutUser_validInput() throws Exception {
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
@@ -184,6 +179,22 @@ public class UserControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @Test
+    public void updateUser_validInput() throws Exception {
+        // given
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setUsername("bla");
+        userPutDTO.setPassword("bla");
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder putRequest = put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPutDTO));
+
+        // then
+        mockMvc.perform(putRequest).andExpect(status().isNoContent());
+    }
+
 
     private String asJsonString(final Object object) {
         try {
@@ -193,6 +204,4 @@ public class UserControllerTest {
             throw new SopraServiceException(String.format("The request body could not be created.%s", e.toString()));
         }
     }
-
-
 }

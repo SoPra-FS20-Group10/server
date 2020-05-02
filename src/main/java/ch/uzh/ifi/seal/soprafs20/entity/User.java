@@ -41,7 +41,7 @@ public class User implements Serializable {
     private Date birthday;
 
     @Column()
-    private int playtime;
+    private int playTime;
 
     @Column()
     private float winPercentage = 0;
@@ -133,12 +133,12 @@ public class User implements Serializable {
         this.game = game;
     }
 
-    public int getPlaytime() {
-        return playtime;
+    public int getPlayTime() {
+        return playTime;
     }
 
-    public void setPlaytime(int playtime) {
-        this.playtime = playtime;
+    public void setPlayTime(int playtime) {
+        this.playTime = playtime;
     }
 
     public float getWinPercentage() {
