@@ -40,9 +40,6 @@ public class RoundServiceTest {
     @InjectMocks
     private GameService gameService;
 
-    @InjectMocks
-    private TileService tileService;
-
     private Game testGame;
     private Player testPlayer;
     private Stone stone1, stone2;
@@ -222,6 +219,21 @@ public class RoundServiceTest {
     }
 
     @Test
+    public void get_currentPlayer_successful() {
+        // given
+        Player player = new Player();
+        player.setId(25);
+
+        testGame.initGame();
+        testGame.addPlayer(testPlayer);
+        testGame.addPlayer(player);
+
+        assertEquals(player.getId(), roundService.getCurrentPlayer(testGame, testPlayer).getId());
+        assertEquals(testPlayer.getId(), roundService.getCurrentPlayer(testGame, player).getId());
+        assertEquals(player.getId(), roundService.getCurrentPlayer(testGame, testPlayer).getId());
+    }
+
+    @Test
     public void test_exchangeStones_successful() {
         List<Stone> stonesGame = new ArrayList<>();
         List<Stone> stonesPlayer = new ArrayList<>();
@@ -270,7 +282,7 @@ public class RoundServiceTest {
 
     @Test
     public void test_placeWord_successful() {
-        // given
+        // given tiles, user, player and game
         Tile tile1 = new Tile(3, null, "w");
         Tile tile2 = new Tile(1, null, "l");
         Tile tile3 = new Tile(3, "g", "w");
@@ -285,13 +297,16 @@ public class RoundServiceTest {
         testPlayer.addStone(stone1);
         testPlayer.addStone(stone2);
 
+        // create game
         gameService.createGame(testGame, testPlayer);
         assertNotNull(testGame, "The created game should not be null");
 
+        // stones to place
         List<Long> stoneIds = new ArrayList<>();
         stoneIds.add(1L);
         stoneIds.add(2L);
 
+        // where to place
         List<Integer> coordinates = new ArrayList<>();
         coordinates.add(0);
         coordinates.add(1);
