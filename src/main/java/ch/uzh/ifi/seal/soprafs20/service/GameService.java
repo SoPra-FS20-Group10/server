@@ -25,9 +25,6 @@ public class GameService {
     public GameService(@Qualifier("gameRepository")GameRepository gameRepository, @Qualifier("tileRepository")TileRepository tileRepository) {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
-
-        // initialise all the tiles
-        initTiles();
     }
 
     public Game getGame(long gameId) {
@@ -255,32 +252,6 @@ public class GameService {
 
         // add grid to game
         game.setGrid(grid);
-    }
-
-
-    public void initTiles(){
-        String alpha = "abcdefghijklmnopqrstuvwxyz";
-
-        //create and save empty tiles
-        for (int i = 1; i < 4; ++i) {
-            tileRepository.save(new Tile(i, null,"l"));
-            tileRepository.flush();
-
-            tileRepository.save(new Tile(i, null,"w"));
-            tileRepository.flush();
-        }
-
-        //add all other stone-tile combinations ot the repo
-        for(int i = 0; i < alpha.length(); i++){
-            String symbol = Character.toString(alpha.charAt(i));
-            for(int j = 1; j < 4; j++){
-                tileRepository.save(new Tile(j, symbol,"w"));
-                tileRepository.flush();
-
-                tileRepository.save(new Tile(j, symbol,"l"));
-                tileRepository.flush();
-            }
-        }
     }
 
     private void addAllStones(Game game) {

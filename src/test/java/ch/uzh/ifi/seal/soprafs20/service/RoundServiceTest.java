@@ -40,6 +40,9 @@ public class RoundServiceTest {
     @InjectMocks
     private GameService gameService;
 
+    @InjectMocks
+    private TileService tileService;
+
     private Game testGame;
     private Player testPlayer;
     private Stone stone1, stone2;
@@ -74,6 +77,8 @@ public class RoundServiceTest {
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
+
+        // when -> tile is searched -> return tile
         Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(Mockito.anyInt(), Mockito.isNull(),
                 Mockito.anyString())).thenReturn(Optional.of(tile));
     }
@@ -275,21 +280,13 @@ public class RoundServiceTest {
         user.setId(1L);
         user.setUsername("test");
 
-        Player player = new Player();
-        player.setId(1L);
-        player.setUsername("test");
-        player.setScore(0);
-        player.setUser(user);
-        player.initPlayer();
-        player.addStone(stone1);
-        player.addStone(stone2);
+        testPlayer.setUser(user);
+        testPlayer.initPlayer();
+        testPlayer.addStone(stone1);
+        testPlayer.addStone(stone2);
 
-        Game game = new Game();
-        game.setName("test");
-        game.setPassword("test");
-
-        gameService.createGame(game, player);
-        assertNotNull(game, "The created game should not be null");
+        gameService.createGame(testGame, testPlayer);
+        assertNotNull(testGame, "The created game should not be null");
 
         List<Long> stoneIds = new ArrayList<>();
         stoneIds.add(1L);
@@ -312,10 +309,11 @@ public class RoundServiceTest {
                 eq("l"))).thenReturn(Optional.of(tile4));
 
         // test method
-        roundService.placeWord(game, player, stoneIds, coordinates);
+        roundService.placeWord(testGame, testPlayer, stoneIds, coordinates);
 
-        assertEquals("g", game.getGrid().get(0).getStoneSymbol());
-        assertEquals("o", game.getGrid().get(1).getStoneSymbol());
-        assertTrue(player.getBag().isEmpty());
+        // assertions
+        assertEquals("g", testGame.getGrid().get(0).getStoneSymbol());
+        assertEquals("o", testGame.getGrid().get(1).getStoneSymbol());
+        assertTrue(testPlayer.getBag().isEmpty());
     }
 }

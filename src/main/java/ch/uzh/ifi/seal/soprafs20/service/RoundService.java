@@ -127,6 +127,11 @@ public class RoundService {
         // scan board for all new words with length > 1
         tuple = checkBoard(new ArrayList<>(grid), stones, coordinates);
 
+        // check if there are any valid words
+        if (tuple.words.isEmpty()) {
+            throw new ConflictException("The stones placed form no valid word.");
+        }
+
         // add score to the player
         player.setScore(player.getScore() + tuple.score);
 
@@ -338,8 +343,8 @@ public class RoundService {
         int score = 0;
         Tile[][] board2d = new Tile[15][15];
         ArrayList<String> words = new ArrayList<>();
-        Boolean[][] visitedVertical = new Boolean[15][15];
-        Boolean[][] visitedHorizontal = new Boolean[15][15];
+        boolean[][] visitedVertical = new boolean[15][15];
+        boolean[][] visitedHorizontal = new boolean[15][15];
 
         // place stones on temporary board copy
         for (int i = 0; i < stones.size(); ++i) {
@@ -395,7 +400,7 @@ public class RoundService {
         return points;
     }
 
-    private List<Triplet> findVerticalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
+    private List<Triplet> findVerticalWords(Tile[][] board, boolean[][] visited, int i, int j) {
         Triplet currentLetter = new Triplet(board[i][j], i, j);
         List<Triplet> words = new ArrayList<>();
 
@@ -467,7 +472,7 @@ public class RoundService {
         }
     }
 
-    private List<Triplet> findHorizontalWords(Tile[][] board, Boolean[][] visited, int i, int j) {
+    private List<Triplet> findHorizontalWords(Tile[][] board, boolean[][] visited, int i, int j) {
         Triplet currentLetter = new Triplet(board[i][j], i, j);
         List<Triplet> words = new ArrayList<>();
 

@@ -2,16 +2,10 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.Stone;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
-import ch.uzh.ifi.seal.soprafs20.service.GameService;
-import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
-import ch.uzh.ifi.seal.soprafs20.service.RoundService;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
+import ch.uzh.ifi.seal.soprafs20.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -76,7 +70,8 @@ public class GameControllerTest {
         given(gameService.getGame(Mockito.anyLong())).willReturn(game);
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/games/1").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/games/1")
+                .contentType(MediaType.APPLICATION_JSON);
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -97,11 +92,12 @@ public class GameControllerTest {
 
         List<Game> allGames = Collections.singletonList(game);
 
-        // this mocks the GameService -> we define above what the gameService should return when getGames() is called
+        // this mocks the GameService
         given(gameService.getGames()).willReturn(allGames);
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/games").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/games").
+                contentType(MediaType.APPLICATION_JSON);
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -127,7 +123,8 @@ public class GameControllerTest {
         given(playerService.getPlayer(Mockito.anyLong())).willReturn(player);
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/games/1/players/1").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/games/1/players/1")
+                .contentType(MediaType.APPLICATION_JSON);
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk());
@@ -174,7 +171,8 @@ public class GameControllerTest {
         given(playerService.getStones(Mockito.anyLong(), Mockito.anyLong())).willReturn(allStones);
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/games/1/players/1/bag").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/games/1/players/1/bag")
+                .contentType(MediaType.APPLICATION_JSON);
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
