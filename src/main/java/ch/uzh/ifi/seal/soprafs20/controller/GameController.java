@@ -130,13 +130,13 @@ public class GameController {
             throw new NotFoundException("the players could not be found");
         }
 
-
         List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
         for (Player player : players) {
             playerGetDTOs.add(DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
         }
+
         return playerGetDTOs;
     }
 
@@ -250,13 +250,10 @@ public class GameController {
         // parse input into user
         String token = userTokenDTO.getToken();
 
-
         // get game and player instance
         Game game = gameService.getGame(gameId);
 
-
         Player player = playerService.getPlayer(playerId);
-
 
         // leave game, remove player from user and delete player
         gameService.leaveGame(game, player, token);
@@ -387,14 +384,12 @@ public class GameController {
     @ResponseBody
     public void exchangeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
                                             @RequestBody ExchangeStonesDTO exchangeStonesDTO) {
-
         // get player and game
         Player player = playerService.getPlayer(playerId);
 
         if(player == null){
             throw new NotFoundException("the player could not be found");
         }
-
 
         Game game = gameService.getGame(gameId);
 

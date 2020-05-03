@@ -22,7 +22,8 @@ public class GameService {
     private final TileRepository tileRepository;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository")GameRepository gameRepository, @Qualifier("tileRepository")TileRepository tileRepository) {
+    public GameService(@Qualifier("gameRepository")GameRepository gameRepository,
+                       @Qualifier("tileRepository")TileRepository tileRepository) {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
     }
@@ -107,9 +108,11 @@ public class GameService {
         if (!game.getOwner().getToken().equals(token)) {
             throw new UnauthorizedException("The user is not authorized to start the game");
         }
-        // check if all players are ready
+
+        // fetch players from the game
         List<Player> players = game.getPlayers();
 
+        // check if all players are ready
         for (Player player : players) {
             if (player.getStatus() == PlayerStatus.NOT_READY) {
                 throw new ConflictException("Not all players are ready to start.");
@@ -139,6 +142,7 @@ public class GameService {
 
         // check if the user is authorized to leave the game
         if (!player.getUser().getToken().equals(token)) {
+            if (!game.getOwner().getToken().equals(token))
             throw new ConflictException("The user is not authorized to leave this game");
         }
 
