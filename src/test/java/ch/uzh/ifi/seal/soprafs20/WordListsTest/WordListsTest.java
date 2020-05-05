@@ -23,4 +23,15 @@ public class WordListsTest {
         assertTrue(wordLists.contains("ant"));
         assertTrue(wordLists.contains("bow"));
     }
+
+    @Test
+    void Contains_words_2() throws IOException {
+        WordLists wordLists = WordLists.getInstance();
+        wordLists.contains("snow");
+        assertTrue(wordLists.contains("Snow"));
+        assertFalse(wordLists.contains("aksdfhasdf"));
+        assertFalse(wordLists.contains("Sn0w"));
+        assertFalse(wordLists.contains(""));
+    }
+
 }
