@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.dictionary.WordLists;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Stone;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -226,10 +228,16 @@ public class RoundService {
         return stones;
     }
 
-    private void checkWord(String word) {
+    private void checkWord(String word) throws IOException {
         // check if word is empty
         if (word.isEmpty()) {
             throw new ConflictException("Cannot look up an empty word.");
+        }
+
+        //check if word is in dictionary
+        WordLists wordLists = WordLists.getInstance();
+        if(wordLists.contains(word)){
+            return;
         }
 
         // url for request
