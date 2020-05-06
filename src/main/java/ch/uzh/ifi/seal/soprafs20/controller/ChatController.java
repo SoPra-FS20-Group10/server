@@ -12,6 +12,7 @@ public class ChatController {
         this.chatService = chatService;
     }
 
+
     @GetMapping("/chat")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
