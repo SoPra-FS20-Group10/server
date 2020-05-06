@@ -14,12 +14,16 @@ public class WordLists {
 
     private static WordLists wordLists;
 
+    //get path of absolute file
     private File file = new File(String.valueOf(new File("words.txt").getAbsoluteFile()));
     ArrayList<String> dictionary = new ArrayList<>();
 
 
+
+    //private constructor
     private WordLists() throws IOException{
-        // pass the path to the file as a parameter
+
+
         Scanner scanner = new Scanner(file);
         while(scanner.hasNextLine()){
             dictionary.add(scanner.next());
@@ -36,7 +40,7 @@ public class WordLists {
     }
 
 
-
+    //check if word is in list
     public Boolean contains(String word){
         return dictionary.contains(word.toUpperCase());
     }
