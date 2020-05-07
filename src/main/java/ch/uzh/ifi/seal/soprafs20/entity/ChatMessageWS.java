@@ -38,6 +38,4 @@ public class ChatMessageWS {
         this.time = time;
     }
 
-
-
 }
