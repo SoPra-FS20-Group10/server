@@ -2,12 +2,11 @@ package ch.uzh.ifi.seal.soprafs20.WordListsTest;
 
 import ch.uzh.ifi.seal.soprafs20.dictionary.WordLists;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 
-import java.util.Scanner;
-import java.io.*;
-import java.util.InputMismatchException;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WordListsTest {
 
@@ -34,11 +33,9 @@ public class WordListsTest {
         assertFalse(wordLists.contains(""));
     }
 
-
     @Test
     void Contains_words_hoe() throws IOException {
-        WordLists wordLists = WordLists.getInstance();;
+        WordLists wordLists = WordLists.getInstance();
         assertTrue(wordLists.contains("hoe"));
     }
-
 }

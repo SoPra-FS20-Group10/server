@@ -390,22 +390,25 @@ public class RoundService {
     }
 
     private int checkIfNewWordAndCalculatePoints(List<Integer> coordinates, ArrayList<String> words, List<Triplet> word) {
-        int points = 0;
+        String newWord = this.buildString(word);
 
-        if (word.size() > 1) {
-            for (Triplet triplet : word) {
-                if (coordinates.contains(triplet.j * 15 + triplet.i)) {
-                    String newWord = this.buildString(word);
+        // check if word is only one letter
+        if (newWord.length() <= 1) {
+            return 0;
+        }
 
-                    if (!words.contains(newWord)) {
-                        words.add(newWord);
-                        points = calculatePoints(buildList(word));
-                    }
+        // check if word belongs to new words and add score and word to lists if yes
+        for (Triplet triplet : word) {
+            if (coordinates.contains(triplet.j * 15 + triplet.i)) {
+                if (!words.contains(newWord)) {
+                    words.add(newWord);
+                    return calculatePoints(buildList(word));
                 }
             }
         }
 
-        return points;
+        // return score=0 if the word contains no played stones
+        return 0;
     }
 
     private List<Triplet> findVerticalWords(Tile[][] board, boolean[][] visited, int i, int j) {
