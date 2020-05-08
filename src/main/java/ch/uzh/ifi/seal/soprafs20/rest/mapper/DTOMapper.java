@@ -77,4 +77,9 @@ public interface DTOMapper {
     @Mapping(source = "time", target = "time")
     @Mapping(source = "message", target = "message")
     MessageDTO convertEntityToMessageDTO(Message message);
+
+    @Mapping(source = "messages", target = "messages")
+    ChatGetDTO convertEntityToChatGetDTO(Chat chat);
+
+
 }
