@@ -320,6 +320,10 @@ public class GameController {
         // remove game from owner
         userService.removeGame(gameService.getGame(gameId));
 
+        //delete gamechat
+
+        chatService.deleteChat(gameService.getGame(gameId));
+
         // end game
         gameService.endGame(gameId);
     }

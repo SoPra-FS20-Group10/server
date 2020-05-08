@@ -58,6 +58,13 @@ public class ChatService {
         return newchat;
     }
 
+    public void deleteChat(Game game){
+        Chat chat = game.getChat();
+
+        chatRepository.delete(chat);
+        chatRepository.flush();
+    }
+
 
 
 
