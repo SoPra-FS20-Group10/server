@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +26,10 @@ public class Chat implements Serializable {
 
     @OneToMany
     private List<Message> messages;
+
+    public void initchat(){
+        messages = new ArrayList<>();
+    }
 
     public List<Message> getMessages() {
         return messages;

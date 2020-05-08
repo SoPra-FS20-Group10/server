@@ -1,7 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,13 +18,33 @@ import java.util.Optional;
 @Transactional
 public class ChatService {
     private PlayerRepository playerRepository;
+    private ChatRepository chatRepository;
     private GameRepository gameRepository;
     private SimpMessagingTemplate simp;
 
-    public ChatService(@Qualifier("playerRepository")PlayerRepository playerRepository, @Qualifier("gameRepository")GameRepository gameRepository){
+    public ChatService(@Qualifier("playerRepository")PlayerRepository playerRepository, @Qualifier("gameRepository")GameRepository gameRepository, @Qualifier("chatRepository")ChatRepository chatRepository){
         this.playerRepository = playerRepository;
         this.gameRepository = gameRepository;
+        this.chatRepository = chatRepository;
     }
+
+
+    public Chat createChat(){
+        Chat chat = new Chat();
+        chat.initchat();
+
+        chat = chatRepository.save(chat);
+        chatRepository.flush();
+
+        return chat;
+
+    }
+
+
+
+
+
+    //WS
 
     public void sendToGame(long gameId, String destination, Object message){
         Optional<Game> game1 = gameRepository.findById(gameId);

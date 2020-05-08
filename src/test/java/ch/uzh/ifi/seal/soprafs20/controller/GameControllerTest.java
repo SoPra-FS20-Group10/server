@@ -51,6 +51,9 @@ public class GameControllerTest {
     @MockBean
     private RoundService roundService;
 
+    @MockBean
+    private ChatService chatService;
+
     @Test
     public void getGame_validInput() throws Exception {
         // given

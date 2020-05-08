@@ -1,12 +1,12 @@
 package ch.uzh.ifi.seal.soprafs20.testclasses;
 
-public class HelloMessage {
+public class HelloMessageWS {
     private String name;
 
-    public HelloMessage() {
+    public HelloMessageWS() {
     }
 
-    public HelloMessage(String name) {
+    public HelloMessageWS(String name) {
         this.name = name;
     }
 

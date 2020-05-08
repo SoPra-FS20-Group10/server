@@ -1,12 +1,12 @@
 package ch.uzh.ifi.seal.soprafs20.testclasses;
 
-public class Greeting {
+public class GreetingWS {
     private String content;
 
-    public Greeting() {
+    public GreetingWS() {
     }
 
-    public Greeting(String content) {
+    public GreetingWS(String content) {
         this.content = content;
     }
 

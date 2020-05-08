@@ -7,10 +7,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
-import ch.uzh.ifi.seal.soprafs20.service.GameService;
-import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
-import ch.uzh.ifi.seal.soprafs20.service.RoundService;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
+import ch.uzh.ifi.seal.soprafs20.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,13 +28,15 @@ public class GameController {
     private final GameService gameService;
     private final PlayerService playerService;
     private final RoundService roundService;
+    private final ChatService chatService;
 
     GameController(UserService userService, GameService gameService, PlayerService playerService,
-                   RoundService roundService) {
+                   RoundService roundService,ChatService chatService) {
         this.userService = userService;
         this.gameService = gameService;
         this.playerService = playerService;
         this.roundService = roundService;
+        this.chatService = chatService;
     }
 
     @GetMapping("/games/{gameId}")
@@ -168,11 +167,15 @@ public class GameController {
         // create a player for the owner
         Player player = playerService.createPlayer(user);
 
+        //create new chat
+        Chat chat = chatService.createChat();
+
         // adds player to user
         userService.addPlayer(player);
 
         // create the game
         Game newGame = gameService.createGame(game, player);
+
 
         // adds game to player and user
         playerService.addGame(player, game);

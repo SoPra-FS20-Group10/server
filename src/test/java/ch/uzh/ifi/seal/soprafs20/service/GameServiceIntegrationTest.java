@@ -3,10 +3,12 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
+import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
@@ -42,12 +44,17 @@ public class GameServiceIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Qualifier("chatRepository")
+    @Autowired
+    private ChatRepository chatRepository;
+
     @Autowired
     private GameService gameService;
 
     private Game game;
     private Player player;
     private User user;
+    private Chat chat;
 
     @BeforeEach
     public void setup() {
@@ -64,6 +71,14 @@ public class GameServiceIntegrationTest {
 
         userRepository.save(user);
         userRepository.flush();
+
+        //setup chat
+        chat = new Chat();
+        chat.setId(2L);
+
+        chatRepository.save(chat);
+        chatRepository.flush();
+
 
         // setup game
         game = new Game();
