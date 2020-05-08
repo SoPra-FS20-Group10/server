@@ -41,4 +41,8 @@ public class Chat implements Serializable {
     public void setGame(Game game) {
         this.game = game;
     }
+
+    public void addMessage(Message message){
+        messages.add(message);
+    }
 }
