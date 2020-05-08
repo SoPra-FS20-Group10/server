@@ -19,6 +19,9 @@ public class Message implements Serializable {
     private Long id;
 
     @Column
+    private String username;
+
+    @Column
     private String message;
 
     @Column

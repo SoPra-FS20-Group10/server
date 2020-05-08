@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -21,6 +22,9 @@ public class Chat implements Serializable {
 
     @OneToOne
     private Game game;
+
+    @OneToMany
+    private List<Message> messages;
 
     public Long getId() {
         return id;

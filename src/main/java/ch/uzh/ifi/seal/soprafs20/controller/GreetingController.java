@@ -11,7 +11,7 @@ import org.springframework.web.util.HtmlUtils;
 public class GreetingController {
 
 
-    @MessageMapping("/hello")
+    @MessageMapping("/game/{gameId}/chat")
     @SendTo("/topic/greetings")
     public Greeting greeting(HelloMessage message) throws Exception {
         Thread.sleep(1000); // simulated delay

@@ -34,4 +34,11 @@ public class WordListsTest {
         assertFalse(wordLists.contains(""));
     }
 
+
+    @Test
+    void Contains_words_hoe() throws IOException {
+        WordLists wordLists = WordLists.getInstance();;
+        assertTrue(wordLists.contains("hoe"));
+    }
+
 }
