@@ -11,6 +11,9 @@ import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 public class ChatController {
     private final ChatService chatService;
@@ -39,19 +42,36 @@ public class ChatController {
     @GetMapping("/chat/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void getLocalMessages(@PathVariable ("gameId") Long gameId) {
-        //TODO: implement
+    public List<MessageDTO> getLocalMessages(@PathVariable ("gameId") Long gameId) {
+        Game game = gameService.getGame(gameId);
+        Chat chat = game.getChat();
+
+        List<Message> messages = chat.getMessages();
+        List<MessageDTO> dtomessages = new ArrayList<>();
+
+        for(Message singlemessage :messages){
+            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        }
+
+        return dtomessages;
     }
 
     @PutMapping("/chat/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void sendLocalMessages(@PathVariable ("gameId") Long gameId, @RequestBody MessageDTO messageDTO) {
+    public List<MessageDTO> sendLocalMessages(@PathVariable ("gameId") Long gameId, @RequestBody MessageDTO messageDTO) {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
         Game game = gameService.getGame(gameId);
         Chat chat = game.getChat();
         chat.addMessage(message);
 
-        //TODO: implement
+        List<Message> messages = chat.getMessages();
+        List<MessageDTO> dtomessages = new ArrayList<>();
+
+        for(Message singlemessage :messages){
+            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        }
+
+        return dtomessages;
     }
 }
