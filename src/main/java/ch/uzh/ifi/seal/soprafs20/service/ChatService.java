@@ -52,10 +52,10 @@ public class ChatService {
 
         chat.addMessage(message);
 
-        Chat newchat = chatRepository.save(chat);
+        chatRepository.save(chat);
         chatRepository.flush();
 
-        return newchat;
+        return chat;
     }
 
     public void deleteChat(Game game){
@@ -72,6 +72,8 @@ public class ChatService {
         }else{
             Chat newchat = new Chat();
             newchat.setId(0L);
+
+            newchat.initchat();
 
             chatRepository.save(newchat);
             chatRepository.flush();

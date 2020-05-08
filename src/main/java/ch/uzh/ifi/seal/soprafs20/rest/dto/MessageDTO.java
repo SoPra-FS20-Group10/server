@@ -3,7 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto;
 public class MessageDTO {
 
     private String username;
-    private int time;
+    private Long time;
     private String message;
 
     public String getUsername() {
@@ -14,11 +14,11 @@ public class MessageDTO {
         this.username = username;
     }
 
-    public int getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 

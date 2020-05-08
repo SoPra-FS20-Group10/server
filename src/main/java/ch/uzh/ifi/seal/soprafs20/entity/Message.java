@@ -25,7 +25,7 @@ public class Message implements Serializable {
     private String message;
 
     @Column
-    private int time;
+    private Long time;
 
     public String getUsername() {
         return username;
@@ -51,11 +51,11 @@ public class Message implements Serializable {
         this.message = message;
     }
 
-    public int getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 }
