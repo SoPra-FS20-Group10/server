@@ -67,4 +67,14 @@ public interface DTOMapper {
     @Mapping(source = "multiplier", target = "multiplier")
     @Mapping(source = "multivariant", target = "multivariant")
     TileGetDTO convertEntityToTileGetDTO(Tile tile);
+
+    @Mapping(source = "username", target = "username")
+    @Mapping(source = "time", target = "time")
+    @Mapping(source = "message", target = "message")
+    Message convertMessageDTOtoEntity(MessageDTO messageDTO);
+
+    @Mapping(source = "username", target = "username")
+    @Mapping(source = "time", target = "time")
+    @Mapping(source = "message", target = "message")
+    MessageDTO convertEntityToMessageDTO(Message message);
 }
