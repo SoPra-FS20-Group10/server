@@ -26,6 +26,14 @@ public class Chat implements Serializable {
     @OneToMany
     private List<Message> messages;
 
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
     public Long getId() {
         return id;
     }
