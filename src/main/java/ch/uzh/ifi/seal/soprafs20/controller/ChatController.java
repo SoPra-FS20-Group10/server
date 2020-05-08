@@ -29,16 +29,40 @@ public class ChatController {
     @GetMapping("/chat")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void getGlobalMessages() {
-        //TODO: implement
+    public List<MessageDTO> getGlobalMessages() {
+        Chat globalchat = chatService.getGlobalChat();
+
+        List<Message> messages = globalchat.getMessages();
+        List<MessageDTO> dtomessages = new ArrayList<>();
+
+        for(Message singlemessage :messages){
+            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        }
+
+        return dtomessages;
     }
 
     @PutMapping("/chat")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void sendGlobalMessages() {
-        //TODO: implement
+    public List<MessageDTO> sendGlobalMessages(@RequestBody MessageDTO messageDTO) {
+        Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
+
+        Chat globalchat = chatService.getGlobalChat();
+        Chat newchat = chatService.addMessage(globalchat,message);
+
+        List<Message> messages = newchat.getMessages();
+        List<MessageDTO> dtomessages = new ArrayList<>();
+
+        for(Message singlemessage :messages){
+            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        }
+
+        return dtomessages;
+
     }
+
+
 
     @GetMapping("/chat/{gameId}")
     @ResponseStatus(HttpStatus.OK)

@@ -65,6 +65,21 @@ public class ChatService {
         chatRepository.flush();
     }
 
+    public Chat getGlobalChat(){
+        Optional<Chat> chat = chatRepository.findById(0L);
+        if (chat.isPresent()){
+            return chat.get();
+        }else{
+            Chat newchat = new Chat();
+            newchat.setId(0L);
+
+            chatRepository.save(newchat);
+            chatRepository.flush();
+
+            return newchat;
+        }
+    }
+
 
 
 
