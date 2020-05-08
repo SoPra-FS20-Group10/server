@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
@@ -31,6 +32,9 @@ public class ChatService {
         this.gameRepository = gameRepository;
         this.chatRepository = chatRepository;
         this.messageRepository = messageRepository;
+
+        initglobal();
+
     }
 
 
@@ -80,6 +84,26 @@ public class ChatService {
 
             return newchat;
         }
+    }
+
+    public Chat getglobal(){
+        Optional<Chat> chat = chatRepository.findByType("global");
+        if(chat.isPresent()){
+            return chat.get();
+        }else{
+            throw new NotFoundException("global not found");
+        }
+
+    }
+
+    public void initglobal(){
+        Chat chat = new Chat();
+        chat.initchat();
+        chat.setId(0L);
+        chat.setType("global");
+
+        chatRepository.save(chat);
+        chatRepository.flush();
     }
 
 

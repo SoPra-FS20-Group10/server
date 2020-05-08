@@ -27,12 +27,23 @@ public class Chat implements Serializable {
     @OneToMany
     private List<Message> messages;
 
+    @Column
+    private String type;
+
     public void initchat(){
         messages = new ArrayList<>();
     }
 
     public List<Message> getMessages() {
         return messages;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setMessages(List<Message> messages) {

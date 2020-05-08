@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat,Long> {
     Optional<Chat> findByIdIs(long id);
-
+    Optional<Chat> findByType(String type);
 }

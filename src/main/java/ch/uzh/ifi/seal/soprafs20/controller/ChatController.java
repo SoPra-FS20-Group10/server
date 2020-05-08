@@ -30,7 +30,7 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<MessageDTO> getGlobalMessages() {
-        Chat globalchat = chatService.getGlobalChat();
+        Chat globalchat = chatService.getglobal();
 
         List<Message> messages = globalchat.getMessages();
         List<MessageDTO> dtomessages = new ArrayList<>();
@@ -48,7 +48,7 @@ public class ChatController {
     public List<MessageDTO> sendGlobalMessages(@RequestBody MessageDTO messageDTO) {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
 
-        Chat globalchat = chatService.getGlobalChat();
+        Chat globalchat = chatService.getglobal();
         Chat newchat = chatService.addMessage(globalchat,message);
 
         List<Message> messages = newchat.getMessages();
