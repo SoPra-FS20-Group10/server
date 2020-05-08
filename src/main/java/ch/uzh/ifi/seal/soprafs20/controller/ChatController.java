@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
+import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.JoinGameDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.MessageDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
@@ -63,9 +64,9 @@ public class ChatController {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
         Game game = gameService.getGame(gameId);
         Chat chat = game.getChat();
-        chat.addMessage(message);
+        Chat newchat = chatService.addMessage(chat,message);
 
-        List<Message> messages = chat.getMessages();
+        List<Message> messages = newchat.getMessages();
         List<MessageDTO> dtomessages = new ArrayList<>();
 
         for(Message singlemessage :messages){

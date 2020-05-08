@@ -2,9 +2,11 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Message;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,12 +22,15 @@ public class ChatService {
     private PlayerRepository playerRepository;
     private ChatRepository chatRepository;
     private GameRepository gameRepository;
+    private MessageRepository messageRepository;
     private SimpMessagingTemplate simp;
 
-    public ChatService(@Qualifier("playerRepository")PlayerRepository playerRepository, @Qualifier("gameRepository")GameRepository gameRepository, @Qualifier("chatRepository")ChatRepository chatRepository){
+    public ChatService(@Qualifier("playerRepository")PlayerRepository playerRepository, @Qualifier("gameRepository")GameRepository gameRepository,
+                       @Qualifier("chatRepository")ChatRepository chatRepository,@Qualifier("messageRepository")MessageRepository messageRepository){
         this.playerRepository = playerRepository;
         this.gameRepository = gameRepository;
         this.chatRepository = chatRepository;
+        this.messageRepository = messageRepository;
     }
 
 
@@ -39,6 +44,18 @@ public class ChatService {
 
         return chat;
 
+    }
+
+    public Chat addMessage(Chat chat, Message message){
+        messageRepository.save(message);
+        messageRepository.flush();
+
+        chat.addMessage(message);
+
+        Chat newchat = chatRepository.save(chat);
+        chatRepository.flush();
+
+        return newchat;
     }
 
 
