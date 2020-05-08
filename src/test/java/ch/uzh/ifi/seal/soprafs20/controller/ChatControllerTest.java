@@ -5,8 +5,13 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
+import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.JoinGameDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.MessageDTO;
 import ch.uzh.ifi.seal.soprafs20.service.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -139,5 +145,68 @@ public class ChatControllerTest {
                 .andExpect(jsonPath("$[2].message", is("hello2")))
                 .andExpect(jsonPath("$[2].username", is("test2")));
 
+    }
+
+
+    @Test
+    public void send_message() throws Exception {
+        Chat chat = new Chat();
+        chat.initchat();
+
+
+        Message message = new Message();
+        message.setMessage("hello");
+        message.setUsername("test");
+        message.setTime(100L);
+
+        chat.addMessage(message);
+
+        Game game = new Game();
+        game.setId(1L);
+        game.setName("testName");
+        game.setStatus(GameStatus.WAITING);
+        game.setCurrentPlayerId(2L);
+        game.setChat(chat);
+        game.initGame();
+
+        // given DTO
+        MessageDTO messageDTO = new MessageDTO();
+        messageDTO.setMessage("hello");
+        messageDTO.setTime(100L);
+        messageDTO.setUsername("test");
+
+        //TODO: mock chatservice
+
+        /*
+
+        // this mocks the GameService
+        given(gameService.getGame(Mockito.anyLong())).willReturn(game);
+
+
+        // this mocks the GameService
+        given(chatService.addMessage(chat,message)).willReturn(chat);
+
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder putRequest = put("/chat/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(messageDTO));
+
+        // then
+        mockMvc.perform(putRequest).andExpect(status().isOk());
+
+         */
+    }
+
+
+
+
+    private String asJsonString(final Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        }
+        catch (JsonProcessingException e) {
+            throw new SopraServiceException(String.format("The request body could not be created.%s", e.toString()));
+        }
     }
 }
