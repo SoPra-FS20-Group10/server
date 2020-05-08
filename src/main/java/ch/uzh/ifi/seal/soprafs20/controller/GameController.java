@@ -167,14 +167,17 @@ public class GameController {
         // create a player for the owner
         Player player = playerService.createPlayer(user);
 
-        //create new chat
-        Chat chat = chatService.createChat();
 
         // adds player to user
         userService.addPlayer(player);
 
         // create the game
         Game newGame = gameService.createGame(game, player);
+
+        //create new chat
+        Chat chat = chatService.createChat(game);
+
+        gameService.addChat(chat);
 
 
         // adds game to player and user
