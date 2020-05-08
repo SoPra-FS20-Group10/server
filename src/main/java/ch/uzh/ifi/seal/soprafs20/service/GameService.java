@@ -53,6 +53,16 @@ public class GameService {
         gameRepository.flush();
     }
 
+    public void addChat(Chat chat) {
+        // add player to the user
+        Game game = chat.getGame();
+        game.setChat(chat);
+
+        // save change
+        gameRepository.save(game);
+        gameRepository.flush();
+    }
+
     public List<Game> getGames() {
         return gameRepository.findAll();
     }

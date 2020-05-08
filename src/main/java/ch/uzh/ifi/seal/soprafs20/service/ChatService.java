@@ -29,9 +29,10 @@ public class ChatService {
     }
 
 
-    public Chat createChat(){
+    public Chat createChat(Game game){
         Chat chat = new Chat();
         chat.initchat();
+        chat.setGame(game);
 
         chat = chatRepository.save(chat);
         chatRepository.flush();
