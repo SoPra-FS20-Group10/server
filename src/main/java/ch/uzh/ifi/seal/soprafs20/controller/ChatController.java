@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.JoinGameDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.MessageDTO;
@@ -32,6 +33,10 @@ public class ChatController {
     public List<MessageDTO> getGlobalMessages() {
         Chat globalchat = chatService.getglobal();
 
+        if(globalchat == null){
+            throw new NotFoundException("global chat could not be found");
+        }
+
         List<Message> messages = globalchat.getMessages();
         List<MessageDTO> dtomessages = new ArrayList<>();
 
@@ -49,7 +54,14 @@ public class ChatController {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
 
         Chat globalchat = chatService.getglobal();
+        if(globalchat == null){
+            throw new NotFoundException("global chat could not be found");
+        }
+
+
         Chat newchat = chatService.addMessage(globalchat,message);
+
+
 
         List<Message> messages = newchat.getMessages();
         List<MessageDTO> dtomessages = new ArrayList<>();
@@ -71,6 +83,10 @@ public class ChatController {
         Game game = gameService.getGame(gameId);
         Chat chat = game.getChat();
 
+        if(chat == null){
+            throw new NotFoundException("chat could not be found");
+        }
+
         List<Message> messages = chat.getMessages();
         List<MessageDTO> dtomessages = new ArrayList<>();
 
@@ -88,6 +104,12 @@ public class ChatController {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
         Game game = gameService.getGame(gameId);
         Chat chat = game.getChat();
+
+        if(chat == null){
+            throw new NotFoundException("chat could not be found");
+        }
+
+
         Chat newchat = chatService.addMessage(chat,message);
 
         List<Message> messages = newchat.getMessages();
