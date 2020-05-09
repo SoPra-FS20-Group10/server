@@ -75,7 +75,7 @@ public class GameServiceTest {
 
     @Test
     public void getGame_validInput_success() {
-                // given game
+        // given game
         Game createdGame = gameService.createGame(testGame, testPlayer);
         Optional<Game> found = Optional.ofNullable(createdGame);
 
