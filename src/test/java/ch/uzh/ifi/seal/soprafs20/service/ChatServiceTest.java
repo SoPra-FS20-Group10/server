@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChatServiceTest {
@@ -87,7 +89,28 @@ public class ChatServiceTest {
         assertEquals(addedmessage.getUsername(),message.getUsername());
         assertEquals(addedmessage.getTime(),message.getTime());
 
+    }
+
+    @Test
+    public void getGame_validInput_success() {
+        // given game
+        Chat newchat = chatService.createChat(testGame);
+        Optional<Chat> found = Optional.ofNullable(newchat);
+
+        // when
+        Mockito.when(chatRepository.findByIdIs(Mockito.anyLong())).thenReturn(found);
+
+        Mockito.when(chatRepository.findByType(Mockito.anyString()))
+                .thenReturn(Optional.ofNullable(chat));
+
+        // search game
+        Chat foundchat = chatService.getglobal();
+
+        // then check if they are equal
+        assertEquals(chat.getMessages().get(0),chat.getMessages().get(0));
 
     }
+
+
 
 }
