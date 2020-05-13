@@ -88,9 +88,9 @@ public class ChatController {
         }
 
         List<Message> messages = chat.getMessages();
-        List<MessageDTO> dtomessages = new ArrayList<>();
+            List<MessageDTO> dtomessages = new ArrayList<>();
 
-        for(Message singlemessage :messages){
+            for(Message singlemessage :messages){
             dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
         }
 
