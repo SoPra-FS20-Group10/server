@@ -3,8 +3,6 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
-import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.JoinGameDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.MessageDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.ChatService;
@@ -25,21 +23,20 @@ public class ChatController {
         this.gameService = gameService;
     }
 
-
     @GetMapping("/chat")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<MessageDTO> getGlobalMessages() {
-        Chat globalchat = chatService.getglobal();
+        Chat globalChat = chatService.getGlobal();
 
-        List<Message> messages = globalchat.getMessages();
-        List<MessageDTO> dtomessages = new ArrayList<>();
+        List<Message> messages = globalChat.getMessages();
+        List<MessageDTO> dtoMessages = new ArrayList<>();
 
-        for(Message singlemessage :messages){
-            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        for(Message singleMessage :messages){
+            dtoMessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
         }
 
-        return dtomessages;
+        return dtoMessages;
     }
 
     @PutMapping("/chat")
@@ -48,21 +45,18 @@ public class ChatController {
     public List<MessageDTO> sendGlobalMessages(@RequestBody MessageDTO messageDTO) {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
 
-        Chat globalchat = chatService.getglobal();
-        Chat newchat = chatService.addMessage(globalchat,message);
+        Chat globalChat = chatService.getGlobal();
+        Chat newchat = chatService.addMessage(globalChat,message);
 
         List<Message> messages = newchat.getMessages();
-        List<MessageDTO> dtomessages = new ArrayList<>();
+        List<MessageDTO> dtoMessages = new ArrayList<>();
 
-        for(Message singlemessage :messages){
-            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        for(Message SingleMessage :messages){
+            dtoMessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(SingleMessage));
         }
 
-        return dtomessages;
-
+        return dtoMessages;
     }
-
-
 
     @GetMapping("/chat/{gameId}")
     @ResponseStatus(HttpStatus.OK)
@@ -72,13 +66,13 @@ public class ChatController {
         Chat chat = game.getChat();
 
         List<Message> messages = chat.getMessages();
-        List<MessageDTO> dtomessages = new ArrayList<>();
+        List<MessageDTO> dtoMessage = new ArrayList<>();
 
-        for(Message singlemessage :messages){
-            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        for(Message singleMessage :messages){
+            dtoMessage.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
         }
 
-        return dtomessages;
+        return dtoMessage;
     }
 
     @PutMapping("/chat/{gameId}")
@@ -91,12 +85,12 @@ public class ChatController {
         Chat newchat = chatService.addMessage(chat,message);
 
         List<Message> messages = newchat.getMessages();
-        List<MessageDTO> dtomessages = new ArrayList<>();
+        List<MessageDTO> dtoMessages = new ArrayList<>();
 
-        for(Message singlemessage :messages){
-            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        for(Message singleMessage :messages){
+            dtoMessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
         }
 
-        return dtomessages;
+        return dtoMessages;
     }
 }

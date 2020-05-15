@@ -8,7 +8,6 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -20,23 +19,20 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ChatService {
-    private PlayerRepository playerRepository;
-    private ChatRepository chatRepository;
-    private GameRepository gameRepository;
-    private MessageRepository messageRepository;
+    private final ChatRepository chatRepository;
+    private final GameRepository gameRepository;
+    private final MessageRepository messageRepository;
     private SimpMessagingTemplate simp;
 
-    public ChatService(@Qualifier("playerRepository")PlayerRepository playerRepository, @Qualifier("gameRepository")GameRepository gameRepository,
-                       @Qualifier("chatRepository")ChatRepository chatRepository,@Qualifier("messageRepository")MessageRepository messageRepository){
-        this.playerRepository = playerRepository;
+    public ChatService(@Qualifier("gameRepository")GameRepository gameRepository,
+                       @Qualifier("chatRepository")ChatRepository chatRepository,
+                       @Qualifier("messageRepository")MessageRepository messageRepository){
         this.gameRepository = gameRepository;
         this.chatRepository = chatRepository;
         this.messageRepository = messageRepository;
 
-        initglobal();
-
+        initGlobal();
     }
-
 
     public Chat createChat(Game game){
         Chat chat = new Chat();
@@ -47,7 +43,6 @@ public class ChatService {
         chatRepository.flush();
 
         return chat;
-
     }
 
     public Chat addMessage(Chat chat, Message message){
@@ -74,29 +69,28 @@ public class ChatService {
         if (chat.isPresent()){
             return chat.get();
         }else{
-            Chat newchat = new Chat();
-            newchat.setId(0L);
+            Chat newChat = new Chat();
+            newChat.setId(0L);
 
-            newchat.initchat();
+            newChat.initchat();
 
-            chatRepository.save(newchat);
+            chatRepository.save(newChat);
             chatRepository.flush();
 
-            return newchat;
+            return newChat;
         }
     }
 
-    public Chat getglobal(){
+    public Chat getGlobal(){
         Optional<Chat> chat = chatRepository.findByType("global");
         if(chat.isPresent()){
             return chat.get();
         }else{
             throw new NotFoundException("global not found");
         }
-
     }
 
-    public void initglobal(){
+    public void initGlobal(){
         Chat chat = new Chat();
         chat.initchat();
         chat.setId(0L);
@@ -106,12 +100,7 @@ public class ChatService {
         chatRepository.flush();
     }
 
-
-
-
-
     //WS
-
     public void sendToGame(long gameId, String destination, Object message){
         Optional<Game> game1 = gameRepository.findById(gameId);
         Game game = game1.get();
@@ -119,15 +108,10 @@ public class ChatService {
         for( Player player: players){
 
         }
-
     }
 
     protected void sendToPlayer(long gameId, String player, Object message) {
 
         simp.convertAndSendToUser(player, "/queue/lobby/" + gameId, message);
     }
-
-
-
-
 }

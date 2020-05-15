@@ -210,6 +210,7 @@ public class GameController {
     public void startGame(@PathVariable("gameId")long gameId, @RequestBody UserTokenDTO userTokenDTO) {
         String token = userTokenDTO.getToken();
 
+        // check if token is existing
         if(token == null){
             throw new NotFoundException("the token could not be found");
         }
@@ -217,6 +218,7 @@ public class GameController {
         // fetch game from db
         Game game = gameService.getGame(gameId);
 
+        // check if game is existing
         if(game == null){
             throw new NotFoundException("the game could not be found");
         }
@@ -224,6 +226,7 @@ public class GameController {
         // fetch players from game
         List<Player> players = game.getPlayers();
 
+        // check if players are existing
         if(players == null){
             throw new NotFoundException("the players could not be found");
         }
@@ -258,7 +261,6 @@ public class GameController {
 
         // get game and player instance
         Game game = gameService.getGame(gameId);
-
         Player player = playerService.getPlayer(playerId);
 
         // leave game, remove player from user and delete player
@@ -320,8 +322,7 @@ public class GameController {
         // remove game from owner
         userService.removeGame(gameService.getGame(gameId));
 
-        //delete gamechat
-
+        //delete gameChat
         chatService.deleteChat(gameService.getGame(gameId));
 
         // end game

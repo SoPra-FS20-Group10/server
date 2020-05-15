@@ -167,6 +167,12 @@ public class RoundService {
         List<Stone> stones;
         List<Stone> answer = new ArrayList<>();
 
+        // check if game has enough stones to exchange
+        if (game.getBag().size() < stoneIds.size()) {
+            throw new ConflictException("The game has only " + game.getBag().size() + " stones left. Thus, the player" +
+                    " cannot exchange " + stoneIds.size() + " stones.");
+        }
+
         // fetch all stones to exchange from the db
         stones = getStones(stoneIds);
 

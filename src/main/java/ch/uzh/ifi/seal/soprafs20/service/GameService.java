@@ -6,7 +6,6 @@ import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
-import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.TileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +20,12 @@ import java.util.*;
 public class GameService {
     private final GameRepository gameRepository;
     private final TileRepository tileRepository;
-    private final ChatRepository chatRepository;
-
 
     @Autowired
     public GameService(@Qualifier("gameRepository")GameRepository gameRepository,
-                       @Qualifier("tileRepository")TileRepository tileRepository,
-                       @Qualifier("chatRepository")ChatRepository chatRepository) {
+                       @Qualifier("tileRepository")TileRepository tileRepository) {
         this.gameRepository = gameRepository;
         this.tileRepository = tileRepository;
-        this.chatRepository = chatRepository;
     }
 
     public Game getGame(long gameId) {
@@ -73,12 +68,8 @@ public class GameService {
             throw new ConflictException("The user with the id " + owner.getUser().getId() + " is hosting another game.");
         }
 
-
         game.setOwner(owner.getUser());
         game.setStatus(GameStatus.WAITING);
-
-        //initialise chat
-
 
         // initialise list
         game.initGame();
@@ -91,14 +82,12 @@ public class GameService {
         game.addPlayer(owner);
         game.setCurrentPlayerId(owner.getId());
 
-
         // save changes
         game = gameRepository.save(game);
         gameRepository.flush();
 
         return game;
     }
-
 
     public Game joinGame(long gameId, Player player, String password) {
         // fetch game from db
@@ -178,7 +167,7 @@ public class GameService {
         // fetch game from db
         Game game = getGame(gameId);
 
-        // delete bag so that global tiles wont be deleted
+        // delete grid so that global tiles wont be deleted
         game.setGrid(null);
 
         // delete the game
@@ -195,13 +184,12 @@ public class GameService {
 
     public void createGrid(Game game){
         List<Tile> grid = new ArrayList<>();
+        String error = "Grid cannot be initialized since the tiles couldn't be found";
 
         Integer[] doubles = {3, 11,16,28,32,36,38,42,45,48,52,56,59,64,70,84,92,96,98,102,108};
         Integer[] triples= {0,7,14,20,24,76,80,84,88,105};
         Integer[] doubleWord = {16,28,32,42,48,56,64,70};
         Integer[] tripleWord = {0,7,14,105};
-
-        String error = "Grid cannot be initialized since the tiles couldn't be found";
 
         //create half of board, then flip and append testTest
         for(int i =0; i < 112; i++){
