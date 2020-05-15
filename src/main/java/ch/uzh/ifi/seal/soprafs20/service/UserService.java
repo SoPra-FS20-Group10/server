@@ -80,13 +80,10 @@ public class UserService {
         if (!user.getToken().equals(token)) {
             throw new UnauthorizedException("The user is not authorized to logout this user.");
         }
-
-        // fetch user from db
-        user = getUser(userId);
-
         //check if guest and delete
         if(user.getType().equals("guest")){
             deleteUser(userId);
+            return;
         }
 
         // change the status to offline
