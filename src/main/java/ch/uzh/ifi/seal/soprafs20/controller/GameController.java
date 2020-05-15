@@ -156,6 +156,23 @@ public class GameController {
         return stoneGetDTOs;
     }
 
+    @GetMapping("/games/{gameId}/words")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<WordGetDTO> getWords(@PathVariable("gameId")long gameId) {
+        // get words from player
+        List<Word> words = gameService.getWords(gameId);
+
+        // parse Word entities into  wordDTOs
+        List<WordGetDTO> wordGetDTOs = new ArrayList<>();
+
+        for (Word word : words) {
+            wordGetDTOs.add(DTOMapper.INSTANCE.convertEntityToWordGetDTO(word));
+        }
+
+        return wordGetDTOs;
+    }
+
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody

@@ -67,6 +67,20 @@ public class GameService {
         return gameRepository.findAll();
     }
 
+    public List<Word> getWords(long gameId) {
+        Game game;
+        Optional<Game> foundGame = gameRepository.findByIdIs(gameId);
+
+        // check if game is present
+        if (foundGame.isPresent()) {
+            game = foundGame.get();
+        } else {
+            throw new NotFoundException("The game with the id " + gameId + " could not be found");
+        }
+
+        return game.getWords();
+    }
+
     public Game createGame(Game game, Player owner) {
         // check if owner is already hosting another game
         if (owner.getUser().getGame() != null) {

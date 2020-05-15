@@ -11,7 +11,6 @@ public class GameGetDTO {
     private long currentPlayerId;
     private List<StoneGetDTO> stones;
     private List<TileGetDTO> board;
-    private List<String> words;
 
     public Long getId() {
         return id;
@@ -59,13 +58,5 @@ public class GameGetDTO {
 
     public void setBoard(List<TileGetDTO> board) {
         this.board = board;
-    }
-
-    public List<String> getWords() {
-        return words;
-    }
-
-    public void setWords(List<String> words) {
-        this.words = words;
     }
 }

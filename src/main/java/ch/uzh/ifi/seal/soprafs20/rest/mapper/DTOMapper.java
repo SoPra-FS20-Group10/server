@@ -82,5 +82,8 @@ public interface DTOMapper {
     @Mapping(source = "messages", target = "messages")
     ChatGetDTO convertEntityToChatGetDTO(Chat chat);
 
-
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "word", target = "word")
+    @Mapping(source = "value", target = "value")
+    WordGetDTO convertEntityToWordGetDTO(Word word);
 }
