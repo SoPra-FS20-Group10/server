@@ -31,6 +31,7 @@ public class UserServiceTest {
         testUser = new User();
         testUser.setId(1L);
         testUser.setUsername("testUsername");
+        testUser.setPassword("pw");
 
         // when -> any object is being save in the userRepository -> return the dummy testUser
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);

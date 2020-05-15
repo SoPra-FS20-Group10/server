@@ -84,6 +84,11 @@ public class UserService {
         // fetch user from db
         user = getUser(userId);
 
+        //check if guest and delete
+        if(user.getType().equals("guest")){
+            deleteUser(userId);
+        }
+
         // change the status to offline
         user.setStatus(UserStatus.OFFLINE);
 
@@ -115,6 +120,12 @@ public class UserService {
         // check if the user credentials are unique
         if (checkIfUserExists(user)) {
             throw new ConflictException("The username provided is not unique. Therefore, the user could not be created!");
+        }
+
+        //check if password is empty --> guest
+
+        if(user.getPassword().equals("")){
+            user.setType("guest");
         }
 
         // create all fields of the user

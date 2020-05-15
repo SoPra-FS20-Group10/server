@@ -35,7 +35,7 @@ public class User implements Serializable {
 	private UserStatus status;
 
     @Column
-    private String Type;
+    private String Type = "";
 
 	@Column(nullable = false)
     private Date cakeDay;
