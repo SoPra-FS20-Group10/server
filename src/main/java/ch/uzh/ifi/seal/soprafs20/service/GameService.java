@@ -392,7 +392,37 @@ public class GameService {
         for (Player player : players) {
             User user = player.getUser();
             user.setOverallScore(user.getOverallScore() + player.getScore());
+
+            //manage userhistory
+            manageHistory(player,user);
+
+
+
             player.setScore(0);
         }
+    }
+
+
+    private void manageHistory(Player player, User user){
+        String history = user.getHistory();
+
+        int length;
+
+        if(history.isEmpty()){
+            length = 0;
+        }else{
+            String[] words = history.split("\\s+");
+            length = words.length;
+        }
+
+        if(length<10){
+            user.setHistory(user.getHistory() + Integer.toString(player.getScore()) + " ");
+        }else{
+            int index = history.indexOf(" ") + 1;
+            user.setHistory(user.getHistory().substring(index) + Integer.toString(player.getScore()) + " ");
+
+        }
+
+
     }
 }
