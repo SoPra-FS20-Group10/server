@@ -403,7 +403,7 @@ public class GameService {
     }
 
 
-    private void manageHistory(Player player, User user){
+    protected void manageHistory(Player player, User user){
         String history = user.getHistory();
 
         int length;

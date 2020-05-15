@@ -186,5 +186,21 @@ public class GameServiceTest {
         assertEquals(100, testUser.getOverallScore());
         assertEquals(200, user.getOverallScore());
     }
+
+    @Test
+    public void manageHistory_successful() {
+        // given
+        User user = new User();
+        Player player = new Player();
+        player.setScore(200);
+        player.setUser(user);
+        player.initPlayer();
+
+        gameService.manageHistory(player,user);
+
+        assertEquals(user.getHistory(),"200 ");
+    }
+
+
 }
 
