@@ -211,11 +211,47 @@ public class GameServiceTest {
         player.initPlayer();
 
         gameService.manageHistory(player,user);
+
+        player.setScore(300);
+        gameService.manageHistory(player,user);
+
+        player.setScore(400);
+        gameService.manageHistory(player,user);
+
+        assertEquals(user.getHistory(),"200 300 400 ");
+    }
+
+    @Test
+    public void manageHistory_more_than_ten_matches_successful() {
+        // check if its got more matdhes the oldest one gets deleted
+        User user = new User();
+        Player player = new Player();
+        player.setScore(200);
+        player.setUser(user);
+        player.initPlayer();
+
+        gameService.manageHistory(player,user);
+
+        player.setScore(300);
+        gameService.manageHistory(player,user);
+
+        player.setScore(400);
+        gameService.manageHistory(player,user);
+        gameService.manageHistory(player,user);
+        gameService.manageHistory(player,user);
+        gameService.manageHistory(player,user);
+        gameService.manageHistory(player,user);
+        gameService.manageHistory(player,user);
+        gameService.manageHistory(player,user);
         gameService.manageHistory(player,user);
         gameService.manageHistory(player,user);
 
-        assertEquals(user.getHistory(),"200 200 200 ");
+
+
+        assertEquals(user.getHistory(),"300 400 400 400 400 400 400 400 400 400 ");
     }
+
+
 
 
 
