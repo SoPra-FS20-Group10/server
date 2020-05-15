@@ -23,6 +23,8 @@ public class UserServiceTest {
 
     private User testUser;
 
+    private User guestUser;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -32,6 +34,11 @@ public class UserServiceTest {
         testUser.setId(1L);
         testUser.setUsername("testUsername");
         testUser.setPassword("pw");
+
+        guestUser = new User();
+        guestUser.setId(2L);
+        guestUser.setUsername("guestUsername");
+        guestUser.setPassword("");
 
         // when -> any object is being save in the userRepository -> return the dummy testUser
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);
@@ -49,6 +56,19 @@ public class UserServiceTest {
         assertEquals(testUser.getUsername(), createdUser.getUsername());
         assertNotNull(createdUser.getToken());
         assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
+    }
+
+    @Test
+    public void createGuest_validInputs_success() {
+
+        User createdUser = userService.createUser(guestUser);
+
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(guestUser);
+
+        // then
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+
+        assertEquals(guestUser.getType(), "guest");
     }
 
     @Test
