@@ -17,10 +17,8 @@ import java.util.List;
 @Entity
 @Table(name = "Game")
 public class Game implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
@@ -31,6 +29,9 @@ public class Game implements Serializable {
 
     @Column
     private String password;
+
+    @Column
+    private long currentPlayerId;
 
     @OneToOne(mappedBy = "game")
     private User owner;
@@ -44,11 +45,11 @@ public class Game implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Stone> bag;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Word> words;
+
     @OneToMany(mappedBy = "game")
     private List<Player> players;
-
-    @Column
-    private long currentPlayerId;
 
     public Long getId() {
         return id;
@@ -122,9 +123,22 @@ public class Game implements Serializable {
         bag.remove(stone);
     }
 
+    public List<Word> getWords() {
+        return words;
+    }
+
+    public void setWords(List<Word> words) {
+        this.words = words;
+    }
+
+    public void addWord(Word word) {
+        words.add(word);
+    }
+
     public void initGame() {
         players = new ArrayList<>();
         bag = new ArrayList<>();
+        words = new ArrayList<>();
         grid = new ArrayList<>();
     }
 

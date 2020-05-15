@@ -1,10 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.dictionary.WordLists;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.Stone;
-import ch.uzh.ifi.seal.soprafs20.entity.Tile;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
@@ -101,7 +98,7 @@ public class RoundService {
     }
 
     public void placeWord(Game game, Player player, List<Long> stoneId, List<Integer> coordinates) {
-        Tuple tuple;
+        List<Word> words;
         List<Tile> grid;
         List<Stone> stones;
 
@@ -127,20 +124,30 @@ public class RoundService {
         }
 
         // scan board for all new words with length > 1
-        tuple = checkBoard(new ArrayList<>(grid), stones, coordinates);
+        words = checkBoard(new ArrayList<>(grid), stones, coordinates);
 
         // check if there are any valid words
-        if (tuple.words.isEmpty()) {
+        if (words.isEmpty()) {
             throw new ConflictException("The stones placed form no valid word.");
         }
 
         // add score to the player
-        player.setScore(player.getScore() + tuple.score);
+        for (Word word : words) {
+            if (word == null) {
+                continue;
+            }
+
+            player.setScore(player.getScore() + word.getValue());
+        }
 
         // check if words exists
         try {
-            for (String word : tuple.words) {
-                checkWord(word.toLowerCase());
+            for (Word word : words) {
+                if (word == null) {
+                    continue;
+                }
+
+                checkWord(word.getWord());
             }
         }
 
@@ -353,10 +360,9 @@ public class RoundService {
         return tiles;
     }
 
-    private Tuple checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
-        int score = 0;
+    private List<Word> checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
         Tile[][] board2d = new Tile[15][15];
-        ArrayList<String> words = new ArrayList<>();
+        ArrayList<Word> words = new ArrayList<>();
         boolean[][] visitedVertical = new boolean[15][15];
         boolean[][] visitedHorizontal = new boolean[15][15];
 
@@ -383,38 +389,35 @@ public class RoundService {
                 if (board2d[i][j].getStoneSymbol() != null) {
                     // check board vertical
                     word = findVerticalWords(board2d, visitedVertical, i, j);
-                    score += checkIfNewWordAndCalculatePoints(coordinates, words, word);
+                    words.add(checkIfNewWordAndCalculatePoints(coordinates, word));
 
                     // check board horizontal
                     word = findHorizontalWords(board2d, visitedHorizontal, i, j);
-                    score += checkIfNewWordAndCalculatePoints(coordinates, words, word);
+                    words.add(checkIfNewWordAndCalculatePoints(coordinates, word));
                 }
             }
         }
 
-        return new Tuple(words, score);
+        return words;
     }
 
-    private int checkIfNewWordAndCalculatePoints(List<Integer> coordinates, ArrayList<String> words, List<Triplet> word) {
+    private Word checkIfNewWordAndCalculatePoints(List<Integer> coordinates, List<Triplet> word) {
         String newWord = this.buildString(word);
 
         // check if word is only one letter
         if (newWord.length() <= 1) {
-            return 0;
+            return null;
         }
 
         // check if word belongs to new words and add score and word to lists if yes
         for (Triplet triplet : word) {
             if (coordinates.contains(triplet.j * 15 + triplet.i)) {
-                if (!words.contains(newWord)) {
-                    words.add(newWord);
-                    return calculatePoints(buildList(word));
-                }
+                return new Word(newWord, calculatePoints(buildList(word)));
             }
         }
 
-        // return score=0 if the word contains no played stones
-        return 0;
+        // return null if the word contains no played stones
+        return null;
     }
 
     private List<Triplet> findVerticalWords(Tile[][] board, boolean[][] visited, int i, int j) {
@@ -490,16 +493,6 @@ public class RoundService {
             this.tile = tile;
             this.i = i;
             this.j = j;
-        }
-    }
-
-    private static class Tuple {
-        public final List<String> words;
-        public final int score;
-
-        private Tuple(List<String> words, int score) {
-            this.words = words;
-            this.score = score;
         }
     }
 }
