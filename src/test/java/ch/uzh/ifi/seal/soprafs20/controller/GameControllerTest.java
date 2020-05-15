@@ -340,6 +340,13 @@ public class GameControllerTest {
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
 
+        Game game = new Game();
+        game.setId(1L);
+        game.initGame();
+
+        // when -> then: return game
+        given(gameService.getGame(anyLong())).willReturn(game);
+
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest = delete("/games/1/players/1")
                 .contentType(MediaType.APPLICATION_JSON)

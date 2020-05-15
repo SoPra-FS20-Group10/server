@@ -48,6 +48,11 @@ public class GameService {
         gameRepository.flush();
     }
 
+    public void deleteGame(Game game) {
+        gameRepository.delete(game);
+        gameRepository.flush();
+    }
+
     public void addChat(Chat chat) {
         // add player to the user
         Game game = chat.getGame();

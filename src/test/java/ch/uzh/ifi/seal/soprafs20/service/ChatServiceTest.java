@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,7 +103,7 @@ public class ChatServiceTest {
                 .thenReturn(Optional.ofNullable(chat));
 
         // search game
-        Chat foundchat = chatService.getglobal();
+        Chat foundchat = chatService.getGlobal();
 
         // then check if they are equal
         assertEquals(chat.getMessages().get(0),chat.getMessages().get(0));

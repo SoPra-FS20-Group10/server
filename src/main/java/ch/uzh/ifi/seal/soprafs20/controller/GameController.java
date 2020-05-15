@@ -267,6 +267,12 @@ public class GameController {
         gameService.leaveGame(game, player, token);
         userService.removePlayer(player);
         playerService.deletePlayer(player);
+
+        // delete game if no players are left
+        if (game.getPlayers().isEmpty()) {
+            chatService.deleteChat(game);
+            gameService.endGame(game.getId());
+        }
     }
 
     @PatchMapping("/games/{gameId}")
