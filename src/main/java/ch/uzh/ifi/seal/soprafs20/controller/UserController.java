@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,8 +41,23 @@ public class UserController {
             throw new NotFoundException("sorry the user could not be found");
         }
 
+        UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
+
+        String history = userInput.getHistory();
+        List<Integer> historylist = new ArrayList<>();
+
+        if(!history.isEmpty()){
+            List<String> scores = Arrays.asList(history.split("\\s+"));
+
+            for(String string:scores){
+                historylist.add(Integer.parseInt(string));
+            }
+            userGetDTO.setHistoryList(historylist);
+
+        }
+
         // convert internal representation of user back to API
-        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
+        return userGetDTO;
     }
 
     @GetMapping("/users")
