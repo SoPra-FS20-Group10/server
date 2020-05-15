@@ -28,11 +28,14 @@ public class User implements Serializable {
 	@Column(nullable = false, unique = true) 
 	private String token;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
 	@Column(nullable = false)
 	private UserStatus status;
+
+    @Column
+    private String Type;
 
 	@Column(nullable = false)
     private Date cakeDay;
@@ -180,4 +183,17 @@ public class User implements Serializable {
     public void setWonGames(int wonGames) {
         this.wonGames = wonGames;
     }
+
+    public String getType() {
+        return Type;
+    }
+
+    public void setType(String type) {
+        Type = type;
+    }
+
+    public void setWinPercentage(float winPercentage) {
+        this.winPercentage = winPercentage;
+    }
+
 }
