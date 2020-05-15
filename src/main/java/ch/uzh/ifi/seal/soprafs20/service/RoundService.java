@@ -131,15 +131,6 @@ public class RoundService {
             throw new ConflictException("The stones placed form no valid word.");
         }
 
-        // add score to the player
-        for (Word word : words) {
-            if (word == null) {
-                continue;
-            }
-
-            player.setScore(player.getScore() + word.getValue());
-        }
-
         // check if words exists
         try {
             for (Word word : words) {
@@ -154,6 +145,16 @@ public class RoundService {
         // if not throw exception
         catch (Exception exception) {
             throw new ConflictException(exception.getMessage());
+        }
+
+        // add score to the player and add word to game
+        for (Word word : words) {
+            if (word == null) {
+                continue;
+            }
+
+            game.addWord(word);
+            player.setScore(player.getScore() + word.getValue());
         }
 
         // place new stones
