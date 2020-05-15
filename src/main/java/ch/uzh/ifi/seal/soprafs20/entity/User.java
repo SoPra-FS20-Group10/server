@@ -5,6 +5,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -42,6 +43,9 @@ public class User implements Serializable {
 
 	@Column()
     private Date birthday;
+
+    @OneToOne
+    private Statistics statistics;
 
     @Column()
     private int playTime;
