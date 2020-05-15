@@ -3,6 +3,9 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
+import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
+import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.JoinGameDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.MessageDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.ChatService;
@@ -23,20 +26,25 @@ public class ChatController {
         this.gameService = gameService;
     }
 
+
     @GetMapping("/chat")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<MessageDTO> getGlobalMessages() {
-        Chat globalChat = chatService.getGlobal();
+        Chat globalchat = chatService.getglobal();
 
-        List<Message> messages = globalChat.getMessages();
-        List<MessageDTO> dtoMessages = new ArrayList<>();
-
-        for(Message singleMessage :messages){
-            dtoMessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
+        if(globalchat == null){
+            throw new NotFoundException("global chat could not be found");
         }
 
-        return dtoMessages;
+        List<Message> messages = globalchat.getMessages();
+        List<MessageDTO> dtomessages = new ArrayList<>();
+
+        for(Message singlemessage :messages){
+            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        }
+
+        return dtomessages;
     }
 
     @PutMapping("/chat")
@@ -45,18 +53,28 @@ public class ChatController {
     public List<MessageDTO> sendGlobalMessages(@RequestBody MessageDTO messageDTO) {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
 
-        Chat globalChat = chatService.getGlobal();
-        Chat newchat = chatService.addMessage(globalChat,message);
-
-        List<Message> messages = newchat.getMessages();
-        List<MessageDTO> dtoMessages = new ArrayList<>();
-
-        for(Message SingleMessage :messages){
-            dtoMessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(SingleMessage));
+        Chat globalchat = chatService.getglobal();
+        if(globalchat == null){
+            throw new NotFoundException("global chat could not be found");
         }
 
-        return dtoMessages;
+
+        Chat newchat = chatService.addMessage(globalchat,message);
+
+
+
+        List<Message> messages = newchat.getMessages();
+        List<MessageDTO> dtomessages = new ArrayList<>();
+
+        for(Message singlemessage :messages){
+            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        }
+
+        return dtomessages;
+
     }
+
+
 
     @GetMapping("/chat/{gameId}")
     @ResponseStatus(HttpStatus.OK)
@@ -65,14 +83,18 @@ public class ChatController {
         Game game = gameService.getGame(gameId);
         Chat chat = game.getChat();
 
-        List<Message> messages = chat.getMessages();
-        List<MessageDTO> dtoMessage = new ArrayList<>();
-
-        for(Message singleMessage :messages){
-            dtoMessage.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
+        if(chat == null){
+            throw new NotFoundException("chat could not be found");
         }
 
-        return dtoMessage;
+        List<Message> messages = chat.getMessages();
+            List<MessageDTO> dtomessages = new ArrayList<>();
+
+            for(Message singlemessage :messages){
+            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
+        }
+
+        return dtomessages;
     }
 
     @PutMapping("/chat/{gameId}")
@@ -82,15 +104,21 @@ public class ChatController {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
         Game game = gameService.getGame(gameId);
         Chat chat = game.getChat();
+
+        if(chat == null){
+            throw new NotFoundException("chat could not be found");
+        }
+
+
         Chat newchat = chatService.addMessage(chat,message);
 
         List<Message> messages = newchat.getMessages();
-        List<MessageDTO> dtoMessages = new ArrayList<>();
+        List<MessageDTO> dtomessages = new ArrayList<>();
 
-        for(Message singleMessage :messages){
-            dtoMessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
+        for(Message singlemessage :messages){
+            dtomessages.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singlemessage));
         }
 
-        return dtoMessages;
+        return dtomessages;
     }
 }
