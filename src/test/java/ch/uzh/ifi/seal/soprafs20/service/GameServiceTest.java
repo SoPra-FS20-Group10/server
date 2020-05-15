@@ -201,6 +201,24 @@ public class GameServiceTest {
         assertEquals(user.getHistory(),"200 ");
     }
 
+    @Test
+    public void manageHistory_multiple_matches_successful() {
+        // given
+        User user = new User();
+        Player player = new Player();
+        player.setScore(200);
+        player.setUser(user);
+        player.initPlayer();
+
+        gameService.manageHistory(player,user);
+        gameService.manageHistory(player,user);
+        gameService.manageHistory(player,user);
+
+        assertEquals(user.getHistory(),"200 200 200 ");
+    }
+
+
+
 
 }
 
