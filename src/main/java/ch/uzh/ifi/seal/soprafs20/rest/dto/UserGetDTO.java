@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 
 import java.util.Date;
+import java.util.List;
 
 public class UserGetDTO {
     private Long id;
@@ -16,6 +17,8 @@ public class UserGetDTO {
     private int playedGames;
     private int wonGames;
     private float winPercentage;
+    private String historyString;
+    private List<Integer> historyList;
 
     public Long getId() {
         return id;
@@ -103,5 +106,20 @@ public class UserGetDTO {
 
     public void setWinPercentage(float winPercentage) {
         this.winPercentage = winPercentage;
+    }
+    public String getHistoryString() {
+        return historyString;
+    }
+
+    public void setHistoryString(String historyString) {
+        this.historyString = historyString;
+    }
+
+    public List<Integer> getHistoryList() {
+        return historyList;
+    }
+
+    public void setHistoryList(List<Integer> historyList) {
+        this.historyList = historyList;
     }
 }
