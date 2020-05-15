@@ -134,10 +134,6 @@ public class RoundService {
         // check if words exists
         try {
             for (Word word : words) {
-                if (word == null) {
-                    continue;
-                }
-
                 checkWord(word.getWord());
             }
         }
@@ -149,10 +145,6 @@ public class RoundService {
 
         // add score to the player and add word to game
         for (Word word : words) {
-            if (word == null) {
-                continue;
-            }
-
             game.addWord(word);
             player.setScore(player.getScore() + word.getValue());
         }
@@ -362,6 +354,7 @@ public class RoundService {
     }
 
     private List<Word> checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
+        Word temp;
         Tile[][] board2d = new Tile[15][15];
         ArrayList<Word> words = new ArrayList<>();
         boolean[][] visitedVertical = new boolean[15][15];
@@ -385,24 +378,33 @@ public class RoundService {
         List<Triplet> word;
 
         // consider every character and look for all words
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 15; j++) {
-                if (board2d[i][j].getStoneSymbol() != null) {
-                    // check board vertical
-                    word = findVerticalWords(board2d, visitedVertical, i, j);
-                    words.add(checkIfNewWordAndCalculatePoints(coordinates, word));
+        for (int coordinate : coordinates) {
+            int i = coordinate % 15;
+            int j = coordinate / 15;
 
-                    // check board horizontal
-                    word = findHorizontalWords(board2d, visitedHorizontal, i, j);
-                    words.add(checkIfNewWordAndCalculatePoints(coordinates, word));
-                }
+            // check board vertical
+            word = findVerticalWords(board2d, visitedVertical, i, j);
+            temp = checkIfNewWordAndCalculatePoints(word);
+
+            // add word to list if it is not null
+            if (temp != null) {
+                words.add(temp);
+            }
+
+            // check board horizontal
+            word = findHorizontalWords(board2d, visitedHorizontal, i, j);
+            temp = checkIfNewWordAndCalculatePoints(word);
+
+            // add word to list if it is not null
+            if (temp != null) {
+                words.add(temp);
             }
         }
 
         return words;
     }
 
-    private Word checkIfNewWordAndCalculatePoints(List<Integer> coordinates, List<Triplet> word) {
+    private Word checkIfNewWordAndCalculatePoints(List<Triplet> word) {
         String newWord = this.buildString(word);
 
         // check if word is only one letter
@@ -411,14 +413,7 @@ public class RoundService {
         }
 
         // check if word belongs to new words and add score and word to lists if yes
-        for (Triplet triplet : word) {
-            if (coordinates.contains(triplet.j * 15 + triplet.i)) {
-                return new Word(newWord, calculatePoints(buildList(word)));
-            }
-        }
-
-        // return null if the word contains no played stones
-        return null;
+        return new Word(newWord, calculatePoints(buildList(word)));
     }
 
     private List<Triplet> findVerticalWords(Tile[][] board, boolean[][] visited, int i, int j) {
