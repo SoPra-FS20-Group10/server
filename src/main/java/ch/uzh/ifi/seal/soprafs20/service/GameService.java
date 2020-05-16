@@ -48,11 +48,6 @@ public class GameService {
         gameRepository.flush();
     }
 
-    public void deleteGame(Game game) {
-        gameRepository.delete(game);
-        gameRepository.flush();
-    }
-
     public void addChat(Chat chat) {
         // add player to the user
         Game game = chat.getGame();
@@ -286,115 +281,70 @@ public class GameService {
     }
 
     private void addAllStones(Game game) {
-        for (int i = 0; i < 10; i++) {
-            game.addStone(new Stone("a", 1));
-        }
+        game.addStone(new Stone("q", 10));
+        game.addStone(new Stone("j", 8));
+        game.addStone(new Stone("k", 5));
+        game.addStone(new Stone("x", 8));
+        game.addStone(new Stone("z", 10));
 
         for (int i = 0; i < 3; i++) {
             game.addStone(new Stone("b", 3));
-        }
-
-        for (int i = 0; i < 3; i++) {
             game.addStone(new Stone("c", 3));
-        }
-
-        for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("d", 2));
-        }
-
-        for (int i = 0; i < 13; i++) {
-            game.addStone(new Stone("e", 1));
-        }
-
-        for (int i = 0; i < 3; i++) {
             game.addStone(new Stone("f", 4));
+            game.addStone(new Stone("h", 4));
+            game.addStone(new Stone("p", 3));
+            game.addStone(new Stone("v", 4));
+            game.addStone(new Stone("w", 4));
+            game.addStone(new Stone("y", 4));
+            game.addStone(new Stone("m", 3));
         }
 
         for (int i = 0; i < 4; i++) {
             game.addStone(new Stone("g", 2));
         }
 
-        for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("h", 4));
-        }
-
-        for (int i = 0; i < 10; i++) {
-            game.addStone(new Stone("i", 1));
-        }
-
-        game.addStone(new Stone("j", 8));
-
-        game.addStone(new Stone("k", 5));
-
         for (int i = 0; i < 5; i++) {
+            game.addStone(new Stone("d", 2));
             game.addStone(new Stone("l", 1));
-        }
-
-        for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("m", 3));
+            game.addStone(new Stone("s", 1));
+            game.addStone(new Stone("u", 1));
         }
 
         for (int i = 0; i < 7; i++) {
             game.addStone(new Stone("n", 1));
+            game.addStone(new Stone("r", 1));
+            game.addStone(new Stone("t", 1));
         }
 
         for (int i = 0; i < 9; i++) {
             game.addStone(new Stone("o", 1));
         }
 
-        for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("p", 3));
+        for (int i = 0; i < 10; i++) {
+            game.addStone(new Stone("a", 1));
+            game.addStone(new Stone("i", 1));
         }
 
-        game.addStone(new Stone("q", 10));
-
-        for (int i = 0; i < 7; i++) {
-            game.addStone(new Stone("r", 1));
+        for (int i = 0; i < 13; i++) {
+            game.addStone(new Stone("e", 1));
         }
-
-        for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("s", 1));
-        }
-
-        for (int i = 0; i < 7; i++) {
-            game.addStone(new Stone("t", 1));
-        }
-
-        for (int i = 0; i < 5; i++) {
-            game.addStone(new Stone("u", 1));
-        }
-
-        for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("v", 4));
-        }
-
-        for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("w", 4));
-        }
-
-        game.addStone(new Stone("x", 8));
-
-        for (int i = 0; i < 3; i++) {
-            game.addStone(new Stone("y", 4));
-        }
-
-        game.addStone(new Stone("z", 10));
     }
 
     public void checkIfGameEnded(Game game) {
         // check if bag of game is empty
-        if (game.getBag().isEmpty()) {
-            List<Player> players = game.getPlayers();
+        if (!game.getBag().isEmpty()) {
+            return;
+        }
 
-            // check if a bag of a player is empty
-            for (Player player : players) {
+        // fetch the players from the game
+        List<Player> players = game.getPlayers();
 
-                // if a player has no stones left, the game has ended
-                if (player.getBag().isEmpty()) {
-                    game.setStatus(GameStatus.ENDED);
-                    updateScore(game);
-                    break;
-                }
+        // check if a bag of a player is empty -> if a bag of one player is empty, the game ends
+        for (Player player : players) {
+            if (player.getBag().isEmpty()) {
+                game.setStatus(GameStatus.ENDED);
+                updateScore(game);
+                break;
             }
         }
     }
@@ -407,36 +357,29 @@ public class GameService {
             User user = player.getUser();
             user.setOverallScore(user.getOverallScore() + player.getScore());
 
-            //manage userhistory
+            //manage userHistory
             manageHistory(player,user);
-
-
 
             player.setScore(0);
         }
     }
 
-
     protected void manageHistory(Player player, User user){
+        int length;
         String history = user.getHistory();
 
-        int length;
-
-        if(history.isEmpty()){
+        if (history.isEmpty()){
             length = 0;
-        }else{
+        } else {
             String[] words = history.split("\\s+");
             length = words.length;
         }
 
-        if(length<10){
-            user.setHistory(user.getHistory() + Integer.toString(player.getScore()) + " ");
-        }else{
+        if (length < 10){
+            user.setHistory(user.getHistory() + player.getScore() + " ");
+        } else {
             int index = history.indexOf(" ") + 1;
-            user.setHistory(user.getHistory().substring(index) + Integer.toString(player.getScore()) + " ");
-
+            user.setHistory(user.getHistory().substring(index) + player.getScore() + " ");
         }
-
-
     }
 }
