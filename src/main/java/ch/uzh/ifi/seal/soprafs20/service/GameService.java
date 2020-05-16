@@ -164,8 +164,7 @@ public class GameService {
         }
 
         // check if the user is authorized to leave the game
-        if (!player.getUser().getToken().equals(token)) {
-            if (!game.getOwner().getToken().equals(token))
+        if (!player.getUser().getToken().equals(token) || !game.getOwner().getToken().equals(token)) {
             throw new ConflictException("The user is not authorized to leave this game");
         }
 
@@ -380,7 +379,7 @@ public class GameService {
         if (length < 10){
             user.setHistory(user.getHistory() + player.getScore() + " ");
         } else {
-            int index = history.indexOf(" ") + 1;
+            int index = history.indexOf(' ') + 1;
             user.setHistory(user.getHistory().substring(index) + player.getScore() + " ");
         }
     }

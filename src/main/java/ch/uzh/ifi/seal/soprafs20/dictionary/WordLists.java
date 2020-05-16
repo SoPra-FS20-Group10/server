@@ -32,7 +32,7 @@ public class WordLists {
     }
 
     //check if word is in list
-    public Boolean contains(String word){
+    public boolean contains(String word){
         return dictionary.contains(word.toUpperCase());
     }
 }

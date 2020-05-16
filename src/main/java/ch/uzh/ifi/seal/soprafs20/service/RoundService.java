@@ -242,7 +242,7 @@ public class RoundService {
 
         //check if word is in dictionary
         WordLists wordLists = WordLists.getInstance();
-        if(wordLists.contains(word)){
+        if (wordLists.contains(word)) {
             return;
         }
 

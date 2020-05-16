@@ -34,7 +34,6 @@ public class GameServiceTest {
     private Game testGame;
     private Player testPlayer;
     private User testUser;
-    private Tile testTile;
 
     @BeforeEach
     public void setup() {
@@ -54,7 +53,7 @@ public class GameServiceTest {
         testGame.initGame();
 
         //given tile
-        testTile = new Tile(1, null,null);
+        Tile testTile = new Tile(1, null, null);
 
 
         // given player
@@ -70,7 +69,7 @@ public class GameServiceTest {
         Mockito.when(tileRepository.save(Mockito.any())).thenReturn(testTile);
 
         Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(Mockito.anyInt(), Mockito.eq(null),Mockito.anyString()))
-                .thenReturn(Optional.ofNullable(testTile));
+                .thenReturn(Optional.of(testTile));
     }
 
     @Test
@@ -198,7 +197,7 @@ public class GameServiceTest {
 
         gameService.manageHistory(player,user);
 
-        assertEquals(user.getHistory(),"200 ");
+        assertEquals("200 ", user.getHistory());
     }
 
     @Test
@@ -218,12 +217,12 @@ public class GameServiceTest {
         player.setScore(400);
         gameService.manageHistory(player,user);
 
-        assertEquals(user.getHistory(),"200 300 400 ");
+        assertEquals("200 300 400 ", user.getHistory());
     }
 
     @Test
     public void manageHistory_more_than_ten_matches_successful() {
-        // check if its got more matdhes the oldest one gets deleted
+        // check if its got more matches the oldest one gets deleted
         User user = new User();
         Player player = new Player();
         player.setScore(200);
@@ -246,15 +245,7 @@ public class GameServiceTest {
         gameService.manageHistory(player,user);
         gameService.manageHistory(player,user);
 
-
-
-        assertEquals(user.getHistory(),"300 400 400 400 400 400 400 400 400 400 ");
+        assertEquals("300 400 400 400 400 400 400 400 400 400 ", user.getHistory());
     }
-
-
-
-
-
-
 }
 
