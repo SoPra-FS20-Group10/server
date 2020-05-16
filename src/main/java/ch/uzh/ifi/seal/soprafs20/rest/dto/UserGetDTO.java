@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class UserGetDTO {
     private int wonGames;
     private float winPercentage;
     private String historyString;
-    private List<Integer> historyList;
+    private List<Integer> historyList = new ArrayList<>();
 
     public Long getId() {
         return id;
