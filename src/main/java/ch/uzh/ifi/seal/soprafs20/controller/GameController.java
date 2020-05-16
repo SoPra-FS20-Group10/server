@@ -278,7 +278,7 @@ public class GameController {
 
         // delete game if no players are left
         if (game.getPlayers().isEmpty()) {
-            chatService.deleteChat(game);
+            chatService.deleteChat(game.getChat());
             gameService.endGame(game.getId());
         }
     }
@@ -325,19 +325,22 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void deleteGame(@PathVariable("gameId")Long gameId) {
+        // fetch game from db
+        Game game = gameService.getGame(gameId);
+
         // fetch all players from the game
-        List<Player> players = gameService.getPlayers(gameId);
+        List<Player> players = game.getPlayers();
 
         // check if there are still players in the game
         if (!players.isEmpty()){
-            throw new NotFoundException("There are still players in the game");
+            throw new ConflictException("There are still players in the game");
         }
 
         // remove game from owner
-        userService.removeGame(gameService.getGame(gameId));
+        userService.removeGame(game);
 
         //delete gameChat
-        chatService.deleteChat(gameService.getGame(gameId));
+        chatService.deleteChat(game.getChat());
 
         // end game
         gameService.endGame(gameId);

@@ -50,14 +50,10 @@ public class ChatService {
         return chat;
     }
 
-    public void deleteChat(Game game){
-        Chat chat = game.getChat();
-        game.setChat(null);
-
+    public void deleteChat(Chat chat){
         chatRepository.delete(chat);
         chatRepository.flush();
     }
-
 
     public Chat getGlobal(){
         Optional<Chat> chat = chatRepository.findByType("global");

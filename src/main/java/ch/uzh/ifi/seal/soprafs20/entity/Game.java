@@ -36,7 +36,7 @@ public class Game implements Serializable {
     @OneToOne(mappedBy = "game")
     private User owner;
 
-    @OneToOne
+    @OneToOne(mappedBy = "game")
     private Chat chat;
 
     @ManyToMany(cascade = CascadeType.ALL)
