@@ -20,7 +20,6 @@ import java.util.List;
  * This class is responsible for handling all REST request regarding the game.
  * The controller will receive the request and delegate the execution to the services and finally return the result.
  */
-
 @RestController
 @Transactional
 public class GameController {
@@ -43,28 +42,29 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO getGame(@PathVariable ("gameId") Long gameId) {
-        List<TileGetDTO> grid = new ArrayList<>();
+        List<TileGetDTO> gridGetDTO = new ArrayList<>();
         List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
 
-        // fetch game and grid
+        // fetch game from db
         Game game = gameService.getGame(gameId);
 
-        if(game == null){
-            throw new NotFoundException("the game could not be found");
-        }
-
-        List<Tile> ogGrid = game.getGrid();
+        // fetch grid and bag from game
+        List<Tile> grid = game.getGrid();
         List<Stone> bag = game.getBag();
 
-        if(bag == null){
-            throw new NotFoundException("the bag could not be found");
+        // check if grid is present
+        if (grid == null) {
+            throw new NotFoundException("Something went wrong while fetching the grid.");
         }
 
-        GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+        // check if bag is present
+        if (bag == null){
+            throw new NotFoundException("Something went wrong while fetching the bag");
+        }
 
         // parse tile into TileGetDTO
-        for(Tile tile : ogGrid){
-            grid.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
+        for(Tile tile : grid){
+            gridGetDTO.add(DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile));
         }
 
         // parse stone into StoneGetDTO
@@ -72,9 +72,11 @@ public class GameController {
             stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
         }
 
+        // parse Game into GameGetDTO and add currentPlayer, bag and grid
+        GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
         gameGetDTO.setCurrentPlayerId(game.getCurrentPlayerId());
         gameGetDTO.setStones(stoneGetDTOs);
-        gameGetDTO.setBoard(grid);
+        gameGetDTO.setBoard(gridGetDTO);
 
         // return
         return gameGetDTO;
@@ -88,13 +90,8 @@ public class GameController {
         // fetch all games in the internal representation
         List<Game> games = gameService.getGames();
 
-        if(games == null){
-            throw new NotFoundException("the games could not be found");
-        }
-
+        // parse Game entities into GameGetDTOs
         List<GameGetDTO> gameGetDTOs = new ArrayList<>();
-
-        // convert each user to the API representation
         for (Game game : games) {
             gameGetDTOs.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
         }
@@ -125,13 +122,13 @@ public class GameController {
         // fetch all users in the internal representation
         List<Player> players = gameService.getPlayers(gameId);
 
+        // check if players exist
         if(players == null){
             throw new NotFoundException("the players could not be found");
         }
 
+        // parse Player entities into playerGetDTOs
         List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
-
-        // convert each user to the API representation
         for (Player player : players) {
             playerGetDTOs.add(DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
         }
@@ -148,7 +145,6 @@ public class GameController {
 
         // parse stone entities into stone DTOs
         List<StoneGetDTO> stoneGetDTOs = new ArrayList<>();
-
         for (Stone stone : stones) {
             stoneGetDTOs.add(DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone));
         }
@@ -163,9 +159,8 @@ public class GameController {
         // get words from player
         List<Word> words = gameService.getWords(gameId);
 
-        // parse Word entities into  wordDTOs
+        // parse Word entities into wordDTOs
         List<WordGetDTO> wordGetDTOs = new ArrayList<>();
-
         for (Word word : words) {
             wordGetDTOs.add(DTOMapper.INSTANCE.convertEntityToWordGetDTO(word));
         }
@@ -183,7 +178,6 @@ public class GameController {
 
         // create a player for the owner
         Player player = playerService.createPlayer(user);
-
 
         // adds player to user
         userService.addPlayer(player);
@@ -234,11 +228,6 @@ public class GameController {
 
         // fetch game from db
         Game game = gameService.getGame(gameId);
-
-        // check if game is existing
-        if(game == null){
-            throw new NotFoundException("the game could not be found");
-        }
 
         // fetch players from game
         List<Player> players = game.getPlayers();
@@ -357,34 +346,12 @@ public class GameController {
     @ResponseBody
     public void placeStones(@PathVariable("gameId")long gameId, @PathVariable("playerId")long playerId,
                             @RequestBody PlaceWordDTO placeWordDTO) {
-        // get game
+        // get player and game
+        Player player = playerService.getPlayer(playerId);
         Game game = gameService.getGame(gameId);
 
-        if(game == null){
-            throw new NotFoundException("the game could not be found");
-        }
-
-        // get player
-        Player player = playerService.getPlayer(playerId);
-
-        if(player == null){
-            throw new NotFoundException("the player could not be found");
-        }
-
-        // check if game is running
-        if (game.getStatus() != GameStatus.RUNNING) {
-            throw new ConflictException("The game with the id " + gameId + " is not running." );
-        }
-
-        // check if user is authorized to perform exchange action
-        if (!player.getUser().getToken().equals(placeWordDTO.getToken())) {
-            throw new UnauthorizedException("The user is not authorized to perform this action.");
-        }
-
-        // check if it's the players turn
-        if (game.getCurrentPlayerId() != playerId) {
-            throw new ConflictException("It's not the turn of the player " + playerId);
-        }
+        // check if game is running, user is authorized and it is the users turn
+        checkIfValidAction(game, player, placeWordDTO.getToken());
 
         // check if placing is valid and place it if possible
         roundService.placeWord(game, player, placeWordDTO.getStoneIds(), placeWordDTO.getCoordinates());
@@ -420,31 +387,10 @@ public class GameController {
                                             @RequestBody ExchangeStonesDTO exchangeStonesDTO) {
         // get player and game
         Player player = playerService.getPlayer(playerId);
-
-        if(player == null){
-            throw new NotFoundException("the player could not be found");
-        }
-
         Game game = gameService.getGame(gameId);
 
-        if(game == null){
-            throw new NotFoundException("the game could not be found");
-        }
-
-        // check if game is running
-        if (game.getStatus() != GameStatus.RUNNING) {
-            throw new ConflictException("The game with the id " + gameId + " is not running." );
-        }
-
-        // check if user is authorized to perform exchange action
-        if (!player.getUser().getToken().equals(exchangeStonesDTO.getToken())) {
-            throw new UnauthorizedException("The user is not authorized to perform this action.");
-        }
-
-        // check if it's the players turn
-        if (game.getCurrentPlayerId() != playerId) {
-            throw new ConflictException("It's not the turn of the player " + playerId);
-        }
+        // check if game is running, user is authorized and it is the users turn
+        checkIfValidAction(game, player, exchangeStonesDTO.getToken());
 
         // exchange the stones
         roundService.exchangeStone(game, player, exchangeStonesDTO.getStoneIds());
@@ -458,5 +404,22 @@ public class GameController {
         // save changes
         playerService.savePlayer(player);
         gameService.saveGame(game);
+    }
+
+    private void checkIfValidAction(Game game, Player player, String token) {
+        // check if game is running
+        if (game.getStatus() != GameStatus.RUNNING) {
+            throw new ConflictException("The game with the id " + game.getId() + " is not running." );
+        }
+
+        // check if user is authorized to perform exchange action
+        if (!player.getUser().getToken().equals(token)) {
+            throw new UnauthorizedException("The user is not authorized to perform this action.");
+        }
+
+        // check if it's the players turn
+        if (game.getCurrentPlayerId() != player.getId()) {
+            throw new ConflictException("It's not the turn of the player " + player.getId());
+        }
     }
 }
