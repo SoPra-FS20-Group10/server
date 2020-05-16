@@ -15,10 +15,8 @@ import java.util.List;
 @Entity
 @Table(name = "Chat")
 public class Chat implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
@@ -30,7 +28,7 @@ public class Chat implements Serializable {
     @Column
     private String type;
 
-    public void initchat(){
+    public void initChat(){
         messages = new ArrayList<>();
     }
 

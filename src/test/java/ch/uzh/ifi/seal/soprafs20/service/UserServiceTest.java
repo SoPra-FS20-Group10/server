@@ -68,7 +68,7 @@ public class UserServiceTest {
         // then
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
 
-        assertEquals(guestUser.getType(), "guest");
+        assertEquals("guest", guestUser.getType());
     }
 
     @Test

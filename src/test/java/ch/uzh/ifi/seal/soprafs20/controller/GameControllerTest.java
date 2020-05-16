@@ -346,6 +346,7 @@ public class GameControllerTest {
 
         // when -> then: return game
         given(gameService.getGame(anyLong())).willReturn(game);
+        given(gameService.leaveGame(Mockito.any(), Mockito.any(), Mockito.anyString())).willReturn(game);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest = delete("/games/1/players/1")

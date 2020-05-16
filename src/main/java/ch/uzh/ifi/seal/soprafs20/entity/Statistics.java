@@ -1,10 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 @Entity
 @Table(name = "Statistics")

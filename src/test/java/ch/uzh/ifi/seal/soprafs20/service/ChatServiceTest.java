@@ -41,7 +41,7 @@ public class ChatServiceTest {
         testUser.setToken("testToken");
 
         chat = new Chat();
-        chat.initchat();
+        chat.initChat();
 
         message = new Message();
         message.setMessage("hello");

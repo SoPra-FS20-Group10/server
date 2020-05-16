@@ -3,17 +3,13 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,7 +29,7 @@ public class ChatService {
 
     public Chat createChat(Game game){
         Chat chat = new Chat();
-        chat.initchat();
+        chat.initChat();
         chat.setGame(game);
 
         chat = chatRepository.save(chat);
@@ -74,7 +70,7 @@ public class ChatService {
 
     public void initGlobal(){
         Chat chat = new Chat();
-        chat.initchat();
+        chat.initChat();
         chat.setId(0L);
         chat.setType("global");
 

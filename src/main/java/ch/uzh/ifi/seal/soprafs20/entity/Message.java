@@ -13,9 +13,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "Message")
 public class Message implements Serializable {
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column

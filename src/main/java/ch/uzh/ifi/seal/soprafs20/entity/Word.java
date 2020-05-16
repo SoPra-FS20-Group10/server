@@ -1,10 +1,11 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "Word")
-public class Word {
+public class Word implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

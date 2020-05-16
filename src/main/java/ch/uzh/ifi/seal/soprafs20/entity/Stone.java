@@ -13,10 +13,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "Stone")
 public class Stone implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column

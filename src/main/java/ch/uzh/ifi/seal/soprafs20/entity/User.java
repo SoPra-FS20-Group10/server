@@ -5,7 +5,6 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Internal User Representation
@@ -20,7 +19,7 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(nullable = false, unique = true) 
@@ -36,7 +35,7 @@ public class User implements Serializable {
 	private UserStatus status;
 
     @Column
-    private String Type = "";
+    private String type = "";
 
 	@Column(nullable = false)
     private Date cakeDay;
@@ -192,11 +191,11 @@ public class User implements Serializable {
     }
 
     public String getType() {
-        return Type;
+        return type;
     }
 
     public void setType(String type) {
-        Type = type;
+        this.type = type;
     }
 
     public void setWinPercentage(float winPercentage) {

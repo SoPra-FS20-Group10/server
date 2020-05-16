@@ -254,6 +254,8 @@ public class GameController {
                 game.removeStone(stone);
             }
         }
+
+        // save changes
         gameService.saveGame(game);
     }
 
@@ -270,7 +272,7 @@ public class GameController {
         Player player = playerService.getPlayer(playerId);
 
         // leave game, remove player from user and delete player
-        gameService.leaveGame(game, player, token);
+        game = gameService.leaveGame(game, player, token);
         userService.removePlayer(player);
         playerService.deletePlayer(player);
 

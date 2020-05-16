@@ -6,8 +6,6 @@ import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GameGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.JoinGameDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.MessageDTO;
 import ch.uzh.ifi.seal.soprafs20.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -54,7 +52,7 @@ public class ChatControllerTest {
     public void getMessages_single_message() throws Exception {
         // given
         Chat chat = new Chat();
-        chat.initchat();
+        chat.initChat();
 
         Message message = new Message();
         message.setMessage("hello");
@@ -93,7 +91,7 @@ public class ChatControllerTest {
     public void getMessages_multiple_messages() throws Exception {
         // given
         Chat chat = new Chat();
-        chat.initchat();
+        chat.initChat();
 
         Message message = new Message();
         message.setMessage("hello");
@@ -151,7 +149,7 @@ public class ChatControllerTest {
     @Test
     public void send_message() throws Exception {
         Chat chat = new Chat();
-        chat.initchat();
+        chat.initChat();
 
 
         Message message = new Message();

@@ -157,7 +157,7 @@ public class GameService {
         gameRepository.flush();
     }
 
-    public void leaveGame(Game game, Player player, String token) {
+    public Game leaveGame(Game game, Player player, String token) {
         // check if player is the lobbyLeader
         if (game.getStatus() != GameStatus.ENDED && player.getUser().getId().equals(game.getOwner().getId())) {
             throw new UnauthorizedException("The game owner cannot leave the game. Choose to end the game.");
@@ -173,8 +173,10 @@ public class GameService {
         game.removePlayer(player);
 
         // save changes
-        gameRepository.save(game);
+        game = gameRepository.save(game);
         gameRepository.flush();
+
+        return game;
     }
 
     public void endGame(long gameId) {
