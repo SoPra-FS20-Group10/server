@@ -279,6 +279,7 @@ public class GameController {
         // delete game if no players are left
         if (game.getPlayers().isEmpty()) {
             chatService.deleteChat(game.getChat());
+            userService.removeGame(game);
             gameService.endGame(game.getId());
         }
     }
