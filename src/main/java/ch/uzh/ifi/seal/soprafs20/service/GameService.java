@@ -164,7 +164,7 @@ public class GameService {
         }
 
         // check if the user is authorized to leave the game
-        if (!player.getUser().getToken().equals(token) || !game.getOwner().getToken().equals(token)) {
+        if (!player.getUser().getToken().equals(token) && !game.getOwner().getToken().equals(token)) {
             throw new ConflictException("The user is not authorized to leave this game");
         }
 
