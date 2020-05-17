@@ -71,6 +71,21 @@ public class PlayerControllerTest {
         mockMvc.perform(putRequest).andExpect(status().isOk());
     }
 
+    @Test
+    public void readyPlayer_invalidInput_noToken() throws Exception {
+        // given
+        UserTokenDTO userTokenDTO = new UserTokenDTO();
+        userTokenDTO.setToken(null);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder putRequest = put("/players/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userTokenDTO));
+
+        // then
+        mockMvc.perform(putRequest).andExpect(status().isNotFound());
+    }
+
     private String asJsonString(final Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);

@@ -19,12 +19,10 @@ public class PlayerController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public PlayerGetDTO getPlayer(@PathVariable("playerId")long playerId){
+        // fetch player from db
         Player player = playerService.getPlayer(playerId);
 
-        if(player == null){
-            throw new NotFoundException("the player could not be found");
-        }
-
+        // parse entity into PlayerGetDTO and return
         return DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player);
     }
 
@@ -35,6 +33,7 @@ public class PlayerController {
         // parse input into String
         String token = userTokenDTO.getToken();
 
+        // check if token exists
         if(token == null){
             throw new NotFoundException("the token is empty");
         }
