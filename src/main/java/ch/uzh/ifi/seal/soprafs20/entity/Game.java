@@ -10,9 +10,6 @@ import java.util.List;
 /**
  * Internal Game Representation
  * This class composes the internal representation of the game and defines how the game is stored in the database.
- * Every variable will be mapped into a database field with the @Column annotation
- * - nullable = false -> this cannot be left empty
- * - unique = true -> this value must be unique across the database -> composes the primary key
  */
 @Entity
 @Table(name = "Game")
@@ -51,12 +48,27 @@ public class Game implements Serializable {
     @OneToMany(mappedBy = "game")
     private List<Player> players;
 
+    public void initGame() {
+        players = new ArrayList<>();
+        bag = new ArrayList<>();
+        words = new ArrayList<>();
+        grid = new ArrayList<>();
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public GameStatus getStatus() {
@@ -67,22 +79,6 @@ public class Game implements Serializable {
         this.status = status;
     }
 
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -91,12 +87,28 @@ public class Game implements Serializable {
         this.password = password;
     }
 
+    public long getCurrentPlayerId() {
+        return this.currentPlayerId;
+    }
+
+    public void setCurrentPlayerId(long currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+    }
+
     public User getOwner() {
         return owner;
     }
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
     }
 
     public List<Tile> getGrid() {
@@ -135,13 +147,6 @@ public class Game implements Serializable {
         words.add(word);
     }
 
-    public void initGame() {
-        players = new ArrayList<>();
-        bag = new ArrayList<>();
-        words = new ArrayList<>();
-        grid = new ArrayList<>();
-    }
-
     public List<Player> getPlayers() {
         return players;
     }
@@ -156,13 +161,5 @@ public class Game implements Serializable {
 
     public void removePlayer(Player player) {
         players.remove(player);
-    }
-
-    public long getCurrentPlayerId() {
-        return this.currentPlayerId;
-    }
-
-    public void setCurrentPlayerId(long currentPlayerId) {
-        this.currentPlayerId = currentPlayerId;
     }
 }

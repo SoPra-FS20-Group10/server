@@ -25,27 +25,8 @@ public class Chat implements Serializable {
     @OneToMany
     private List<Message> messages;
 
-    @Column
-    private String type;
-
     public void initChat(){
         messages = new ArrayList<>();
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
     }
 
     public Long getId() {
@@ -62,6 +43,14 @@ public class Chat implements Serializable {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 
     public void addMessage(Message message){

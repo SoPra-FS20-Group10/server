@@ -25,7 +25,6 @@ public class ChatService {
         this.messageRepository = messageRepository;
 
         initGlobal();
-
     }
 
     public Chat createChat(Game game){
@@ -63,7 +62,7 @@ public class ChatService {
 
     public Chat getGlobal(){
         Chat chat;
-        Optional<Chat> foundChat = chatRepository.findByType("global");
+        Optional<Chat> foundChat = chatRepository.findByIdIs(0L);
 
         // check if foundChat exists
         if(foundChat.isPresent()){
@@ -75,11 +74,10 @@ public class ChatService {
         return chat;
     }
 
-    public void initGlobal(){
+    private void initGlobal(){
         Chat chat = new Chat();
         chat.initChat();
         chat.setId(0L);
-        chat.setType("global");
 
         chatRepository.save(chat);
         chatRepository.flush();

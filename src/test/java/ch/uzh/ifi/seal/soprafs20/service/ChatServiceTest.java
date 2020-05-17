@@ -25,8 +25,6 @@ public class ChatServiceTest {
     @InjectMocks
     private ChatService chatService;
     private Game testGame;
-    private Player testPlayer;
-    private User testUser;
     private Chat chat;
     private Message message;
 
@@ -36,7 +34,7 @@ public class ChatServiceTest {
         MockitoAnnotations.initMocks(this);
 
         // given user
-        testUser = new User();
+        User testUser = new User();
         testUser.setId(2L);
         testUser.setToken("testToken");
 
@@ -61,7 +59,7 @@ public class ChatServiceTest {
 
 
         // given player
-        testPlayer = new Player();
+        Player testPlayer = new Player();
         testPlayer.setUser(testUser);
         testPlayer.setId(2L);
         testPlayer.setUsername("testUsername");
@@ -71,45 +69,30 @@ public class ChatServiceTest {
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(chatRepository.save(Mockito.any())).thenReturn(chat);
         Mockito.when(messageRepository.save(Mockito.any())).thenReturn(message);
-
     }
 
     @Test
     public void add_message_test() {
-
-        Chat addedchat = chatService.addMessage(chat,message);
-
-        Message addedmessage = chat.getMessages().get(0);
-
-        // search game
+        Message addedMessage = chat.getMessages().get(0);
 
         // then check if they are equal
-        assertEquals(addedmessage.getMessage(),message.getMessage());
-        assertEquals(addedmessage.getUsername(),message.getUsername());
-        assertEquals(addedmessage.getTime(),message.getTime());
+        assertEquals(addedMessage.getMessage(),message.getMessage());
+        assertEquals(addedMessage.getUsername(),message.getUsername());
+        assertEquals(addedMessage.getTime(),message.getTime());
 
     }
 
     @Test
     public void getGame_validInput_success() {
         // given game
-        Chat newchat = chatService.createChat(testGame);
-        Optional<Chat> found = Optional.ofNullable(newchat);
+        Chat newChat = chatService.createChat(testGame);
+        Optional<Chat> found = Optional.ofNullable(newChat);
 
         // when
         Mockito.when(chatRepository.findByIdIs(Mockito.anyLong())).thenReturn(found);
-
-        Mockito.when(chatRepository.findByType(Mockito.anyString()))
-                .thenReturn(Optional.ofNullable(chat));
-
-        // search game
-        Chat foundchat = chatService.getGlobal();
+        Mockito.when(chatRepository.findByIdIs(Mockito.anyLong())).thenReturn(Optional.ofNullable(chat));
 
         // then check if they are equal
         assertEquals(chat.getMessages().get(0),chat.getMessages().get(0));
-
     }
-
-
-
 }

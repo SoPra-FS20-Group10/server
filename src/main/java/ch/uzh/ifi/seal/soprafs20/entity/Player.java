@@ -8,11 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Internal User Representation
- * This class composes the internal representation of the user and defines how the user is stored in the database.
- * Every variable will be mapped into a database field with the @Column annotation
- * - nullable = false -> this cannot be left empty
- * - unique = true -> this value must be unique across the database -> composes the primary key
+ * Internal Player Representation
+ * This class composes the internal representation of the player and defines how the player is stored in the database.
  */
 @Entity
 @Table(name = "Player")
@@ -35,11 +32,12 @@ public class Player implements Serializable {
     @OneToOne
     private User user;
 
-    @OneToOne
-    private Game currently;
-
     @ManyToOne
     private Game game;
+
+    public void initPlayer() {
+        bag = new ArrayList<>();
+    }
 
     public Long getId() {
         return id;
@@ -69,14 +67,6 @@ public class Player implements Serializable {
         return score;
     }
 
-    public Game getCurrently() {
-        return currently;
-    }
-
-    public void setCurrently(Game currently) {
-        this.currently = currently;
-    }
-
     public void setScore(int score) {
         this.score = score;
     }
@@ -99,10 +89,6 @@ public class Player implements Serializable {
 
     public void removeStone(Stone stone) {
         bag.remove(stone);
-    }
-
-    public void initPlayer() {
-        bag = new ArrayList<>();
     }
 
     public User getUser() {

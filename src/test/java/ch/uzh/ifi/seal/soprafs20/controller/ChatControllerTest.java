@@ -334,7 +334,6 @@ public class ChatControllerTest {
         Chat chat = new Chat();
         chat.initChat();
 
-
         Message message = new Message();
         message.setMessage("hello");
         message.setUsername("test");
@@ -356,17 +355,9 @@ public class ChatControllerTest {
         messageDTO.setTime(100L);
         messageDTO.setUsername("test");
 
-        //TODO: mock chatservice
-
-        /*
-
         // this mocks the GameService
         given(gameService.getGame(Mockito.anyLong())).willReturn(game);
-
-
-        // this mocks the GameService
-        given(chatService.addMessage(chat,message)).willReturn(chat);
-
+        given(chatService.addMessage(Mockito.any(), Mockito.any())).willReturn(chat);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/chat/1")
@@ -375,8 +366,6 @@ public class ChatControllerTest {
 
         // then
         mockMvc.perform(putRequest).andExpect(status().isOk());
-
-         */
     }
 
     private String asJsonString(final Object object) {

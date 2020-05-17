@@ -4,11 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * Internal User Representation
- * This class composes the internal representation of the user and defines how the user is stored in the database.
- * Every variable will be mapped into a database field with the @Column annotation
- * - nullable = false -> this cannot be left empty
- * - unique = true -> this value must be unique across the database -> composes the primary key
+ * Internal Tile Representation
+ * This class composes the internal representation of the tile and defines how the tile is stored in the database.
  */
 @Entity
 @Table(name = "Tile")
@@ -46,14 +43,6 @@ public class Tile implements Serializable {
         this.multivariant = multivariant;
     }
 
-    public String getStoneSymbol() {
-        return stoneSymbol;
-    }
-
-    public void setStoneSymbol(String stoneSymbol) {
-        this.stoneSymbol = stoneSymbol;
-    }
-
     public Long getId() {
         return id;
     }
@@ -62,12 +51,12 @@ public class Tile implements Serializable {
         this.id = id;
     }
 
-    public int getMultiplier() {
-        return multiplier;
+    public String getStoneSymbol() {
+        return stoneSymbol;
     }
 
-    public void setMultiplier(int multiplier) {
-        this.multiplier = multiplier;
+    public void setStoneSymbol(String stoneSymbol) {
+        this.stoneSymbol = stoneSymbol;
     }
 
     public int getValue() {
@@ -76,6 +65,14 @@ public class Tile implements Serializable {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public int getMultiplier() {
+        return multiplier;
+    }
+
+    public void setMultiplier(int multiplier) {
+        this.multiplier = multiplier;
     }
 
     public String getMultivariant() {

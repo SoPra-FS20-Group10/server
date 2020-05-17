@@ -50,18 +50,10 @@ public class ChatController {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
 
         // fetch globalChat from db
-        Chat globalChat = chatService.getGlobal();
+        Chat chat = chatService.getGlobal();
 
-        Chat newchat = chatService.addMessage(globalChat,message);
-
-        List<Message> messages = newchat.getMessages();
-        List<MessageDTO> messageDTOs = new ArrayList<>();
-
-        for (Message singleMessage : messages) {
-            messageDTOs.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
-        }
-
-        return messageDTOs;
+        // add to chat and parse into DTO
+        return addToChatAndParseToDTO(chat, message);
     }
 
     @GetMapping("/chat/{gameId}")
@@ -98,11 +90,19 @@ public class ChatController {
             throw new NotFoundException("chat could not be found");
         }
 
-        Chat newchat = chatService.addMessage(chat,message);
+        // add to chat and parse into DTO
+        return addToChatAndParseToDTO(chat, message);
+    }
 
-        List<Message> messages = newchat.getMessages();
+    private List<MessageDTO> addToChatAndParseToDTO(Chat chat, Message message) {
+        // add message to the chat
+        chat = chatService.addMessage(chat,message);
+
+        // fetch messages from the chat
+        List<Message> messages = chat.getMessages();
         List<MessageDTO> messageDTOs = new ArrayList<>();
 
+        // parse Message entities into MessageDTOs
         for(Message singleMessage :messages){
             messageDTOs.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
         }
