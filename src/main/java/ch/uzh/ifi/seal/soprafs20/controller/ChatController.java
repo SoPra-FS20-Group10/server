@@ -28,15 +28,14 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<MessageDTO> getGlobalMessages() {
+        // fetch global chat from db
         Chat globalChat = chatService.getGlobal();
 
-        if(globalChat == null){
-            throw new NotFoundException("global chat could not be found");
-        }
-
+        // fetch messages from chat
         List<Message> messages = globalChat.getMessages();
         List<MessageDTO> messageDTO = new ArrayList<>();
 
+        // parse messages into MessageDTOs
         for(Message message :messages){
             messageDTO.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(message));
         }
@@ -50,17 +49,15 @@ public class ChatController {
     public List<MessageDTO> sendGlobalMessages(@RequestBody MessageDTO messageDTO) {
         Message message = DTOMapper.INSTANCE.convertMessageDTOtoEntity(messageDTO);
 
+        // fetch globalChat from db
         Chat globalChat = chatService.getGlobal();
-        if(globalChat == null){
-            throw new NotFoundException("global chat could not be found");
-        }
 
         Chat newchat = chatService.addMessage(globalChat,message);
 
         List<Message> messages = newchat.getMessages();
         List<MessageDTO> messageDTOs = new ArrayList<>();
 
-        for(Message singleMessage :messages){
+        for (Message singleMessage : messages) {
             messageDTOs.add(DTOMapper.INSTANCE.convertEntityToMessageDTO(singleMessage));
         }
 
@@ -96,6 +93,7 @@ public class ChatController {
         Game game = gameService.getGame(gameId);
         Chat chat = game.getChat();
 
+        // check if game has a chat
         if(chat == null){
             throw new NotFoundException("chat could not be found");
         }

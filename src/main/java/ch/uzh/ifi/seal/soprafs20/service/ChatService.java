@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.ChatRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.MessageRepository;
@@ -39,6 +40,11 @@ public class ChatService {
     }
 
     public Chat addMessage(Chat chat, Message message){
+        // check if message is empty
+        if (message.getMessage().isEmpty()) {
+            throw new ConflictException("Cannot send an empty message.");
+        }
+
         messageRepository.save(message);
         messageRepository.flush();
 
@@ -56,12 +62,17 @@ public class ChatService {
     }
 
     public Chat getGlobal(){
-        Optional<Chat> chat = chatRepository.findByType("global");
-        if(chat.isPresent()){
-            return chat.get();
+        Chat chat;
+        Optional<Chat> foundChat = chatRepository.findByType("global");
+
+        // check if foundChat exists
+        if(foundChat.isPresent()){
+            chat = foundChat.get();
         } else {
             throw new NotFoundException("global not found");
         }
+
+        return chat;
     }
 
     public void initGlobal(){

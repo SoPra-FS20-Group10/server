@@ -1,13 +1,13 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Chat;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Message;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.MessageDTO;
-import ch.uzh.ifi.seal.soprafs20.service.*;
+import ch.uzh.ifi.seal.soprafs20.service.ChatService;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
@@ -33,20 +36,206 @@ public class ChatControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
-
-    @MockBean
     private GameService gameService;
-
-    @MockBean
-    private PlayerService playerService;
-
-    @MockBean
-    private RoundService roundService;
 
     @MockBean
     private ChatService chatService;
 
+    @Test
+    public void getGlobalMessage_validInput() throws Exception {
+        // given
+        Chat chat = new Chat();
+        Message message = new Message();
+        List<Message> messages = new ArrayList<>();
+
+        // initialise message
+        message.setId(1L);
+        message.setMessage("Hello There!");
+        message.setUsername("General Kenobi...");
+        message.setTime(69L);
+
+        // initialise list
+        messages.add(message);
+
+        // initialise chat
+        chat.setMessages(messages);
+
+        // this mocks the chatService
+        given(chatService.getGlobal()).willReturn(chat);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/chat")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].time", is(69)))
+                .andExpect(jsonPath("$[0].message", is(message.getMessage())))
+                .andExpect(jsonPath("$[0].username", is(message.getUsername())));
+    }
+
+    @Test
+    public void sendGlobalMessage_validInput() throws Exception {
+        // given
+        Chat chat = new Chat();
+        Message message = new Message();
+        MessageDTO messageDTO = new MessageDTO();
+
+        // initialise chat
+        chat.initChat();
+        chat.addMessage(message);
+
+        // initialise Message
+        message.setMessage("Hello there!");
+        message.setUsername("General Kenobi...");
+        message.setTime(69L);
+
+        // initialise messageDTO
+        messageDTO.setMessage("Hello there!");
+        messageDTO.setTime(69L);
+        messageDTO.setUsername("General Kenobi...");
+
+        // this mocks the chatService
+        given(chatService.getGlobal()).willReturn(chat);
+        given(chatService.addMessage(Mockito.any(), Mockito.any())).willReturn(chat);
+
+        // when
+        MockHttpServletRequestBuilder putRequest = put("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(messageDTO));
+
+        // then
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].time", is(69)))
+                .andExpect(jsonPath("$[0].message", is(message.getMessage())))
+                .andExpect(jsonPath("$[0].username", is(message.getUsername())));
+    }
+
+    @Test
+    public void getLocalMessage_validInput() throws Exception {
+        // given
+        Game game = new Game();
+        Chat chat = new Chat();
+        Message message = new Message();
+        List<Message> messages = new ArrayList<>();
+
+        // initialise game
+        game.setChat(chat);
+
+        // initialise message
+        message.setId(1L);
+        message.setMessage("Hello There!");
+        message.setUsername("General Kenobi...");
+        message.setTime(69L);
+
+        // initialise list
+        messages.add(message);
+
+        // initialise chat
+        chat.setMessages(messages);
+
+        // this mocks the chatService
+        given(gameService.getGame(Mockito.anyLong())).willReturn(game);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/chat/1")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].time", is(69)))
+                .andExpect(jsonPath("$[0].message", is(message.getMessage())))
+                .andExpect(jsonPath("$[0].username", is(message.getUsername())));
+    }
+
+    @Test
+    public void sendLocalMessage_validInput() throws Exception {
+        // given
+        Game game = new Game();
+        Chat chat = new Chat();
+        Message message = new Message();
+        MessageDTO messageDTO = new MessageDTO();
+
+        // initialise chat
+        chat.initChat();
+        chat.addMessage(message);
+
+        // initialise Message
+        message.setMessage("Hello there!");
+        message.setUsername("General Kenobi...");
+        message.setTime(69L);
+
+        // initialise game
+        game.setId(1L);
+        game.setName("testName");
+        game.setStatus(GameStatus.WAITING);
+        game.setCurrentPlayerId(2L);
+        game.setChat(chat);
+        game.initGame();
+
+        // initialise messageDTO
+        messageDTO.setMessage("Hello there!");
+        messageDTO.setTime(69L);
+        messageDTO.setUsername("General Kenobi...");
+
+        // this mocks the chatService
+        given(gameService.getGame(Mockito.anyLong())).willReturn(game);
+        given(chatService.addMessage(Mockito.any(), Mockito.any())).willReturn(chat);
+
+        // when
+        MockHttpServletRequestBuilder putRequest = put("/chat/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(message));
+
+        // then
+        mockMvc.perform(putRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].time", is(69)))
+                .andExpect(jsonPath("$[0].message", is(message.getMessage())))
+                .andExpect(jsonPath("$[0].username", is(message.getUsername())));
+    }
+
+    @Test
+    public void sendLocalMessages_invalidInput_noChat() throws Exception {
+        // given
+        Game game = new Game();
+        Chat chat = new Chat();
+        Message message = new Message();
+        MessageDTO messageDTO = new MessageDTO();
+
+        // initialise chat
+        chat.initChat();
+        chat.addMessage(message);
+
+        // initialise Message
+        message.setMessage("Hello there!");
+        message.setUsername("General Kenobi...");
+        message.setTime(69L);
+
+        // initialise game
+        game.setId(1L);
+        game.setName("testName");
+        game.setStatus(GameStatus.WAITING);
+        game.setCurrentPlayerId(2L);
+        game.initGame();
+        game.setChat(null);
+
+        // initialise messageDTO
+        messageDTO.setMessage("Hello there!");
+        messageDTO.setTime(69L);
+        messageDTO.setUsername("General Kenobi...");
+
+        // this mocks the chatService
+        given(gameService.getGame(Mockito.anyLong())).willReturn(game);
+        given(chatService.addMessage(Mockito.any(), Mockito.any())).willReturn(chat);
+
+        // when
+        MockHttpServletRequestBuilder putRequest = put("/chat/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(message));
+
+        // then
+        mockMvc.perform(putRequest).andExpect(status().isNotFound());
+    }
 
     @Test
     public void getMessages_single_message() throws Exception {
@@ -60,8 +249,6 @@ public class ChatControllerTest {
         message.setTime(100L);
 
         chat.addMessage(message);
-
-
 
         Game game = new Game();
         game.setId(1L);
@@ -114,8 +301,6 @@ public class ChatControllerTest {
 
         chat.addMessage(message2);
 
-
-
         Game game = new Game();
         game.setId(1L);
         game.setName("testName");
@@ -142,9 +327,7 @@ public class ChatControllerTest {
                 .andExpect(jsonPath("$[2].time", is(102)))
                 .andExpect(jsonPath("$[2].message", is("hello2")))
                 .andExpect(jsonPath("$[2].username", is("test2")));
-
     }
-
 
     @Test
     public void send_message() throws Exception {
@@ -195,9 +378,6 @@ public class ChatControllerTest {
 
          */
     }
-
-
-
 
     private String asJsonString(final Object object) {
         try {
