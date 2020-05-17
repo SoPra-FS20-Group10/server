@@ -358,8 +358,6 @@ public class GameService {
 
             //manage userHistory
             manageHistory(player,user);
-
-            player.setScore(0);
         }
     }
 
