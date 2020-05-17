@@ -36,15 +36,14 @@ public class UserController {
         // search if user exists in database
         User userInput = userService.getUser(userId);
 
-        if(userInput == null){
-            throw new NotFoundException("sorry the user could not be found");
-        }
-
+        // parse User entity into UserGetDTO
         UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
 
+        // declare history
         String history = userInput.getHistory();
         List<Integer> historyList = new ArrayList<>();
 
+        // add history
         if(!history.isEmpty()){
             String[] scores = history.split("\\s+");
 
@@ -52,7 +51,6 @@ public class UserController {
                 historyList.add(Integer.parseInt(string));
             }
             userGetDTO.setHistoryList(historyList);
-
         }
 
         // convert internal representation of user back to API
@@ -66,16 +64,13 @@ public class UserController {
         // fetch all users in the internal representation
         List<User> users = userService.getUsers();
 
-        if(users == null){
-            throw new NotFoundException("sorry the users could not be found");
-        }
-
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
         for (User user : users) {
             userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
         }
+
         return userGetDTOs;
     }
 
@@ -99,10 +94,6 @@ public class UserController {
     public ResponseEntity<UserGetDTO> loginUser(@RequestBody UserPostDTO userPostDTO) {
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-
-        if(userInput == null){
-            throw new NotFoundException("sorry the user could not be found");
-        }
 
         // search if user exists in database and change status
         return userService.loginUser(userInput);

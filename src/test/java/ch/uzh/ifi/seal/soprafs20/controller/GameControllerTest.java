@@ -363,7 +363,12 @@ public class GameControllerTest {
         testGame.setName("testGame");
         testGame.setPassword("");
 
+        // given chat
+        Chat chat = new Chat();
+
+        // mocks the services
         given(gameService.createGame(Mockito.any(), Mockito.any())).willReturn(testGame);
+        given(chatService.createChat(Mockito.any())).willReturn(chat);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/games")
@@ -530,6 +535,32 @@ public class GameControllerTest {
 
     @Test
     public void leaveGame_validInput() throws Exception {
+        // given
+        UserTokenDTO userTokenDTO = new UserTokenDTO();
+        userTokenDTO.setToken("testToken");
+
+        Player player = new Player();
+
+        Game game = new Game();
+        game.setId(1L);
+        game.initGame();
+        game.addPlayer(player);
+
+        // when -> then: return game
+        given(gameService.getGame(anyLong())).willReturn(game);
+        given(gameService.leaveGame(Mockito.any(), Mockito.any(), Mockito.anyString())).willReturn(game);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder deleteRequest = delete("/games/1/players/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userTokenDTO));
+
+        // then
+        mockMvc.perform(deleteRequest).andExpect(status().isOk());
+    }
+
+    @Test
+    public void leaveGame_validInput_lastPlayer() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");

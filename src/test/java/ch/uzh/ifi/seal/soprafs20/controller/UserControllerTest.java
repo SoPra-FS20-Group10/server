@@ -41,7 +41,7 @@ public class UserControllerTest {
     private UserService userService;
 
     @Test
-    public void getUser_validInput() throws Exception {
+    public void getUser_validInput_withoutHistory() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -73,7 +73,49 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.overallScore", is(user.getOverallScore())))
                 .andExpect(jsonPath("$.playedGames", is(user.getPlayedGames())))
                 .andExpect(jsonPath("$.wonGames", is(user.getWonGames())))
-                .andExpect(jsonPath("$.winPercentage", is(0.25)));
+                .andExpect(jsonPath("$.winPercentage", is(0.25)))
+                .andExpect(jsonPath("$.historyString", is(user.getHistory())));
+    }
+
+    @Test
+    public void getUser_validInput_withHistory() throws Exception {
+        // given
+        User user = new User();
+        user.setId(1L);
+        user.setToken("testToken");
+        user.setUsername("testUsername");
+        user.setStatus(UserStatus.OFFLINE);
+        user.setBirthday(new Date());
+        user.setCakeDay(new Date());
+        user.setPlayTime(100);
+        user.setOverallScore(150);
+        user.setPlayedGames(200);
+        user.setWonGames(50);
+        user.setWinPercentage();
+        user.setHistory("10 15 20");
+
+        // when -> then: return user
+        given(userService.getUser(Mockito.anyLong())).willReturn(user);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder getRequest = get("/users/1")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(notNullValue())))
+                .andExpect(jsonPath("$.token", is(user.getToken())))
+                .andExpect(jsonPath("$.username", is(user.getUsername())))
+                .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$.playTime", is(user.getPlayTime())))
+                .andExpect(jsonPath("$.overallScore", is(user.getOverallScore())))
+                .andExpect(jsonPath("$.playedGames", is(user.getPlayedGames())))
+                .andExpect(jsonPath("$.wonGames", is(user.getWonGames())))
+                .andExpect(jsonPath("$.winPercentage", is(0.25)))
+                .andExpect(jsonPath("$.historyString", is(user.getHistory())))
+                .andExpect(jsonPath("$.historyList[0]", is(10)))
+                .andExpect(jsonPath("$.historyList[1]", is(15)))
+                .andExpect(jsonPath("$.historyList[2]", is(20)));
     }
 
     @Test
@@ -124,7 +166,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void loginUser_validInput_userLoggedIn() throws Exception {
+    public void loginUser_validInput() throws Exception {
         // given
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
@@ -169,14 +211,27 @@ public class UserControllerTest {
     }
 
     @Test
+    public void logoutUser_invalidInput_noToken() throws Exception {
+        UserTokenDTO userTokenDTO = new UserTokenDTO();
+        userTokenDTO.setToken(null);
+
+        // do the request + validate the result
+        MockHttpServletRequestBuilder patchRequest = patch("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userTokenDTO));
+
+        // then
+        mockMvc.perform(patchRequest).andExpect(status().isNotFound());
+    }
+
+    @Test
     public void deleteUser_validInput() throws Exception {
         // do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest = delete("/users/1")
                 .contentType(MediaType.APPLICATION_JSON);
 
         // then
-        mockMvc.perform(deleteRequest)
-                .andExpect(status().isNoContent());
+        mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
     }
 
     @Test
