@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,15 +43,15 @@ public class UserController {
         UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
 
         String history = userInput.getHistory();
-        List<Integer> historylist = new ArrayList<>();
+        List<Integer> historyList = new ArrayList<>();
 
         if(!history.isEmpty()){
-            List<String> scores = Arrays.asList(history.split("\\s+"));
+            String[] scores = history.split("\\s+");
 
             for(String string:scores){
-                historylist.add(Integer.parseInt(string));
+                historyList.add(Integer.parseInt(string));
             }
-            userGetDTO.setHistoryList(historylist);
+            userGetDTO.setHistoryList(historyList);
 
         }
 

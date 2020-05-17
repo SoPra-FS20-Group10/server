@@ -54,8 +54,7 @@ public class GameService {
         game.setChat(chat);
 
         // save change
-        gameRepository.save(game);
-        gameRepository.flush();
+        saveGame(game);
     }
 
     public List<Game> getGames() {
@@ -153,8 +152,7 @@ public class GameService {
         game.setStatus(GameStatus.RUNNING);
 
         // save change
-        gameRepository.save(game);
-        gameRepository.flush();
+        saveGame(game);
     }
 
     public Game leaveGame(Game game, Player player, String token) {
