@@ -47,7 +47,7 @@ public class User implements Serializable {
     private String history = "";
 
     @Column
-    private String historytime = "";
+    private String historyTime = "";
 
     @Column()
     private int playTime;
@@ -218,12 +218,12 @@ public class User implements Serializable {
         this.history = history;
     }
 
-    public String getHistorytime() {
-        return historytime;
+    public String getHistoryTime() {
+        return historyTime;
     }
 
-    public void setHistorytime(String historytime) {
-        this.historytime = historytime;
+    public void setHistoryTime(String historytime) {
+        this.historyTime = historytime;
     }
 
 

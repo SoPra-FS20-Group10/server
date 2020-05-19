@@ -20,6 +20,8 @@ public class UserGetDTO {
     private float winPercentage;
     private String historyString;
     private List<Integer> historyList = new ArrayList<>();
+    private String historyTimeString;
+    private List<Integer> historyTimeList = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -122,5 +124,21 @@ public class UserGetDTO {
 
     public void setHistoryList(List<Integer> historyList) {
         this.historyList = historyList;
+    }
+
+    public String getHistoryTimeString() {
+        return historyTimeString;
+    }
+
+    public void setHistoryTimeString(String historyTimeString) {
+        this.historyTimeString = historyTimeString;
+    }
+
+    public List<Integer> getHistoryTimeList() {
+        return historyTimeList;
+    }
+
+    public void setHistoryTimeList(List<Integer> historyTimeList) {
+        this.historyTimeList = historyTimeList;
     }
 }
