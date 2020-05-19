@@ -39,9 +39,12 @@ public class UserController {
         // parse User entity into UserGetDTO
         UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
 
-        // declare history
+        // declare history and timestamps
         String history = userInput.getHistory();
         List<Integer> historyList = new ArrayList<>();
+
+        String historyTime = userInput.getHistoryTime();
+        List<Long> historyTimeList = new ArrayList<>();
 
         // add history
         if(!history.isEmpty()){
@@ -52,6 +55,17 @@ public class UserController {
             }
             userGetDTO.setHistoryList(historyList);
         }
+
+        // add historyTime
+        if(!historyTime.isEmpty()){
+            String[] scores = historyTime.split("\\s+");
+
+            for(String string:scores){
+                historyTimeList.add(Long.parseLong(string));
+            }
+            userGetDTO.setHistoryTimeList(historyTimeList);
+        }
+
 
         // convert internal representation of user back to API
         return userGetDTO;

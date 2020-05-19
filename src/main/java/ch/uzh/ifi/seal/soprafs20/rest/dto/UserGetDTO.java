@@ -21,7 +21,7 @@ public class UserGetDTO {
     private String historyString;
     private List<Integer> historyList = new ArrayList<>();
     private String historyTimeString;
-    private List<Integer> historyTimeList = new ArrayList<>();
+    private List<Long> historyTimeList = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -134,11 +134,11 @@ public class UserGetDTO {
         this.historyTimeString = historyTimeString;
     }
 
-    public List<Integer> getHistoryTimeList() {
+    public List<Long> getHistoryTimeList() {
         return historyTimeList;
     }
 
-    public void setHistoryTimeList(List<Integer> historyTimeList) {
+    public void setHistoryTimeList(List<Long> historyTimeList) {
         this.historyTimeList = historyTimeList;
     }
 }

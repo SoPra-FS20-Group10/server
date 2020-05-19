@@ -358,6 +358,9 @@ public class GameService {
 
             //manage userHistory
             manageHistory(player,user);
+
+            //manage userHistoryTime
+            manageHistoryTime(user);
         }
     }
 
@@ -379,4 +382,24 @@ public class GameService {
             user.setHistory(user.getHistory().substring(index) + player.getScore() + " ");
         }
     }
+
+    protected void manageHistoryTime(User user){
+        int length;
+        String historyTime = user.getHistoryTime();
+
+        if (historyTime.isEmpty()){
+            length = 0;
+        } else {
+            String[] words = historyTime.split("\\s+");
+            length = words.length;
+        }
+
+        if (length < 10){
+            user.setHistoryTime(user.getHistoryTime() + System.currentTimeMillis() + " ");
+        } else {
+            int index = historyTime.indexOf(' ') + 1;
+            user.setHistoryTime(user.getHistoryTime().substring(index) + System.currentTimeMillis() + " ");
+        }
+    }
+
 }
