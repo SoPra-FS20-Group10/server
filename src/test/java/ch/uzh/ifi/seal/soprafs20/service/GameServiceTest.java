@@ -247,5 +247,15 @@ public class GameServiceTest {
 
         assertEquals("300 400 400 400 400 400 400 400 400 400 ", user.getHistory());
     }
+
+    @Test
+    public void manageHistoryTime_successful() {
+        // given
+        User user = new User();
+
+        gameService.manageHistoryTime(user);
+
+        assertEquals((Long.toString(System.currentTimeMillis())+ " ").substring(0,(Long.toString(System.currentTimeMillis())+ " ").length() - 4), user.getHistoryTime().substring(0,user.getHistoryTime().length()-4));
+    }
 }
 
