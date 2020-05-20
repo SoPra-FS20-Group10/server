@@ -369,6 +369,11 @@ public class GameService {
 
         }
 
+        //if no score was added
+        if(winners.get(0).getScore() == 0){
+            return;
+        }
+
         for(Player winner:players){
             winner.getUser().setWonGames(winner.getUser().getWonGames() + 1);
         }
