@@ -362,7 +362,7 @@ public class GameService {
                     winners.add(player1);
                 }
 
-                if(player2.getScore() == player1.getScore()){
+                if(player2.getScore() == player1.getScore() && player1 != player2){
                     winners.add(player2);
                 }
             }
@@ -374,7 +374,7 @@ public class GameService {
             return;
         }
 
-        for(Player winner:players){
+        for(Player winner:winners){
             winner.getUser().setWonGames(winner.getUser().getWonGames() + 1);
         }
 

@@ -258,6 +258,40 @@ public class GameServiceTest {
         assertEquals((Long.toString(System.currentTimeMillis())+ " ").substring(0,(Long.toString(System.currentTimeMillis())+ " ").length() - 4), user.getHistoryTime().substring(0,user.getHistoryTime().length()-4));
     }
 
+    @Test
+    public void update_score_successful(){
+
+        User user = new User();
+        Player player = new Player();
+        player.setScore(200);
+        player.setUser(user);
+        player.initPlayer();
+
+        User user1 = new User();
+        Player player1 = new Player();
+        player1.setScore(100);
+        player1.setUser(user1);
+        player1.initPlayer();
+
+
+        testGame.setStatus(GameStatus.RUNNING);
+        testGame.addPlayer(testPlayer);
+        testGame.addPlayer(player);
+        testGame.addPlayer(player1);
+
+
+        gameService.checkIfGameEnded(testGame);
+
+        assertEquals(100, testUser.getOverallScore());
+        assertEquals(200, user.getOverallScore());
+        assertEquals(1, user.getWonGames());
+        assertEquals(0, user1.getWonGames());
+
+
+
+
+    }
+
 
 }
 
