@@ -257,31 +257,6 @@ public class GameServiceTest {
 
         assertEquals((Long.toString(System.currentTimeMillis())+ " ").substring(0,(Long.toString(System.currentTimeMillis())+ " ").length() - 4), user.getHistoryTime().substring(0,user.getHistoryTime().length()-4));
     }
-/*
-    @Test
-    public void manageHistoryTime_more_than_ten_matches_successful() {
-        // given
-        User user = new User();
-
-        gameService.manageHistoryTime(user);
-        gameService.manageHistoryTime(user);
-        gameService.manageHistoryTime(user);
-        gameService.manageHistoryTime(user);
-        gameService.manageHistoryTime(user);
-
-        gameService.manageHistoryTime(user);
-        gameService.manageHistoryTime(user);
-        gameService.manageHistoryTime(user);
-        gameService.manageHistoryTime(user);
-        gameService.manageHistoryTime(user);
-
-
-
-        assertEquals((Long.toString(System.currentTimeMillis())+ " ").substring(0,(Long.toString(System.currentTimeMillis())+ " ").length() - 6), user.getHistoryTime().substring(0,user.getHistoryTime().length()-6));
-    }
-
- */
-
 
 
 }

@@ -351,6 +351,17 @@ public class GameService {
     private void updateScore(Game game) {
         List<Player> players = game.getPlayers();
 
+        //determine winner
+        Player winner = players.get(0);
+
+        for(Player player : players){
+            if(player.getScore() > winner.getScore()){
+                winner = player;
+            }
+        }
+
+        winner.getUser().setWonGames(winner.getUser().getWonGames() + 1);
+
 
         // update score for every player/user
         for (Player player : players) {
