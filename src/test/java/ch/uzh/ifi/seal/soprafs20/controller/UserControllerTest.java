@@ -50,7 +50,6 @@ public class UserControllerTest {
         user.setStatus(UserStatus.OFFLINE);
         user.setBirthday(new Date());
         user.setCakeDay(new Date());
-        user.setPlayTime(100);
         user.setOverallScore(150);
         user.setPlayedGames(200);
         user.setWonGames(50);
@@ -69,7 +68,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.token", is(user.getToken())))
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.playTime", is(user.getPlayTime())))
                 .andExpect(jsonPath("$.overallScore", is(user.getOverallScore())))
                 .andExpect(jsonPath("$.playedGames", is(user.getPlayedGames())))
                 .andExpect(jsonPath("$.wonGames", is(user.getWonGames())))
@@ -87,7 +85,6 @@ public class UserControllerTest {
         user.setStatus(UserStatus.OFFLINE);
         user.setBirthday(new Date());
         user.setCakeDay(new Date());
-        user.setPlayTime(100);
         user.setOverallScore(150);
         user.setPlayedGames(200);
         user.setWonGames(50);
@@ -107,7 +104,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.token", is(user.getToken())))
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.playTime", is(user.getPlayTime())))
                 .andExpect(jsonPath("$.overallScore", is(user.getOverallScore())))
                 .andExpect(jsonPath("$.playedGames", is(user.getPlayedGames())))
                 .andExpect(jsonPath("$.wonGames", is(user.getWonGames())))

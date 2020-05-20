@@ -369,7 +369,7 @@ public class GameService {
 
         }
 
-        //if no score was added
+        //if highest score is 0, doesnt count as game
         if(winners.get(0).getScore() == 0){
             return;
         }

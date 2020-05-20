@@ -29,7 +29,6 @@ public interface DTOMapper {
     @Mapping(source = "status", target = "status")
     @Mapping(source = "birthday", target = "birthday")
     @Mapping(source = "cakeDay", target = "cakeDay")
-    @Mapping(source = "playTime", target = "playTime")
     @Mapping(source = "overallScore", target = "overallScore")
     @Mapping(source = "playedGames", target = "playedGames")
     @Mapping(source = "wonGames", target = "wonGames")

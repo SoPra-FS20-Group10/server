@@ -50,9 +50,6 @@ public class User implements Serializable {
     private String historyTime = "";
 
     @Column()
-    private int playTime;
-
-    @Column()
     private float winPercentage = 0;
 
     @Column()
@@ -140,14 +137,6 @@ public class User implements Serializable {
 
     public void setGame(Game game) {
         this.game = game;
-    }
-
-    public int getPlayTime() {
-        return playTime;
-    }
-
-    public void setPlayTime(int playtime) {
-        this.playTime = playtime;
     }
 
     public float getWinPercentage() {
