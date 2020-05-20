@@ -351,9 +351,11 @@ public class GameService {
     private void updateScore(Game game) {
         List<Player> players = game.getPlayers();
 
+
         // update score for every player/user
         for (Player player : players) {
             User user = player.getUser();
+            user.setPlayedGames(user.getPlayedGames() + 1);
             user.setOverallScore(user.getOverallScore() + player.getScore());
 
             //manage userHistory
