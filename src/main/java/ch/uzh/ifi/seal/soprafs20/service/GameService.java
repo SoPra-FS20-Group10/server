@@ -43,22 +43,15 @@ public class GameService {
         return game;
     }
 
-    public void saveGame(Game game) {
-        gameRepository.save(game);
-        gameRepository.flush();
-    }
-
-    public void addChat(Chat chat) {
-        // add player to the user
-        Game game = chat.getGame();
-        game.setChat(chat);
-
-        // save change
-        saveGame(game);
-    }
-
     public List<Game> getGames() {
         return gameRepository.findAll();
+    }
+
+    public List<Player> getPlayers(long gameId) {
+        // fetch game from db
+        Game game = getGame(gameId);
+
+        return game.getPlayers();
     }
 
     public List<Word> getWords(long gameId) {
@@ -73,6 +66,20 @@ public class GameService {
         }
 
         return game.getWords();
+    }
+
+    public void saveGame(Game game) {
+        gameRepository.save(game);
+        gameRepository.flush();
+    }
+
+    public void addChat(Chat chat) {
+        // add player to the user
+        Game game = chat.getGame();
+        game.setChat(chat);
+
+        // save change
+        saveGame(game);
     }
 
     public Game createGame(Game game, Player owner) {
@@ -106,9 +113,19 @@ public class GameService {
         // fetch game from db
         Game game = getGame(gameId);
 
+        // check if game is waiting
+        if (game.getStatus() != GameStatus.WAITING) {
+            throw new ConflictException("The game is already running. You cannot join a running game.");
+        }
+
+        // check that only 4 players can play the game
+        if (game.getPlayers().size() == 4) {
+            throw new ConflictException("The game has already 4 players. You cannot join a full game.");
+        }
+
         // check if password is correct
-        if(!(game.getPassword() == null || password == null)){
-            if(!(game.getPassword().equals(password))){
+        if (!(game.getPassword() == null || password == null)){
+            if (!(game.getPassword().equals(password))){
                 throw new ConflictException("Wrong password. Therefore the player could not join the game");
             }
         } else {
@@ -146,6 +163,11 @@ public class GameService {
             throw new ConflictException("The game is already running.");
         } else if (game.getStatus() == GameStatus.ENDED) {
             throw new ConflictException("The game has already ended.");
+        }
+
+        // check if there are at least two players
+        if (game.getPlayers().size() < 2) {
+            throw new ConflictException("The game must have at least 2 players to start.");
         }
 
         // set flag to running
@@ -186,13 +208,6 @@ public class GameService {
         // delete the game
         gameRepository.delete(game);
         gameRepository.flush();
-    }
-
-    public List<Player> getPlayers(long gameId) {
-        // fetch game from db
-        Game game = getGame(gameId);
-
-        return game.getPlayers();
     }
 
     public void createGrid(Game game){
