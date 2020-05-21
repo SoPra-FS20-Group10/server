@@ -13,13 +13,14 @@ public class UserGetDTO {
     private UserStatus status;
     private Date birthday;
     private Date cakeDay;
-    private int playTime;
     private int overallScore;
     private int playedGames;
     private int wonGames;
     private float winPercentage;
     private String historyString;
     private List<Integer> historyList = new ArrayList<>();
+    private String historyTimeString;
+    private List<Long> historyTimeList = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -69,14 +70,6 @@ public class UserGetDTO {
         this.cakeDay = cakeDay;
     }
 
-    public int getPlayTime() {
-        return playTime;
-    }
-
-    public void setPlayTime(int playTime) {
-        this.playTime = playTime;
-    }
-
     public int getOverallScore() {
         return overallScore;
     }
@@ -122,5 +115,21 @@ public class UserGetDTO {
 
     public void setHistoryList(List<Integer> historyList) {
         this.historyList = historyList;
+    }
+
+    public String getHistoryTimeString() {
+        return historyTimeString;
+    }
+
+    public void setHistoryTimeString(String historyTimeString) {
+        this.historyTimeString = historyTimeString;
+    }
+
+    public List<Long> getHistoryTimeList() {
+        return historyTimeList;
+    }
+
+    public void setHistoryTimeList(List<Long> historyTimeList) {
+        this.historyTimeList = historyTimeList;
     }
 }

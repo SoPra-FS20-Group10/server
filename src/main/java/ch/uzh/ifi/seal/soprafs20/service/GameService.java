@@ -366,13 +366,45 @@ public class GameService {
     private void updateScore(Game game) {
         List<Player> players = game.getPlayers();
 
+        //determine winner(s)
+        List<Player> winners = new ArrayList<>();
+        winners.add(players.get(0));
+
+        for(Player player1: players){
+            for(Player player2 : players){
+                if(player1.getScore() > winners.get(0).getScore()){
+                    winners.clear();
+                    winners.add(player1);
+                }
+
+                if(player2.getScore() == player1.getScore() && player1 != player2){
+                    winners.add(player2);
+                }
+            }
+
+        }
+
+        //if highest score is 0, doesnt count as game
+        if(winners.get(0).getScore() == 0){
+            return;
+        }
+
+        for(Player winner:winners){
+            winner.getUser().setWonGames(winner.getUser().getWonGames() + 1);
+        }
+
+
         // update score for every player/user
         for (Player player : players) {
             User user = player.getUser();
+            user.setPlayedGames(user.getPlayedGames() + 1);
             user.setOverallScore(user.getOverallScore() + player.getScore());
 
             //manage userHistory
             manageHistory(player,user);
+
+            //manage userHistoryTime
+            manageHistoryTime(user);
         }
     }
 
@@ -394,4 +426,24 @@ public class GameService {
             user.setHistory(user.getHistory().substring(index) + player.getScore() + " ");
         }
     }
+
+    protected void manageHistoryTime(User user){
+        int length;
+        String historyTime = user.getHistoryTime();
+
+        if (historyTime.isEmpty()){
+            length = 0;
+        } else {
+            String[] words = historyTime.split("\\s+");
+            length = words.length;
+        }
+
+        if (length < 10){
+            user.setHistoryTime(user.getHistoryTime() + System.currentTimeMillis() + " ");
+        } else {
+            int index = historyTime.indexOf(' ') + 1;
+            user.setHistoryTime(user.getHistoryTime().substring(index) + System.currentTimeMillis() + " ");
+        }
+    }
+
 }
