@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
+class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -41,7 +41,7 @@ public class UserControllerTest {
     private UserService userService;
 
     @Test
-    public void getUser_validInput_withoutHistory() throws Exception {
+    void getUser_validInput_withoutHistory() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -76,7 +76,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void getUser_validInput_withHistory() throws Exception {
+    void getUser_validInput_withHistory() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -115,7 +115,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
+    void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
         // given
         User user = new User();
         user.setId(1);
@@ -140,7 +140,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_validInput_userCreated() throws Exception {
+    void createUser_validInput_userCreated() throws Exception {
         // given
         User user = new User();
         user.setUsername("testUsername");
@@ -162,7 +162,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void loginUser_validInput() throws Exception {
+    void loginUser_validInput() throws Exception {
         // given
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
@@ -192,7 +192,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void logoutUser_validInput() throws Exception {
+    void logoutUser_validInput() throws Exception {
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
 
@@ -207,7 +207,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void logoutUser_invalidInput_noToken() throws Exception {
+    void logoutUser_invalidInput_noToken() throws Exception {
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken(null);
 
@@ -221,7 +221,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void deleteUser_validInput() throws Exception {
+    void deleteUser_validInput() throws Exception {
         // do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest = delete("/users/1")
                 .contentType(MediaType.APPLICATION_JSON);
@@ -231,7 +231,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUser_validInput() throws Exception {
+    void updateUser_validInput() throws Exception {
         // given
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("bla");
@@ -245,7 +245,6 @@ public class UserControllerTest {
         // then
         mockMvc.perform(putRequest).andExpect(status().isNoContent());
     }
-
 
     private String asJsonString(final Object object) {
         try {

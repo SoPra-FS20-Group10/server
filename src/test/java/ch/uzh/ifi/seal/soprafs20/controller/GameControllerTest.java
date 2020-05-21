@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the GameController works.
  */
 @WebMvcTest(GameController.class)
-public class GameControllerTest {
+class GameControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,7 +55,7 @@ public class GameControllerTest {
     private ChatService chatService;
 
     @Test
-    public void getGame_validInput_noLists() throws Exception {
+    void getGame_validInput_noLists() throws Exception {
         // given
         Game game = new Game();
         game.setId(1L);
@@ -82,7 +82,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getGame_validInput_withLists() throws Exception {
+    void getGame_validInput_withLists() throws Exception {
         // given
         Game game = new Game();
         game.setId(1L);
@@ -132,7 +132,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getGame_noGrid() throws Exception {
+    void getGame_noGrid() throws Exception {
         // given
         Game game = new Game();
         game.setId(1L);
@@ -156,7 +156,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getGame_noBag() throws Exception {
+    void getGame_noBag() throws Exception {
         // given
         Game game = new Game();
         game.setId(1L);
@@ -180,7 +180,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getGames_validInput() throws Exception {
+    void getGames_validInput() throws Exception {
         // given
         Game game = new Game();
         game.setName("testName");
@@ -202,7 +202,8 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$[0].status", is(game.getStatus().toString())));
     }
 
-    @Test void getPlayerScore_validInput() throws Exception {
+    @Test
+    void getPlayerScore_validInput() throws Exception {
         // given
         Player player = new Player();
         player.setId(1);
@@ -227,7 +228,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getPlayerScore_invalidInput_playerNotInGame() throws Exception {
+    void getPlayerScore_invalidInput_playerNotInGame() throws Exception {
         // given
         Player player = new Player();
         player.setId(1);
@@ -251,7 +252,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getPlayersFromGame_validInput() throws Exception {
+    void getPlayersFromGame_validInput() throws Exception {
         // given
         Player player = new Player();
         player.setId(1);
@@ -278,7 +279,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getPlayersFromGame_noPlayers() throws Exception {
+    void getPlayersFromGame_noPlayers() throws Exception {
         // this mocks the UserService -> we define above what the userService should return when getUsers() is called
         given(gameService.getPlayers(anyLong())).willReturn(null);
 
@@ -291,7 +292,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getStones_validInput() throws Exception {
+    void getStones_validInput() throws Exception {
         // given
         Stone stone = new Stone();
         stone.setId(1L);
@@ -316,7 +317,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getWords_validInput() throws Exception {
+    void getWords_validInput() throws Exception {
         // given
         Word word = new Word();
         word.setId(1L);
@@ -343,7 +344,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void createGame_validInput() throws Exception {
+    void createGame_validInput() throws Exception {
         // given request
         GamePostDTO gamePostDTO = new GamePostDTO();
         gamePostDTO.setOwnerId(1);
@@ -380,7 +381,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void createGame_InputWithPassword() throws Exception {
+    void createGame_InputWithPassword() throws Exception {
         // given request
         GamePostDTO gamePostDTO = new GamePostDTO();
         gamePostDTO.setOwnerId(2L);
@@ -412,7 +413,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void joinGame_withoutPassword_validInput() throws Exception {
+    void joinGame_withoutPassword_validInput() throws Exception {
         // given DTO
         JoinGameDTO joinGameDTO = new JoinGameDTO();
         joinGameDTO.setId(2);
@@ -428,7 +429,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void startGame_validInput() throws Exception {
+    void startGame_validInput() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
@@ -461,7 +462,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void startGame_noToken() throws Exception {
+    void startGame_noToken() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken(null);
@@ -476,7 +477,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void startGame_noPlayers() throws Exception  {
+    void startGame_noPlayers() throws Exception  {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
@@ -498,7 +499,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void startGame_otherInput() throws Exception {
+    void startGame_otherInput() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
@@ -534,7 +535,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void leaveGame_validInput() throws Exception {
+    void leaveGame_validInput() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
@@ -560,7 +561,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void leaveGame_validInput_lastPlayer() throws Exception {
+    void leaveGame_validInput_lastPlayer() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
@@ -583,7 +584,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void endGame_validInput() throws Exception {
+    void endGame_validInput() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
@@ -611,7 +612,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void endGame_invalidInput_wrongToken() throws Exception {
+    void endGame_invalidInput_wrongToken() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("test");
@@ -640,7 +641,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void deleteGame_validInput() throws Exception {
+    void deleteGame_validInput() throws Exception {
         // given
         Game game = new Game();
         game.initGame();
@@ -658,7 +659,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void deleteGame_invalidInput_playersRemaining() throws Exception {
+    void deleteGame_invalidInput_playersRemaining() throws Exception {
         // given
         Game game = new Game();
         game.initGame();
@@ -680,7 +681,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void placeStones_validInput() throws Exception {
+    void placeStones_validInput() throws Exception {
         // given
         User user = new User();
         Game game = new Game();
@@ -723,7 +724,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void placeStones_invalidInput_gameNotRunning() throws Exception {
+    void placeStones_invalidInput_gameNotRunning() throws Exception {
         // given
         User user = new User();
         Game game = new Game();
@@ -766,7 +767,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void placeStones_invalidInput_userNotAuthorized() throws Exception {
+    void placeStones_invalidInput_userNotAuthorized() throws Exception {
         // given
         User user = new User();
         Game game = new Game();
@@ -809,7 +810,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void placeStones_invalidInput_notPlayersTurn() throws Exception {
+    void placeStones_invalidInput_notPlayersTurn() throws Exception {
         // given
         User user = new User();
         Game game = new Game();
@@ -852,7 +853,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void exchangeStones_validInput() throws Exception {
+    void exchangeStones_validInput() throws Exception {
         // given
         User user = new User();
         Game game = new Game();

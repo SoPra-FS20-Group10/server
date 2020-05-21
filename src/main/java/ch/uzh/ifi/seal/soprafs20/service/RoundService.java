@@ -124,7 +124,7 @@ public class RoundService {
         }
 
         // scan board for all new words with length > 1
-        words = checkBoard(new ArrayList<>(grid), stones, coordinates);
+        words = checkBoard(new ArrayList<>(grid), stones, coordinates, game.getWords().isEmpty());
 
         // check if there are any valid words
         if (words.isEmpty()) {
@@ -353,7 +353,7 @@ public class RoundService {
         return tiles;
     }
 
-    private List<Word> checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates ) {
+    private List<Word> checkBoard(List<Tile> board, List<Stone> stones, List<Integer> coordinates, boolean firstTurn) {
         Word temp;
         Tile[][] board2d = new Tile[15][15];
         ArrayList<Word> words = new ArrayList<>();
@@ -399,6 +399,11 @@ public class RoundService {
             if (temp != null) {
                 words.add(temp);
             }
+        }
+
+        // check if word is connected to another played word
+        if (words.size() == 1 && words.get(0).getWord().length() == coordinates.size() && !firstTurn) {
+            throw new ConflictException("The played word is not connected to an already played word.");
         }
 
         return words;

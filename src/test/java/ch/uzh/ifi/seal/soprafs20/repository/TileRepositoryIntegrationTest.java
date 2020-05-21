@@ -13,7 +13,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-public class TileRepositoryIntegrationTest {
+class TileRepositoryIntegrationTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -23,7 +23,7 @@ public class TileRepositoryIntegrationTest {
     private TileRepository tileRepository;
 
     @Test
-    public void findByMultiplierEtc_success() {
+    void findByMultiplierEtc_success() {
         // given
         Tile tile1 = new Tile(2, null, "w");
         entityManager.persist(tile1);

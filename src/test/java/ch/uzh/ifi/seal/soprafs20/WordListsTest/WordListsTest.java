@@ -8,7 +8,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WordListsTest {
+class WordListsTest {
 
     @Test
     void Contains_words() throws IOException {

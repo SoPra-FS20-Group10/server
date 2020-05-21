@@ -381,7 +381,6 @@ public class GameService {
                     winners.add(player2);
                 }
             }
-
         }
 
         //if highest score is 0, doesnt count as game
@@ -389,10 +388,9 @@ public class GameService {
             return;
         }
 
-        for(Player winner:winners){
+        for(Player winner : winners){
             winner.getUser().setWonGames(winner.getUser().getWonGames() + 1);
         }
-
 
         // update score for every player/user
         for (Player player : players) {
@@ -445,5 +443,4 @@ public class GameService {
             user.setHistoryTime(user.getHistoryTime().substring(index) + System.currentTimeMillis() + " ");
         }
     }
-
 }

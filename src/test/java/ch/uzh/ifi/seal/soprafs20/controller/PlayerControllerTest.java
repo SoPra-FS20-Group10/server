@@ -24,16 +24,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PlayerController.class)
-public class PlayerControllerTest {
+class PlayerControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private PlayerService playerService;
 
-
     @Test
-    public void getPlayer_validInput() throws Exception {
+    void getPlayer_validInput() throws Exception {
         // given
         Player player = new Player();
         player.setId(1L);
@@ -57,7 +56,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void readyPlayer_validInput() throws Exception {
+    void readyPlayer_validInput() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken("testToken");
@@ -72,7 +71,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void readyPlayer_invalidInput_noToken() throws Exception {
+    void readyPlayer_invalidInput_noToken() throws Exception {
         // given
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         userTokenDTO.setToken(null);

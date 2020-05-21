@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ChatController.class)
-public class ChatControllerTest {
+class ChatControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,7 +42,7 @@ public class ChatControllerTest {
     private ChatService chatService;
 
     @Test
-    public void getGlobalMessage_validInput() throws Exception {
+    void getGlobalMessage_validInput() throws Exception {
         // given
         Chat chat = new Chat();
         Message message = new Message();
@@ -75,7 +75,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    public void sendGlobalMessage_validInput() throws Exception {
+    void sendGlobalMessage_validInput() throws Exception {
         // given
         Chat chat = new Chat();
         Message message = new Message();
@@ -112,7 +112,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    public void getLocalMessage_validInput() throws Exception {
+    void getLocalMessage_validInput() throws Exception {
         // given
         Game game = new Game();
         Chat chat = new Chat();
@@ -149,7 +149,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    public void sendLocalMessage_validInput() throws Exception {
+    void sendLocalMessage_validInput() throws Exception {
         // given
         Game game = new Game();
         Chat chat = new Chat();
@@ -195,7 +195,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    public void sendLocalMessages_invalidInput_noChat() throws Exception {
+    void sendLocalMessages_invalidInput_noChat() throws Exception {
         // given
         Game game = new Game();
         Chat chat = new Chat();
@@ -238,7 +238,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    public void getMessages_single_message() throws Exception {
+    void getMessages_single_message() throws Exception {
         // given
         Chat chat = new Chat();
         chat.initChat();
@@ -275,7 +275,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    public void getMessages_multiple_messages() throws Exception {
+    void getMessages_multiple_messages() throws Exception {
         // given
         Chat chat = new Chat();
         chat.initChat();
@@ -330,7 +330,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    public void send_message() throws Exception {
+    void send_message() throws Exception {
         Chat chat = new Chat();
         chat.initChat();
 
