@@ -24,6 +24,32 @@ public class PlayerService {
     public PlayerService(@Qualifier("playerRepository")PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
     }
+    public Player getPlayer(long playerId) {
+        // fetch player from db
+        Player player;
+        Optional<Player> foundPlayer = playerRepository.findById(playerId);
+
+        // check if player exists
+        if (foundPlayer.isEmpty()) {
+            throw new NotFoundException("The player with the id " + playerId + " does not exist.");
+        } else {
+            player = foundPlayer.get();
+        }
+
+        return player;
+    }
+
+    public List<Stone> getStones(long playerId, long gameId) {
+        // fetch player from db
+        Player player = getPlayer(playerId);
+
+        // check if player is part of game
+        if (player.getGame().getId() != gameId) {
+            throw new ConflictException("The player is playing in another game.");
+        }
+
+        return player.getBag();
+    }
 
     public Player createPlayer(User user) {
         // check if player already exists
@@ -51,26 +77,6 @@ public class PlayerService {
         return player;
     }
 
-    public Player getPlayer(long playerId) {
-        // fetch player from db
-        Player player;
-        Optional<Player> foundPlayer = playerRepository.findById(playerId);
-
-        // check if player exists
-        if (foundPlayer.isEmpty()) {
-            throw new NotFoundException("The player with the id " + playerId + " does not exist.");
-        } else {
-            player = foundPlayer.get();
-        }
-
-        return player;
-    }
-
-    public void savePlayer(Player player) {
-        playerRepository.save(player);
-        playerRepository.flush();
-    }
-
     public void readyPlayer(long playerId, String token) {
         // fetch player from db
         Player player = getPlayer(playerId);
@@ -92,11 +98,6 @@ public class PlayerService {
         playerRepository.flush();
     }
 
-    public void deletePlayer(Player player) {
-        playerRepository.delete(player);
-        playerRepository.flush();
-    }
-
     public void addGame(Player player, Game game) {
         player.setGame(game);
 
@@ -104,16 +105,14 @@ public class PlayerService {
         playerRepository.flush();
     }
 
-    public List<Stone> getStones(long playerId, long gameId) {
-        // fetch player from db
-        Player player = getPlayer(playerId);
+    public void savePlayer(Player player) {
+        playerRepository.save(player);
+        playerRepository.flush();
+    }
 
-        // check if player is part of game
-        if (player.getGame().getId() != gameId) {
-            throw new ConflictException("The player is playing in another game");
-        }
-
-        return player.getBag();
+    public void deletePlayer(Player player) {
+        playerRepository.delete(player);
+        playerRepository.flush();
     }
 
     private boolean doesPlayerExist(long playerId) {

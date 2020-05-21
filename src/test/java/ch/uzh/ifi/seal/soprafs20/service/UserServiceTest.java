@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -26,7 +26,7 @@ public class UserServiceTest {
     private User guestUser;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.initMocks(this);
 
         // given
@@ -45,7 +45,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser_validInputs_success() {
+    void createUser_validInputs_success() {
         // when -> any object is being save in the userRepository -> return the dummy testUser
         User createdUser = userService.createUser(testUser);
 
@@ -59,9 +59,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createGuest_validInputs_success() {
-
-        User createdUser = userService.createUser(guestUser);
+    void createGuest_validInputs_success() {
+        userService.createUser(guestUser);
 
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(guestUser);
 
@@ -72,7 +71,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser_duplicateInputs_throwsException() {
+    void createUser_duplicateInputs_throwsException() {
         // given -> a first user has already been created
         userService.createUser(testUser);
 
