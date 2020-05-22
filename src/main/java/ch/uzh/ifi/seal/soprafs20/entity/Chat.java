@@ -22,6 +22,9 @@ public class Chat implements Serializable {
     @OneToOne
     private Game game;
 
+    @Column
+    private String type;
+
     @OneToMany
     private List<Message> messages;
 
@@ -55,5 +58,13 @@ public class Chat implements Serializable {
 
     public void addMessage(Message message){
         messages.add(message);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
