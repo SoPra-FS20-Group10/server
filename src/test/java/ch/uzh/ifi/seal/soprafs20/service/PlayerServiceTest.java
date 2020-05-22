@@ -8,6 +8,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Stone;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.NotFoundException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.UnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,7 @@ public class PlayerServiceTest {
 
         // init testUser
         testUser.setId(2L);
+        testUser.setToken("Hello there!");
         testUser.setUsername("General Kenobi");
         testUser.setStatus(UserStatus.ONLINE);
 
@@ -103,7 +105,6 @@ public class PlayerServiceTest {
     @Test
     void getStones_invalidInput_wrongGame() {
         // given
-        List<Stone> bag;
         Game game = new Game();
         game.setId(1L);
 
@@ -149,5 +150,74 @@ public class PlayerServiceTest {
         ConflictException exception = assertThrows(ConflictException.class,
                 () -> playerService.createPlayer(testUser), exceptionMessage);
         assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    void readyPlayer_validInput() {
+        // mock the playerRepository
+        Mockito.when(playerRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testPlayer));
+
+        // call function to ready player
+        playerService.readyPlayer(2, "Hello there!");
+
+        // verify that player entity gets saved
+        Mockito.verify(playerRepository, Mockito.times(1)).save(Mockito.any());
+
+        // test that player is ready
+        assertEquals(PlayerStatus.READY, testPlayer.getStatus());
+
+        // call function again to unready player
+        playerService.readyPlayer(2, "Hello there!");
+
+        // verify that player entity gets saved
+        Mockito.verify(playerRepository, Mockito.times(2)).save(Mockito.any());
+
+        // test that player is ready
+        assertEquals(PlayerStatus.NOT_READY, testPlayer.getStatus());
+    }
+
+    @Test
+    void readyPlayer_invalidInput_playerNotAuthorized() {
+        // mock the playerRepository
+        Mockito.when(playerRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testPlayer));
+
+        // then -> attempt to ready player with wrong token -> check that an error is thrown
+        String exceptionMessage = "The user is not authorized to ready this player.";
+        UnauthorizedException exception = assertThrows(UnauthorizedException.class,
+                () -> playerService.readyPlayer(2, "test"), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    void addGame_validInput() {
+        // given
+        Game testGame = new Game();
+
+        // call function
+        playerService.addGame(testPlayer, testGame);
+
+        // verify that player gets saved
+        Mockito.verify(playerRepository, Mockito.times(1)).save(Mockito.any());
+
+        // test conditions
+        assertEquals(testGame, testPlayer.getGame());
+    }
+
+    @Test
+    void savePlayer_validInput() {
+        // call function
+        playerService.savePlayer(testPlayer);
+
+        // verify that player gets saved
+        Mockito.verify(playerRepository, Mockito.times(1)).save(Mockito.any());
+    }
+
+    @Test
+    void deletePlayer_validInput() {
+        // call function
+        playerService.deletePlayer(testPlayer);
+
+        // verify that player gets saved
+        Mockito.verify(playerRepository, Mockito.times(1)).delete(Mockito.any());
     }
 }
