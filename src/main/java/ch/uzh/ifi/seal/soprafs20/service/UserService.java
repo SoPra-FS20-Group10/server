@@ -40,6 +40,22 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public User getUser(long userId) {
+        // fetch user from db
+        Optional<User> found = userRepository.findById(userId);
+
+        // if no such user is found, an exception is thrown
+        if (found.isEmpty()) {
+            throw new NotFoundException("No user with the id " + userId + " found.");
+        }
+
+        return found.get();
+    }
+
+    public List<User> getUsers() {
+        return this.userRepository.findAll();
+    }
+
     public ResponseEntity<UserGetDTO> loginUser(User userToLogin) {
         User user;
         Optional<User> foundUser = userRepository.findByUsername(userToLogin.getUsername());
@@ -70,44 +86,6 @@ public class UserService {
 
         log.debug("User login successful");
         return ResponseEntity.status(HttpStatus.OK).body(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-    }
-
-    public void logoutUser(String token, long userId) {
-        // fetch user
-        User user = getUser(userId);
-
-        // check if the user is authorized to logout
-        if (!user.getToken().equals(token)) {
-            throw new UnauthorizedException("The user is not authorized to logout this user.");
-        }
-        //check if guest and delete
-        if(user.getType().equals("guest")){
-            deleteUser(userId);
-            return;
-        }
-
-        // change the status to offline
-        user.setStatus(UserStatus.OFFLINE);
-
-        // save the change
-        userRepository.save(user);
-        userRepository.flush();
-    }
-
-    public User getUser(long userId) {
-        // fetch user from db
-        Optional<User> found = userRepository.findById(userId);
-
-        // if no such user is found, an exception is thrown
-        if (found.isEmpty()) {
-            throw new NotFoundException("No user with the id " + userId + " found.");
-        }
-
-        return found.get();
-    }
-
-    public List<User> getUsers() {
-        return this.userRepository.findAll();
     }
 
     public User createUser(User user) {
@@ -170,14 +148,38 @@ public class UserService {
         if(userUpdate.getUsername() != null){
             user.setUsername(userUpdate.getUsername());
         }
+
         if(userUpdate.getPassword() != null){
             user.setPassword(userUpdate.getPassword());
         }
+
         if(userUpdate.getBirthday() != null){
             user.setBirthday(userUpdate.getBirthday());
         }
 
         // save updated user
+        userRepository.save(user);
+        userRepository.flush();
+    }
+
+    public void logoutUser(String token, long userId) {
+        // fetch user
+        User user = getUser(userId);
+
+        // check if the user is authorized to logout
+        if (!user.getToken().equals(token)) {
+            throw new UnauthorizedException("The user is not authorized to logout this user.");
+        }
+        //check if guest and delete
+        if(user.getType().equals("guest")){
+            deleteUser(userId);
+            return;
+        }
+
+        // change the status to offline
+        user.setStatus(UserStatus.OFFLINE);
+
+        // save the change
         userRepository.save(user);
         userRepository.flush();
     }

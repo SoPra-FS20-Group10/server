@@ -255,12 +255,13 @@ public class GameServiceTest {
 
         gameService.manageHistoryTime(user);
 
-        assertEquals((Long.toString(System.currentTimeMillis())+ " ").substring(0,(Long.toString(System.currentTimeMillis())+ " ").length() - 4), user.getHistoryTime().substring(0,user.getHistoryTime().length()-4));
+        assertEquals((System.currentTimeMillis() + " ").substring(0,(System.currentTimeMillis() + " ").length() - 4),
+                user.getHistoryTime().substring(0,user.getHistoryTime().length()-4));
     }
 
     @Test
     public void update_score_successful(){
-
+        // given
         User user = new User();
         Player player = new Player();
         player.setScore(200);
@@ -273,12 +274,10 @@ public class GameServiceTest {
         player1.setUser(user1);
         player1.initPlayer();
 
-
         testGame.setStatus(GameStatus.RUNNING);
         testGame.addPlayer(testPlayer);
         testGame.addPlayer(player);
         testGame.addPlayer(player1);
-
 
         gameService.checkIfGameEnded(testGame);
 
@@ -286,12 +285,5 @@ public class GameServiceTest {
         assertEquals(200, user.getOverallScore());
         assertEquals(1, user.getWonGames());
         assertEquals(0, user1.getWonGames());
-
-
-
-
     }
-
-
 }
-
