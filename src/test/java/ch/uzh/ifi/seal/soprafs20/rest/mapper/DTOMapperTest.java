@@ -114,4 +114,18 @@ class DTOMapperTest {
         assertEquals(tile.getMultiplier(),tileGetDTO.getMultiplier());
         assertEquals(tile.getMultivariant(),tileGetDTO.getMultivariant());
     }
+
+    @Test
+    public void test_convertEntityToMessageDTO(){
+        Message message = new Message();
+        message.setTime(1L);
+        message.setMessage("asdf");
+        message.setUsername("adsfa");
+
+        MessageDTO messageDTO = DTOMapper.INSTANCE.convertEntityToMessageDTO(message);
+
+        assertEquals(message.getTime(),messageDTO.getTime());
+        assertEquals(message.getUsername(),messageDTO.getUsername());
+        assertEquals(message.getMessage(),messageDTO.getMessage());
+    }
 }
