@@ -70,16 +70,24 @@ This command runs your application locally on your system on [http://localhost:8
 
 Some additional features which would be nice to have would be:
 
-* Spectator Mode
-* Password Recovery System
-* Registering with Email
+### Spectator Mode
+
+With the spectator mode, players would be able to join a running game / lobby to be able to watch the whole game without participating. This would bee useful for tournaments.
+
+### Password Recovery System
+
+With the password recovery system, players would be able to recover their password. This can be done either through mail (see next) or some kind of personal question like "What's the name of your first friend?"
+
+### Registering with Email
+
+If the user can register with the mail (which he would have to confirm), he could reset his password. Also, he can be notified about changes.
 
 ## Authors and acknowledgement
 
-Tim Brunner
-Jan Schnyder
-Pascal Marty
-Patrick Looser
+* [Tim Brunner](https://github.com/Tannebaum007)
+* [Jan Schnyder](https://github.com/shnippi)
+* [Pascal Marty](https://github.com/Wassermalone)
+* [Patrick Looser](https://github.com/ploose)
 
 
 ## License
