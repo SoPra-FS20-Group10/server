@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.exceptions.ConflictException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.StoneRepository;
@@ -299,7 +300,6 @@ public class RoundServiceTest {
 
         // create game
         gameService.createGame(testGame, testPlayer);
-        assertNotNull(testGame, "The created game should not be null");
 
         // stones to place
         List<Long> stoneIds = new ArrayList<>();
@@ -329,6 +329,233 @@ public class RoundServiceTest {
         // assertions
         assertEquals("g", testGame.getGrid().get(0).getStoneSymbol());
         assertEquals("o", testGame.getGrid().get(1).getStoneSymbol());
+        assertEquals(1, testGame.getWords().size());
+        assertEquals("go", testGame.getWords().get(0).getWord());
         assertTrue(testPlayer.getBag().isEmpty());
+    }
+
+    @Test
+    public void test_placeWord_successful_twoWords_horizontalAndVertical() {
+        // given tiles, user, player and game
+        Tile tile1 = new Tile(3, null, "w");
+        Tile tile2 = new Tile(1, null, "l");
+        Tile tile3 = new Tile(3, "g", "w");
+        Tile tile4 = new Tile(1, "o", "l");
+        Tile tile5 = new Tile(2, null, "w");
+        Tile tile6 = new Tile(2, "p", "w");
+
+        Stone stone3 = new Stone("p", 3);
+        stone3.setId(3L);
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("test");
+
+        testPlayer.setUser(user);
+        testPlayer.initPlayer();
+        testPlayer.addStone(stone1);
+        testPlayer.addStone(stone2);
+        testPlayer.addStone(stone3);
+
+        // create game
+        gameService.createGame(testGame, testPlayer);
+
+        // stones to place
+        List<Long> stoneIds = new ArrayList<>();
+        stoneIds.add(1L);
+        stoneIds.add(2L);
+
+        // where to place
+        List<Integer> coordinates = new ArrayList<>();
+        coordinates.add(0);
+        coordinates.add(1);
+
+        // when -> then stones
+        Mockito.when(stoneRepository.findByIdIs(1)).thenReturn(Optional.of(stone1));
+        Mockito.when(stoneRepository.findByIdIs(2)).thenReturn(Optional.of(stone2));
+        Mockito.when(stoneRepository.findByIdIs(3)).thenReturn(Optional.of(stone3));
+
+        // when -> then empty tiles
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(3), Mockito.isNull(),
+                eq("w"))).thenReturn(Optional.of(tile1));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), Mockito.isNull(),
+                eq("l"))).thenReturn(Optional.of(tile2));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(2), Mockito.isNull(),
+                eq("w"))).thenReturn(Optional.of(tile5));
+
+        // when -> tiles with stones
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("g"),
+                eq("l"))).thenReturn(Optional.of(tile3));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("o"),
+                eq("l"))).thenReturn(Optional.of(tile4));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("p"),
+                eq("l"))).thenReturn(Optional.of(tile6));
+
+        // test method
+        roundService.placeWord(testGame, testPlayer, stoneIds, coordinates);
+
+        // clean lists
+        stoneIds.clear();
+        coordinates.clear();
+
+        // what and where to place
+        stoneIds.add(3L);
+        coordinates.add(16);
+
+        // place second word
+        roundService.placeWord(testGame, testPlayer, stoneIds, coordinates);
+
+        // assertions
+        assertEquals("g", testGame.getGrid().get(0).getStoneSymbol());
+        assertEquals("o", testGame.getGrid().get(1).getStoneSymbol());
+        assertEquals("p", testGame.getGrid().get(16).getStoneSymbol());
+        assertEquals(2, testGame.getWords().size());
+        assertEquals("go", testGame.getWords().get(0).getWord());
+        assertEquals("op", testGame.getWords().get(1).getWord());
+        assertTrue(testPlayer.getBag().isEmpty());
+    }
+
+    @Test
+    void placeWord_unsuccessful_secondWordNotNextToFirstWord() {
+        // given tiles, user, player and game
+        Tile tile1 = new Tile(3, null, "w");
+        Tile tile2 = new Tile(1, null, "l");
+        Tile tile3 = new Tile(3, "g", "w");
+        Tile tile4 = new Tile(1, "o", "l");
+        Tile tile5 = new Tile(2, null, "w");
+        Tile tile6 = new Tile(2, "p", "w");
+
+        Stone stone3 = new Stone("p", 3);
+        stone3.setId(3L);
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("test");
+
+        testPlayer.setUser(user);
+        testPlayer.initPlayer();
+        testPlayer.addStone(stone1);
+        testPlayer.addStone(stone2);
+        testPlayer.addStone(stone2);
+        testPlayer.addStone(stone3);
+
+        // create game
+        gameService.createGame(testGame, testPlayer);
+
+        // stones to place
+        List<Long> stoneIds = new ArrayList<>();
+        stoneIds.add(1L);
+        stoneIds.add(2L);
+
+        // where to place
+        List<Integer> coordinates = new ArrayList<>();
+        coordinates.add(0);
+        coordinates.add(1);
+
+        // when -> then stones
+        Mockito.when(stoneRepository.findByIdIs(1)).thenReturn(Optional.of(stone1));
+        Mockito.when(stoneRepository.findByIdIs(2)).thenReturn(Optional.of(stone2));
+        Mockito.when(stoneRepository.findByIdIs(3)).thenReturn(Optional.of(stone3));
+
+        // when -> then empty tiles
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(3), Mockito.isNull(),
+                eq("w"))).thenReturn(Optional.of(tile1));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), Mockito.isNull(),
+                eq("l"))).thenReturn(Optional.of(tile2));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(2), Mockito.isNull(),
+                eq("w"))).thenReturn(Optional.of(tile5));
+
+        // when -> tiles with stones
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("g"),
+                eq("l"))).thenReturn(Optional.of(tile3));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("o"),
+                eq("l"))).thenReturn(Optional.of(tile4));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("p"),
+                eq("l"))).thenReturn(Optional.of(tile6));
+
+        // test method
+        roundService.placeWord(testGame, testPlayer, stoneIds, coordinates);
+
+        // clean lists
+        stoneIds.clear();
+        coordinates.clear();
+
+        // what and where to place
+        stoneIds.add(3L);
+        stoneIds.add(2L);
+        coordinates.add(31);
+        coordinates.add(32);
+
+        // then -> attempt to place the second word somewhere not connected to the first -> check that an error is thrown
+        String exceptionMessage = "The played word is not connected to an already played word.";
+        ConflictException exception = assertThrows(ConflictException.class,
+                () -> roundService.placeWord(testGame, testPlayer, stoneIds, coordinates), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    public void test_placeWord_unsuccessful_twoWords_horizontalAndVerticalInOneTurn() {
+        // given tiles, user, player and game
+        Tile tile1 = new Tile(3, null, "w");
+        Tile tile2 = new Tile(1, null, "l");
+        Tile tile3 = new Tile(3, "g", "w");
+        Tile tile4 = new Tile(1, "o", "l");
+        Tile tile5 = new Tile(2, null, "w");
+        Tile tile6 = new Tile(2, "p", "w");
+
+        Stone stone3 = new Stone("p", 3);
+        stone3.setId(3L);
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("test");
+
+        testPlayer.setUser(user);
+        testPlayer.initPlayer();
+        testPlayer.addStone(stone1);
+        testPlayer.addStone(stone2);
+        testPlayer.addStone(stone3);
+
+        // create game
+        gameService.createGame(testGame, testPlayer);
+
+        // stones to place
+        List<Long> stoneIds = new ArrayList<>();
+        stoneIds.add(1L);
+        stoneIds.add(2L);
+        stoneIds.add(3L);
+
+        // where to place
+        List<Integer> coordinates = new ArrayList<>();
+        coordinates.add(0);
+        coordinates.add(1);
+        coordinates.add(16);
+
+        // when -> then stones
+        Mockito.when(stoneRepository.findByIdIs(1)).thenReturn(Optional.of(stone1));
+        Mockito.when(stoneRepository.findByIdIs(2)).thenReturn(Optional.of(stone2));
+        Mockito.when(stoneRepository.findByIdIs(3)).thenReturn(Optional.of(stone3));
+
+        // when -> then empty tiles
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(3), Mockito.isNull(),
+                eq("w"))).thenReturn(Optional.of(tile1));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), Mockito.isNull(),
+                eq("l"))).thenReturn(Optional.of(tile2));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(2), Mockito.isNull(),
+                eq("w"))).thenReturn(Optional.of(tile5));
+
+        // when -> tiles with stones
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("g"),
+                eq("l"))).thenReturn(Optional.of(tile3));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("o"),
+                eq("l"))).thenReturn(Optional.of(tile4));
+        Mockito.when(tileRepository.findByMultiplierAndStoneSymbolAndMultivariant(eq(1), eq("p"),
+                eq("l"))).thenReturn(Optional.of(tile6));
+
+        // then -> attempt to place the second word somewhere not connected to the first -> check that an error is thrown
+        String exceptionMessage = "The letters can only be placed in one line.";
+        ConflictException exception = assertThrows(ConflictException.class,
+                () -> roundService.placeWord(testGame, testPlayer, stoneIds, coordinates), exceptionMessage);
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 }

@@ -360,6 +360,9 @@ public class RoundService {
         boolean[][] visitedVertical = new boolean[15][15];
         boolean[][] visitedHorizontal = new boolean[15][15];
 
+        // check if placed stones are on one line
+        checkIfOneLine(coordinates);
+
         // place stones on temporary board copy
         for (int i = 0; i < stones.size(); ++i) {
             placeStone(board, stones.get(i), coordinates.get(i));
@@ -483,6 +486,38 @@ public class RoundService {
         words.add(currentLetter);
         words.addAll(findHorizontalWords(board, visited, i, j + 1));
         return words;
+    }
+
+    private void checkIfOneLine(List<Integer> coordinates) {
+        String error = "The letters can only be placed in one line.";
+
+        // one letter is ok
+        if (coordinates.size() == 1) {
+            return;
+        }
+
+        // word is horizontal
+        else if (coordinates.get(0) + 15 > coordinates.get(coordinates.size() - 1)) {
+            for (int coordinate : coordinates) {
+                if (coordinate < coordinates.get(0) || coordinate > coordinates.get(coordinates.size() - 1)) {
+                    throw new ConflictException(error);
+                }
+            }
+        }
+
+        // word is vertical
+        else if (coordinates.get(0) % 15 == coordinates.get(coordinates.size() - 1) % 15) {
+            for (int coordinate : coordinates) {
+                if (coordinate % 15 != coordinates.get(0) % 15) {
+                    throw new ConflictException(error);
+                }
+            }
+        }
+
+        // completely wrong placings
+        else {
+            throw new ConflictException(error);
+        }
     }
 
     private static class Triplet{
