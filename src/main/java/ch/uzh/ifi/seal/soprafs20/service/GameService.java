@@ -168,14 +168,6 @@ public class GameService {
             throw new ConflictException("The game has already ended.");
         }
 
-        // check if there are at least two players
-        /*
-        if (game.getPlayers().size() < 2) {
-            throw new ConflictException("The game must have at least 2 players to start.");
-        }
-
-         */
-
         // set flag to running
         game.setStatus(GameStatus.RUNNING);
 
