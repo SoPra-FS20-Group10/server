@@ -1,9 +1,12 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.PlayerGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import org.junit.jupiter.api.Test;
@@ -60,5 +63,24 @@ class DTOMapperTest {
         // check content
         assertEquals(game.getName(), gamePostDTO.getName());
         assertEquals(game.getPassword(), gamePostDTO.getPassword());
+    }
+
+    @Test
+    public void test_Entity_to_PlayerGetDTO(){
+        //create Player
+        Player player = new Player();
+        player.setId(1000);
+        player.setUsername("username");
+        player.setStatus(PlayerStatus.NOT_READY);
+        player.setScore(300);
+
+        PlayerGetDTO playerGetDTO = DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player);
+
+        assertEquals(player.getScore(),playerGetDTO.getScore());
+        assertEquals(player.getId(),playerGetDTO.getId());
+        assertEquals(player.getUsername(),playerGetDTO.getUsername());
+        assertEquals(player.getStatus(),playerGetDTO.getStatus());
+        assertEquals(player.getScore(),playerGetDTO.getScore());
+
     }
 }
