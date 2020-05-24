@@ -151,9 +151,12 @@ public class GameService {
         // fetch players from the game
         List<Player> players = game.getPlayers();
 
+        User owner = game.getOwner();
+        Player ownerplayer = owner.getPlayer();
+
         // check if all players are ready
         for (Player player : players) {
-            if (player.getStatus() == PlayerStatus.NOT_READY) {
+            if (player.getStatus() == PlayerStatus.NOT_READY && player != ownerplayer) {
                 throw new ConflictException("Not all players are ready to start.");
             }
         }
