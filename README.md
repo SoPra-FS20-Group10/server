@@ -50,6 +50,10 @@ of information.
 The service classes of our application are the heart of our system and handle all the logical details. For every complex entity
 (f.i. chats or game) we have a service class that handels all its actions.
 
+### Backup dictionary (words.txt)
+
+Implementation of a backup dictionary for faster word queries and discharge the API
+
 ### Tests (src/test)
 
 We have thorough testing with a test coverage of > 75%. Next to basic testing methods, we also use Mockito to "simulate"
