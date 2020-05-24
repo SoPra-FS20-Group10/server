@@ -122,10 +122,31 @@ class DTOMapperTest {
         message.setMessage("asdf");
         message.setUsername("adsfa");
 
+        // MAP
+
+
         MessageDTO messageDTO = DTOMapper.INSTANCE.convertEntityToMessageDTO(message);
+
+        // check content
 
         assertEquals(message.getTime(),messageDTO.getTime());
         assertEquals(message.getUsername(),messageDTO.getUsername());
         assertEquals(message.getMessage(),messageDTO.getMessage());
+    }
+
+    @Test
+    public void test_convertEntityToWordGetDTO(){
+        Word word = new Word();
+        word.setValue(2);
+        word.setWord("word");
+
+        // MAP
+
+        WordGetDTO wordGetDTO = DTOMapper.INSTANCE.convertEntityToWordGetDTO(word);
+
+        // check content
+
+        assertEquals(word.getValue(),wordGetDTO.getValue());
+        assertEquals(word.getWord(),wordGetDTO.getWord());
     }
 }
