@@ -40,9 +40,6 @@ public class User implements Serializable {
 	@Column()
     private Date birthday;
 
-    @OneToOne
-    private Statistics statistics;
-
     @Column
     private String history = "";
 
@@ -189,14 +186,6 @@ public class User implements Serializable {
 
     public void setWinPercentage(float winPercentage) {
         this.winPercentage = winPercentage;
-    }
-
-    public Statistics getStatistics() {
-        return statistics;
-    }
-
-    public void setStatistics(Statistics statistics) {
-        this.statistics = statistics;
     }
 
     public String getHistory() {
