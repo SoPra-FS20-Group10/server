@@ -151,9 +151,12 @@ public class GameService {
         // fetch players from the game
         List<Player> players = game.getPlayers();
 
+        User owner = game.getOwner();
+        Player ownerplayer = owner.getPlayer();
+
         // check if all players are ready
         for (Player player : players) {
-            if (player.getStatus() == PlayerStatus.NOT_READY) {
+            if (player.getStatus() == PlayerStatus.NOT_READY && player != ownerplayer) {
                 throw new ConflictException("Not all players are ready to start.");
             }
         }
@@ -165,11 +168,6 @@ public class GameService {
             throw new ConflictException("The game has already ended.");
         }
 
-        // check if there are at least two players
-        if (game.getPlayers().size() < 2) {
-            throw new ConflictException("The game must have at least 2 players to start.");
-        }
-
         // set flag to running
         game.setStatus(GameStatus.RUNNING);
 
@@ -179,7 +177,7 @@ public class GameService {
 
     public Game leaveGame(Game game, Player player, String token) {
         // check if player is the lobbyLeader
-        if (game.getStatus() != GameStatus.ENDED && player.getUser().getId().equals(game.getOwner().getId())) {
+        if (game.getStatus() != GameStatus.ENDED && player.getUser().getId().equals(game.getOwner().getId()) && game.getPlayers().size() > 1) {
             throw new UnauthorizedException("The game owner cannot leave the game. Choose to end the game.");
         }
 

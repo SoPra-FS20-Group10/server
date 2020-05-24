@@ -1,11 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,5 +58,95 @@ class DTOMapperTest {
         // check content
         assertEquals(game.getName(), gamePostDTO.getName());
         assertEquals(game.getPassword(), gamePostDTO.getPassword());
+    }
+
+    @Test
+    public void test_Entity_to_PlayerGetDTO(){
+        //create Player
+        Player player = new Player();
+        player.setUsername("username");
+        player.setStatus(PlayerStatus.NOT_READY);
+        player.setScore(300);
+
+        // MAP
+
+        PlayerGetDTO playerGetDTO = DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player);
+
+        // check content
+
+
+        assertEquals(player.getScore(),playerGetDTO.getScore());
+        assertEquals(player.getUsername(),playerGetDTO.getUsername());
+        assertEquals(player.getStatus(),playerGetDTO.getStatus());
+        assertEquals(player.getScore(),playerGetDTO.getScore());
+
+    }
+
+    @Test
+    public void test_convertEntityToStoneGetDTO(){
+        //create Stone
+        Stone stone = new Stone();
+        stone.setSymbol("a");
+        stone.setValue(2);
+
+        // MAP
+
+        StoneGetDTO stoneGetDTO = DTOMapper.INSTANCE.convertEntityToStoneGetDTO(stone);
+
+        // check content
+        assertEquals(stone.getSymbol(),stoneGetDTO.getSymbol());
+        assertEquals(stone.getValue(),stoneGetDTO.getValue());
+    }
+
+    @Test
+    public void test_convertEntityToTileGetDTO(){
+        Tile tile = new Tile();
+        tile.setStoneSymbol("a");
+        tile.setMultiplier(1);
+        tile.setMultivariant("ab");
+
+        // MAP
+        TileGetDTO tileGetDTO = DTOMapper.INSTANCE.convertEntityToTileGetDTO(tile);
+
+
+        // check content
+        assertEquals(tile.getStoneSymbol(),tileGetDTO.getStoneSymbol());
+        assertEquals(tile.getMultiplier(),tileGetDTO.getMultiplier());
+        assertEquals(tile.getMultivariant(),tileGetDTO.getMultivariant());
+    }
+
+    @Test
+    public void test_convertEntityToMessageDTO(){
+        Message message = new Message();
+        message.setTime(1L);
+        message.setMessage("asdf");
+        message.setUsername("adsfa");
+
+        // MAP
+
+
+        MessageDTO messageDTO = DTOMapper.INSTANCE.convertEntityToMessageDTO(message);
+
+        // check content
+
+        assertEquals(message.getTime(),messageDTO.getTime());
+        assertEquals(message.getUsername(),messageDTO.getUsername());
+        assertEquals(message.getMessage(),messageDTO.getMessage());
+    }
+
+    @Test
+    public void test_convertEntityToWordGetDTO(){
+        Word word = new Word();
+        word.setValue(2);
+        word.setWord("word");
+
+        // MAP
+
+        WordGetDTO wordGetDTO = DTOMapper.INSTANCE.convertEntityToWordGetDTO(word);
+
+        // check content
+
+        assertEquals(word.getValue(),wordGetDTO.getValue());
+        assertEquals(word.getWord(),wordGetDTO.getWord());
     }
 }
